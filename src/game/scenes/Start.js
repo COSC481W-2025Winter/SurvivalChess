@@ -17,7 +17,7 @@ export class Start extends Scene {
         this.add.image(512, 384, "background");
         this.add.image(512, 350, "logo").setDepth(100);
         this.add
-            .text(512, 490, "Welcome to our game, click start to play", {
+            .text(512, 490, "Welcome to our game, click \"Start Game!\" to play", {
                 fontFamily: "Arial Black",
                 fontSize: 38,
                 color: "#ffffff",
