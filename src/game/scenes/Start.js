@@ -17,7 +17,7 @@ export class Start extends Scene {
         this.add.image(512, 384, "background");
         this.add.image(512, 350, "logo").setDepth(100);
         this.add
-            .text(512, 490, "Welcome to our game, click \"Start Game!\" to play", {
+            .text(512, 490, "Welcome to Survival Chess, play to lose!", {
                 fontFamily: "Arial Black",
                 fontSize: 38,
                 color: "#ffffff",
@@ -27,7 +27,7 @@ export class Start extends Scene {
             })
             .setOrigin(0.5)
             .setDepth(100);
-        const startButton = this.add.text(100, 100, "Start Game!", {
+        const startButton = this.add.text(100, 100, "Chess Game!", {
             fill: "#0099ff",
             backgroundColor: "#ffff",
             padding: { left: 20, right: 20, top: 10, bottom: 10 },

@@ -17,7 +17,7 @@ export class Game extends Scene {
         this.add.image(512, 384, "background");
         this.add.image(512, 350, "star").setDepth(100);
         this.add
-            .text(512, 490, "You are currently playing the game", {
+            .text(512, 490, "You are currently losing decisviely", {
                 fontFamily: "Arial Black",
                 fontSize: 38,
                 color: "#ffffff",
