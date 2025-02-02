@@ -1,10 +1,7 @@
 import { Scene } from "phaser";
 import { EventBus } from "../EventBus";
 
-function getTileColor(i,j)
-{
-    return (i+j)%2==0 ? "0xE5AA70" : "0xC04000";
-}
+import { ChessTiles } from '../../game-objects/chess-tiles';
 
 export class Game extends Scene {
     constructor() {
@@ -16,6 +13,12 @@ export class Game extends Scene {
 
         this.load.image("star", "star.png");
         this.load.image("background", "bg.png");
+
+        // Load Chess piece pngs
+        this.load.setPath("assets/drummyfish chess");
+        for (let rank of ['pawn','rook','knight','bishop','queen','king'])
+            for (let alignment of ['W','B'])
+                this.load.image(rank+alignment, rank+alignment+'.png');
     }
 
     create() {
@@ -35,69 +38,10 @@ export class Game extends Scene {
 
 
 
-        const tileSize = 75;
-        const pieceSize = 50;
-
-        let chessTiles = []; // 8x8 array of chess tiles
-        let boardState = []; // 8x8 array of chess pieces
-
-        let xPiece;
-        let yPiece;
-
-        let colorGrey = "0x7D7F7C";
-
-        // set up chessTiles & pointer behaviour, as well as interaction with pieces
-        for (let i=0;i<8;i++)
-        {
-            chessTiles.push([]);
-            for (let j=0;j<8;j++)
-            {
-                chessTiles[i][j] = this.add.rectangle(250+tileSize*i, 125+tileSize*j, tileSize, tileSize, getTileColor(i,j));
-                chessTiles[i][j].setInteractive();
-
-                // When the pointer hovers over a tile, highlight it grey
-                chessTiles[i][j].on("pointerover", () => {
-                    chessTiles[i][j].setFillStyle(colorGrey); // Set fill to grey
-                });
-                // When the pointer moves away from a tile, revert to original color
-                chessTiles[i][j].on("pointerout", () => {
-                    if (xPiece != i || yPiece != j) // if tile isn't selected
-                        chessTiles[i][j].setFillStyle(getTileColor(i,j)); // Reset to original fill
-                });
-                // When the pointer pushes down a tile, select/move piece & highlight selected tile with grey
-                chessTiles[i][j].on("pointerdown", () => {
-                    if (boardState[i][j]) // select (pick up) piece
-                    {
-                        if (xPiece && yPiece) // if previously selected piece exists, revert corresponding tile to original color
-                            chessTiles[xPiece][yPiece].setFillStyle(getTileColor(xPiece,yPiece)); 
-                        chessTiles[i][j].setFillStyle(colorGrey); // set fill to grey
-                        xPiece = i;
-                        yPiece = j;
-                    }
-                    else if (xPiece && yPiece) // move (put down) selected piece
-                    {
-                        chessTiles[xPiece][yPiece].setFillStyle(getTileColor(xPiece,yPiece));
-                        boardState[xPiece][yPiece].setPosition(250+tileSize*i, 125+tileSize*j);
-                        boardState[i][j] = boardState[xPiece][yPiece];
-                        boardState[xPiece][yPiece] = null;
-                        xPiece = null
-                        yPiece = null
-                    }
-
-                });
-            }
-        }
-
-        // set up boardState & initialize placeholder player pieces
-        for (let i=0;i<8;i++)
-        {
-            boardState.push([]);
-            for (let j=0;j<8;j++)
-                if (j==6 || j==7)
-                    boardState[i][j] = this.add.ellipse(250+tileSize*i, 125+tileSize*j, pieceSize, pieceSize, "0xFFFFFF");
-                else
-                    boardState[i][j] = null;
-        }
+        // 4 new files in src/game-objects
+        // 6 sets of chess pieces (3 pairs of BW) in pubic/assets/drummyfish chess; Brought to you by Hope!
+        // and a board, and an icon, and a black tile, and a white tile; Totaling to 40 images
+        new ChessTiles(this);
         
 
         
