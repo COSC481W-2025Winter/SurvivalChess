@@ -1,6 +1,7 @@
 import { Scene } from "phaser";
 import { EventBus } from "../EventBus";
 
+import { PLAYER,COMPUTER } from '../../game-objects/constants';
 import { ChessTiles } from '../../game-objects/chess-tiles';
 
 export class Game extends Scene {
@@ -17,7 +18,7 @@ export class Game extends Scene {
         // Load Chess piece pngs
         this.load.setPath("assets/drummyfish chess");
         for (let rank of ['pawn','rook','knight','bishop','queen','king'])
-            for (let alignment of ['W','B'])
+            for (let alignment of [PLAYER,COMPUTER])
                 this.load.image(rank+alignment, rank+alignment+'.png');
     }
 

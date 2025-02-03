@@ -1,10 +1,17 @@
-const TILE_SIZE = 75;   // width & height of each tile
-const X_ANCHOR = 250;   // leftmost pixel of chess board
-const Y_ANCHOR = 125;   // topmost pixel of chess board
+const TILE_SIZE = 80;   // width & height of each tile
+const X_ANCHOR = 512-3.5*TILE_SIZE;   // leftmost pixel of chess board
+const Y_ANCHOR = 384-3.5*TILE_SIZE;   // topmost pixel of chess board
 
 const GRAY = "0x7D7F7C";        // highlight color
 const FAWN = "0xE5AA70";        // white color
 const MAHOGANY = "0xC04000";    // black color
+const VIOLET = "0x7F00FF";      // non-lethal color
+const MAGNETA = "0xFF00FF";     // lethal color
+const DARK_GREY = "0x3b3b3b";   // stage color
+
+const PLAYER = "W";     // player color
+const COMPUTER = "B";   // computer color
 
 export { TILE_SIZE,X_ANCHOR,Y_ANCHOR };
-export { GRAY,FAWN,MAHOGANY };
+export { GRAY,FAWN,MAHOGANY,VIOLET,MAGNETA,DARK_GREY };
+export { PLAYER,COMPUTER };
