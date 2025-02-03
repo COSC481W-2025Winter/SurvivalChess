@@ -3,6 +3,8 @@ import { GRAY,FAWN,MAHOGANY,VIOLET,MAGNETA,DARK_GREY } from './constants';
 import { PLAYER,COMPUTER } from './constants';
 import { BoardState } from './board-state';
 
+import { DEV_MODE } from './constants';
+
 export class ChessTiles {
     constructor(scene)
     {
@@ -49,7 +51,7 @@ export class ChessTiles {
                     else if (this.boardState.isOccupied(i,j)) // else if tile is occupied
                         switch (this.boardState.getAlignment(i,j))
                         {   
-                            case PLAYER:    // if piece is white
+                            case PLAYER:    // if PLAYER's piece
                                 if (this.xy) // if previously selected piece exists, restore corresponding tile to original color
                                     this.clearBoard();
                                 this.highlightColor([i,j],GRAY);
@@ -58,7 +60,7 @@ export class ChessTiles {
                                     this.highlightColor(move.xy, move.isEnemy ? MAGNETA : VIOLET);
                                 this.xy = [i,j];
                                 break;
-                            case COMPUTER:  // if piece is black
+                            case COMPUTER:  // if COMPUTER's piece
                                 if (this.xy && this.isValidMove([i,j])) // if piece is black & move is valid, destroy then move piece
                                 {
                                     this.boardState.destroyPiece(i,j);
@@ -75,6 +77,42 @@ export class ChessTiles {
 
                     temp=null;
                 });
+
+                // if DEV_MODE is enabled; Enable COMPUTER moves via substituting pointerdown with scrolling
+                if (DEV_MODE)
+                    // When the pointer scrolls on a tile, select/move piece & highlight selected tile / possible moves 
+                    this.chessTiles[i][j].on("wheel", () => {
+                        if (this.xy && this.xy[0]==i && this.xy[1]==j) // if tile is same as selected, unselect piece
+                            this.clearBoard();
+                        else if (this.boardState.isOccupied(i,j)) // else if tile is occupied
+                            switch (this.boardState.getAlignment(i,j))
+                            {   
+                                case COMPUTER:  // if COMPUTER's piece
+                                    if (this.xy) // if previously selected piece exists, restore corresponding tile to original color
+                                        this.clearBoard();
+                                    this.highlightColor([i,j],GRAY);
+                                    this.moves = this.boardState.searchMoves(i,j);
+                                    for (let move of this.moves)
+                                        this.highlightColor(move.xy, move.isEnemy ? MAGNETA : VIOLET);
+                                    this.xy = [i,j];
+                                    break;
+                                case PLAYER:    // if PLAYER's piece
+                                    if (this.xy && this.isValidMove([i,j])) // if piece is black & move is valid, destroy then move piece
+                                    {
+                                        this.boardState.destroyPiece(i,j);
+                                        this.boardState.movePiece(this.xy,[i,j]);
+                                        this.clearBoard();
+                                    }
+                                    break;
+                            }
+                        else if (this.xy && this.isValidMove([i,j])) // if not occupied & move is valid, move piece
+                        {
+                            this.boardState.movePiece(this.xy,[i,j]);
+                            this.clearBoard();
+                        }
+
+                        temp=null;
+                    });
             }
         }
 
