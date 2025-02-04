@@ -11,10 +11,10 @@ export class ChessTiles {
         this.scene=scene;
 
         this.chessTiles=[];     // 8x8 array of chess tiles
-        this.boardState;        // contains 8x8 array of chess pieces
-        this.xy;                // coordinate of selected chess piece
-        this.moves;             // possible moves of selected chess piece
-        let temp;               // temporary storage of coordinate & color
+        this.boardState;        // contains BoardState object that manages an 8x8 array of chess pieces
+        this.xy;                // coordinate of selected chess piece; list of [i,j]
+        this.moves;             // possible moves of selected chess piece; list of dictionaries of {'xy':[#,#],'isEnemy':boolean}
+        let temp;               // temporary storage of coordinate & color; dictionary of {'xy':[i,j],'color':color}
         
         this.scene.add.rectangle(X_ANCHOR+3.5*TILE_SIZE, Y_ANCHOR+3.5*TILE_SIZE, 9*TILE_SIZE, 9*TILE_SIZE, DARK_GREY);
 
@@ -61,7 +61,7 @@ export class ChessTiles {
                                 this.xy = [i,j];
                                 break;
                             case COMPUTER:  // if COMPUTER's piece
-                                if (this.xy && this.isValidMove([i,j])) // if piece is black & move is valid, destroy then move piece
+                                if (this.xy && this.isValidMove([i,j])) // if previously selected piece exists & move is valid, destroy then move piece
                                 {
                                     this.boardState.destroyPiece(i,j);
                                     this.boardState.movePiece(this.xy,[i,j]);
@@ -97,7 +97,7 @@ export class ChessTiles {
                                     this.xy = [i,j];
                                     break;
                                 case PLAYER:    // if PLAYER's piece
-                                    if (this.xy && this.isValidMove([i,j])) // if piece is black & move is valid, destroy then move piece
+                                    if (this.xy && this.isValidMove([i,j])) // if previously selected piece exists & move is valid, destroy then move piece
                                     {
                                         this.boardState.destroyPiece(i,j);
                                         this.boardState.movePiece(this.xy,[i,j]);

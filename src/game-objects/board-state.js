@@ -1,68 +1,72 @@
 import { TILE_SIZE,X_ANCHOR,Y_ANCHOR } from './constants';
+import { PAWN,ROOK,KNIGHT,BISHOP,QUEEN,KING } from './constants';
 import { PLAYER,COMPUTER } from './constants';
 import { ChessPiece } from './chess-piece';
 
 export class BoardState {
+    #scene;
+    #boardState;
+
     constructor(scene)
     {
-        this.scene=scene;
+        this.#scene=scene;
 
-        this.boardState=[]; // 8x8 array of chess pieces
+        this.#boardState=[]; // 8x8 array of chess pieces
 
         // set up boardState & initialize player pieces (and computer pieces for testing purposes)
         for (let i=0;i<8;i++)
         {
-            this.boardState.push([]);
+            this.#boardState.push([]);
             // Initialize Player (white) pieces
             for (let j=6;j<8;j++)
                 if (j==6)
-                    this.addPiece(i,j,'pawn',PLAYER);
+                    this.addPiece(i,j,PAWN,PLAYER);
                 else
                     switch (i)
                     {
                         case 0:
                         case 7:
-                            this.addPiece(i,j,'rook',PLAYER);
+                            this.addPiece(i,j,ROOK,PLAYER);
                             break;
                         case 1:
                         case 6:
-                            this.addPiece(i,j,'knight',PLAYER);
+                            this.addPiece(i,j,KNIGHT,PLAYER);
                             break;
                         case 2:
                         case 5:
-                            this.addPiece(i,j,'bishop',PLAYER);
+                            this.addPiece(i,j,BISHOP,PLAYER);
                             break;
                         case 3:
-                            this.addPiece(i,j,'queen',PLAYER);
+                            this.addPiece(i,j,QUEEN,PLAYER);
                             break;
                         case 4:
-                            this.addPiece(i,j,'king',PLAYER);
+                            this.addPiece(i,j,KING,PLAYER);
                             break;
                     }
             // Initialize Computer (black) pieces
             for (let j=0;j<2;j++)
                 if (j==1)
-                    this.addPiece(i,j,'pawn',COMPUTER);
+                    this.addPiece(i,j,PAWN,COMPUTER);
                 else
                     switch (i)
                     {
                         case 0:
                         case 7:
-                            this.addPiece(i,j,'rook',COMPUTER);
+                            this.addPiece(i,j,ROOK,COMPUTER);
                             break;
                         case 1:
                         case 6:
-                            this.addPiece(i,j,'knight',COMPUTER);
+                            this.addPiece(i,j,KNIGHT,COMPUTER);
                             break;
                         case 2:
                         case 5:
-                            this.addPiece(i,j,'bishop',COMPUTER);
+                            this.addPiece(i,j,BISHOP,COMPUTER);
                             break;
                         case 3:
-                            this.addPiece(i,j,'queen',COMPUTER);
+                            this.addPiece(i,j,QUEEN,COMPUTER);
                             break;
                         case 4:
-                            this.addPiece(i,j,'king',COMPUTER);
+                            this.addPiece(i,j,KING,COMPUTER);
                             break;
                     }
         }
@@ -77,14 +81,14 @@ export class BoardState {
     // Check whether coordinate has chess piece
     isOccupied(col,row)
     {
-        return !!this.boardState[col][row];
+        return !!this.#boardState[col][row];
     }
 
     // Add piece of chosen rank & alignment to coordinate
     addPiece(col,row,rank,alignment)
     {
-        this.boardState[col][row] = new ChessPiece(this.scene, X_ANCHOR+col*TILE_SIZE, Y_ANCHOR+row*TILE_SIZE, rank, alignment);
-        this.scene.add.existing(this.boardState[col][row]);
+        this.#boardState[col][row] = new ChessPiece(this.#scene, X_ANCHOR+col*TILE_SIZE, Y_ANCHOR+row*TILE_SIZE, rank, alignment);
+        this.#scene.add.existing(this.#boardState[col][row]);
     }
 
     // Move piece in input coordinate to output coordinate
@@ -95,27 +99,27 @@ export class BoardState {
         let outcol=output[0];
         let outrow=output[1];
 
-        this.boardState[incol][inrow].setPosition(X_ANCHOR+outcol*TILE_SIZE, Y_ANCHOR+outrow*TILE_SIZE);
-        this.boardState[outcol][outrow] = this.boardState[incol][inrow];
-        this.boardState[incol][inrow] = null;
+        this.#boardState[incol][inrow].setPosition(X_ANCHOR+outcol*TILE_SIZE, Y_ANCHOR+outrow*TILE_SIZE);
+        this.#boardState[outcol][outrow] = this.#boardState[incol][inrow];
+        this.#boardState[incol][inrow] = null;
     }
 
     // Completely destroy the piece
     destroyPiece(col,row)
     {
-        this.boardState[col][row].destroy();
+        this.#boardState[col][row].destroy();
     }
 
     // Get alignment info of piece
     getAlignment(col,row)
     {
-        return this.boardState[col][row].getAlignment();
+        return this.#boardState[col][row].getAlignment();
     }
 
     // Get rank info of piece
     getRank(col,row)
     {
-        return this.boardState[col][row].getRank();
+        return this.#boardState[col][row].getRank();
     }
 
     // Search for possible moves a piece can make
@@ -124,17 +128,17 @@ export class BoardState {
         let rank = this.getRank(col,row);
         switch (rank)
         {
-            case 'pawn':
+            case PAWN:
                 return this.searchPawn(col,row);
-            case 'rook':
+            case ROOK:
                 return this.searchRook(col,row);
-            case 'knight':
+            case KNIGHT:
                 return this.searchKnight(col,row);
-            case 'bishop':
+            case BISHOP:
                 return this.searchBishop(col,row);
-            case 'queen':
+            case QUEEN:
                 return this.searchQueen(col,row);
-            case 'king':
+            case KING:
                 return this.searchKing(col,row);
         }
     }
