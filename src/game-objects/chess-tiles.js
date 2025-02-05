@@ -1,5 +1,6 @@
 import { TILE_SIZE,X_ANCHOR,Y_ANCHOR } from './constants';
 import { GRAY,FAWN,MAHOGANY,VIOLET,MAGNETA,DARK_GREY } from './constants';
+import { PAWN,ROOK,KNIGHT,BISHOP,QUEEN,KING } from './constants';
 import { PLAYER,COMPUTER } from './constants';
 import { BoardState } from './board-state';
 
@@ -71,7 +72,7 @@ export class ChessTiles {
                         }
                     else if (this.xy && this.isValidMove([i,j])) // if not occupied & move is valid, move piece
                     {
-                        if (this.boardState.isEnPassant(i,j)) // if en passant move, destroy enemy pawn
+                        if (this.boardState.getRank(this.xy[0],this.xy[1])==PAWN && this.boardState.isEnPassant(i,j)) // if en passant move, destroy enemy pawn
                             this.boardState.destroyPiece(i,this.xy[1]);
                         this.boardState.movePiece(this.xy,[i,j]);
                         this.clearBoard();
@@ -109,7 +110,7 @@ export class ChessTiles {
                             }
                         else if (this.xy && this.isValidMove([i,j])) // if not occupied & move is valid, move piece
                         {
-                            if (this.boardState.isEnPassant(i,j)) // if en passant move, destroy enemy pawn
+                            if (this.boardState.getRank(this.xy[0],this.xy[1])==PAWN && this.boardState.isEnPassant(i,j)) // if en passant move, destroy enemy pawn
                                 this.boardState.destroyPiece(i,this.xy[1]);
                             this.boardState.movePiece(this.xy,[i,j]);
                             this.clearBoard();
