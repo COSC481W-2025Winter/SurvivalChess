@@ -29,7 +29,7 @@ export class Game extends Scene {
             .setDepth(100);
 
         const endButton = this.add.text(100, 100, "End Game!", {
-            fill: "#0099ff",
+            fill: "#000000",
             backgroundColor: "#ffff",
             padding: { left: 20, right: 20, top: 10, bottom: 10 },
         });

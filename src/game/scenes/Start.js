@@ -14,12 +14,12 @@ export class Start extends Scene {
     }
 
     create() {
-        this.add.image(512, 384, "background");
-        this.add.image(512, 350, "logo").setDepth(100);
+        this.add.image(0, 0, "background");
+        this.add.image(512, 200, "logo").setDepth(100);
         this.add
             .text(512, 490, "Welcome to our game, click \"Start Game!\" to play", {
-                fontFamily: "Arial Black",
-                fontSize: 38,
+                fontFamily: "Courier New",
+                fontSize: 30,
                 color: "#ffffff",
                 stroke: "#000000",
                 strokeThickness: 8,
@@ -28,7 +28,7 @@ export class Start extends Scene {
             .setOrigin(0.5)
             .setDepth(100);
         const startButton = this.add.text(100, 100, "Start Game!", {
-            fill: "#0099ff",
+            fill: "#000000",
             backgroundColor: "#ffff",
             padding: { left: 20, right: 20, top: 10, bottom: 10 },
         });
@@ -50,7 +50,17 @@ export class Start extends Scene {
             },
             this
         );
-
+        this.add
+            .text(512, 720, "Credits: David - Deployment, Durva - Documentation, Hope – Developer, Kaydee – SCRUM, Marley – Co-lead, Moe - Deployment, Riana – Team Lead, Ritu – SCRUM", {
+                fontFamily: "Courier New",
+                fontSize: 12,
+                color: "#ffffff",
+                stroke: "#000000",
+                strokeThickness: 4,
+                align: "center",
+            })
+            .setOrigin(0.5)
+            .setDepth(100);
         // When the pointer hovers over the button, scale it up
         startButton.on("pointerover", () => {
             startButton.setScale(1.2); // Increase the scale (grow the button by 20%)
