@@ -48,3 +48,6 @@ Hello my name is Mohamad Tiba and I am currently a computer science major over a
 
 **Durva Kadam - Secretary**
 Hi, I'm Durva Kadam, a junior majoring in Data Science and Analytics at Eastern Michigan University. I enjoy exploring new music, dancing, and baking in my free time. Technically, I’m skilled in R, Java, Python, and HTML, and I especially enjoy working with Python and HTML. I’m passionate about using data to uncover insights and drive meaningful solutions, and I look forward to growing as a professional in the data science field.
+
+**Hope Heck - Developer**
+Hello, I am a Senior going for a Computer Science major with a General Business Minor. I hope to graduate at the end of this semester. I am proficient in Java, and know a bit of Python, PHP, HTML, and Kotlin. I have set up databases from scratch using MySQL and AWS. I look forward to learning more about React for this project.
