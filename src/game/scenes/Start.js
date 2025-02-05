@@ -27,8 +27,10 @@ export class Start extends Scene {
             })
             .setOrigin(0.5)
             .setDepth(100);
-        const startButton = this.add.text(100, 100, "Start Game!", {
-            fill: "#000000",
+
+        const startButton = this.add.text(100, 100, "Chess Game!", {
+            fill: "#0099ff",
+
             backgroundColor: "#ffff",
             padding: { left: 20, right: 20, top: 10, bottom: 10 },
         });
