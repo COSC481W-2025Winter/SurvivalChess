@@ -140,6 +140,7 @@ export class BoardState {
     destroyPiece(col,row)
     {
         this.#boardState[col][row].destroy();
+        this.#boardState[col][row]=null;
     }
 
     // Get alignment info of piece
