@@ -1,11 +1,13 @@
 import { TILE_SIZE,X_ANCHOR,Y_ANCHOR } from './constants';
 import { PAWN,ROOK,KNIGHT,BISHOP,QUEEN,KING } from './constants';
 import { PLAYER,COMPUTER } from './constants';
+import { EN_PASSANT_TOKEN } from './constants';
 import { ChessPiece } from './chess-piece';
 
 export class BoardState {
     #scene;
     #boardState;
+    #enPassantCoordinate;
 
     constructor(scene)
     {
@@ -81,7 +83,33 @@ export class BoardState {
     // Check whether coordinate has chess piece
     isOccupied(col,row)
     {
-        return !!this.#boardState[col][row];
+        return this.#boardState[col][row] && this.#boardState[col][row]!=EN_PASSANT_TOKEN;
+    }
+
+    // Check whether coordinate has en passant token
+    isEnPassant(col,row)
+    {
+        return this.#boardState[col][row]==EN_PASSANT_TOKEN;
+    }
+
+    // Add en passant token to coordinate & log coordinate
+    addEnPassantToken(col,row)
+    {
+        this.#boardState[col][row]=EN_PASSANT_TOKEN;
+        this.#enPassantCoordinate=[col,row];
+    }
+
+    // Destroy en passant token (if it exists)
+    destroyEnPassantToken()
+    {
+        if (this.#enPassantCoordinate)
+        {
+            let col=this.#enPassantCoordinate[0];
+            let row=this.#enPassantCoordinate[1];
+            this.#boardState[col][row]=null;
+            this.#enPassantCoordinate=null;
+        }
+
     }
 
     // Add piece of chosen rank & alignment to coordinate
@@ -98,6 +126,10 @@ export class BoardState {
         let inrow=input[1];
         let outcol=output[0];
         let outrow=output[1];
+
+        this.destroyEnPassantToken();
+        if (this.getRank(incol,inrow)==PAWN && Math.abs(inrow-outrow)==2)
+            this.addEnPassantToken(incol,(inrow+outrow)/2);
 
         this.#boardState[incol][inrow].setPosition(X_ANCHOR+outcol*TILE_SIZE, Y_ANCHOR+outrow*TILE_SIZE);
         this.#boardState[outcol][outrow] = this.#boardState[incol][inrow];
@@ -156,6 +188,8 @@ export class BoardState {
                 if (i==col && !this.isOccupied(i,j))
                     moves.push({'xy':[i,j],'isEnemy':false});
                 else if (i!=col && this.isOccupied(i,j) && alignment!=this.getAlignment(i,j))
+                    moves.push({'xy':[i,j],'isEnemy':true});
+                else if (i!=col && this.isEnPassant(i,j) && alignment!=this.getAlignment(i,row))
                     moves.push({'xy':[i,j],'isEnemy':true});
             }
         

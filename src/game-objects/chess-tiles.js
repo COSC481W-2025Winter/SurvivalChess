@@ -71,6 +71,8 @@ export class ChessTiles {
                         }
                     else if (this.xy && this.isValidMove([i,j])) // if not occupied & move is valid, move piece
                     {
+                        if (this.boardState.isEnPassant(i,j)) // if en passant move, destroy enemy pawn
+                            this.boardState.destroyPiece(i,this.xy[1]);
                         this.boardState.movePiece(this.xy,[i,j]);
                         this.clearBoard();
                     }
@@ -107,6 +109,8 @@ export class ChessTiles {
                             }
                         else if (this.xy && this.isValidMove([i,j])) // if not occupied & move is valid, move piece
                         {
+                            if (this.boardState.isEnPassant(i,j)) // if en passant move, destroy enemy pawn
+                                this.boardState.destroyPiece(i,this.xy[1]);
                             this.boardState.movePiece(this.xy,[i,j]);
                             this.clearBoard();
                         }
