@@ -15,18 +15,18 @@ export class Game extends Scene {
 
     create() {
         this.add.image(512, 384, "background");
-        this.add.image(512, 350, "star").setDepth(100);
-        this.add
-            .text(512, 490, "You are currently losing decisviely", {
-                fontFamily: "Arial Black",
-                fontSize: 38,
-                color: "#ffffff",
-                stroke: "#000000",
-                strokeThickness: 8,
-                align: "center",
-            })
-            .setOrigin(0.5)
-            .setDepth(100);
+        // this.add.image(512, 350, "star").setDepth(100);
+        // this.add
+        //     .text(512, 490, "You are currently losing decisviely", {
+        //         fontFamily: "Arial Black",
+        //         fontSize: 38,
+        //         color: "#ffffff",
+        //         stroke: "#000000",
+        //         strokeThickness: 8,
+        //         align: "center",
+        // //     })
+            // .setOrigin(0.5)
+            // .setDepth(100);
 
         const endButton = this.add.text(100, 100, "End Game!", {
             fill: "#0099ff",
