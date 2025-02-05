@@ -1,5 +1,6 @@
 import { Scene } from "phaser";
 import { EventBus } from "../EventBus";
+import { RulesOverlay } from "./RulesOverlay";
 
 export class Start extends Scene {
     constructor() {
@@ -37,6 +38,7 @@ export class Start extends Scene {
         startButton.on(
             "pointerdown",
             function () {
+                
                 import("./Game") // Dynamically import the Game scene
                     .then((module) => {
                         // Only add the scene if it's not already registered
@@ -60,6 +62,34 @@ export class Start extends Scene {
         startButton.on("pointerout", () => {
             startButton.setScale(1); // Reset to original size
         });
+
+
+        // For the time being, hard-coding the rules button
+        // Will modularize for use on other scenes later
+        const rulesButton = this.add.text(100, 100, "Rules", {
+            fill: "#0099ff",
+            backgroundColor: "#ffff",
+            padding: { left: 20, right: 20, top: 10, bottom: 10 },
+        });
+
+        rulesButton.setPosition(425, 700);
+        rulesButton.setInteractive();
+        rulesButton.on(
+            "pointerdown",
+            function () {
+                import("./RulesOverlay") // Dynamically import the Game scene
+                    .then((module) => {
+                        // Only add the scene if it's not already registered
+                        if (!this.scene.get("Rules")) {
+                            this.scene.add("Rules", module.RulesOverlay); // Add the MainGame scene dynamically
+                        }
+
+                        // Using launch instead of start preserves the current scene underneath it
+                        this.scene.launch("Rules");
+                    });
+            },
+            this
+        );
 
         EventBus.emit("current-scene-ready", this);
     }
