@@ -1,6 +1,7 @@
 import { Scene } from "phaser";
 import { EventBus } from "../EventBus";
 
+import { PAWN,ROOK,KNIGHT,BISHOP,QUEEN,KING } from '../../game-objects/constants';
 import { PLAYER,COMPUTER } from '../../game-objects/constants';
 import { ChessTiles } from '../../game-objects/chess-tiles';
 
@@ -17,25 +18,25 @@ export class Game extends Scene {
 
         // Load Chess piece pngs
         this.load.setPath("assets/drummyfish chess");
-        for (let rank of ['pawn','rook','knight','bishop','queen','king'])
+        for (let rank of [PAWN,ROOK,KNIGHT,BISHOP,QUEEN,KING])
             for (let alignment of [PLAYER,COMPUTER])
                 this.load.image(rank+alignment, rank+alignment+'.png');
     }
 
     create() {
         this.add.image(512, 384, "background");
-        this.add.image(512, 350, "star").setDepth(100);
-        this.add
-            .text(512, 490, "You are currently playing the game", {
-                fontFamily: "Arial Black",
-                fontSize: 38,
-                color: "#ffffff",
-                stroke: "#000000",
-                strokeThickness: 8,
-                align: "center",
-            })
-            .setOrigin(0.5)
-            .setDepth(100);
+//         this.add.image(512, 350, "star").setDepth(100);
+//         this.add
+//             .text(512, 490, "You are currently playing the game", {
+//                 fontFamily: "Arial Black",
+//                 fontSize: 38,
+//                 color: "#ffffff",
+//                 stroke: "#000000",
+//                 strokeThickness: 8,
+//                 align: "center",
+//             })
+//             .setOrigin(0.5)
+//             .setDepth(100);
 
 
 
