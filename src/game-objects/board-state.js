@@ -140,6 +140,7 @@ export class BoardState {
     destroyPiece(col,row)
     {
         this.#boardState[col][row].destroy();
+        this.#boardState[col][row]=null;
     }
 
     // Get alignment info of piece
@@ -189,7 +190,7 @@ export class BoardState {
                     moves.push({'xy':[i,j],'isEnemy':false});
                 else if (i!=col && this.isOccupied(i,j) && alignment!=this.getAlignment(i,j))
                     moves.push({'xy':[i,j],'isEnemy':true});
-                else if (i!=col && this.isEnPassant(i,j) && alignment!=this.getAlignment(i,row))
+                else if (i!=col && this.isEnPassant(i,j) && this.isOccupied(i,row) && alignment!=this.getAlignment(i,row))
                     moves.push({'xy':[i,j],'isEnemy':true});
             }
         
