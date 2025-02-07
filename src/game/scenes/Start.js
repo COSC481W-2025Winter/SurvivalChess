@@ -1,15 +1,14 @@
 import { Scene } from "phaser";
 import { EventBus } from "../EventBus";
+import {
+    FAWNHEX,
+    MAHOGANYHEX,
+    ONYXHEX,
+    CREAMHEX,
+    GREENHEX,
+} from "../../game-objects/constants";
 
 export class Start extends Scene {
-    // // Color values
-
-    // fawn = "#E5AA70"
-    // mahogany = "#C04000"
-    // onyx = "#3B3B3B"
-    // cream = "#F4FFFD"
-    // green = "#6E9075"
-
     constructor() {
         super("Game");
     }
@@ -22,16 +21,18 @@ export class Start extends Scene {
     }
 
     create() {
+        // Set the background color of the scene to a light neutral color
+        this.cameras.main.setBackgroundColor(0xeeeeee); // Light gray background
+
         this.add
             .text(512, 200, "Survival Chess", {
                 fontFamily: "serif",
                 fontSize: 100,
-                color: "#E5AA70",
-                stroke: "#C04000",
+                color: FAWNHEX, // Using FAWNHEX here
+                stroke: MAHOGANYHEX, // Using MAHOGANYHEX here
                 strokeThickness: 8,
                 align: "center",
             })
-
             .setOrigin(0.5)
             .setDepth(100);
 
@@ -39,18 +40,17 @@ export class Start extends Scene {
             .text(
                 512,
                 300,
-                "Description of game: Survival Chess is a arcade style chess game. ",
+                "Description of game: Survival Chess is an arcade style chess game. ",
                 {
                     fontFamily: "serif",
                     fontSize: 20,
-                    color: "#C04000",
-                    backgroundColor: "#E5AA70",
-                    stroke: "#C04000",
+                    color: MAHOGANYHEX, // Using MAHOGANYHEX here
+                    backgroundColor: FAWNHEX, // Using FAWNHEX here
+                    stroke: MAHOGANYHEX, // Using MAHOGANYHEX here
                     strokeThickness: 0,
                     align: "center",
                 }
             )
-
             .setOrigin(0.5)
             .setDepth(100);
 
@@ -62,19 +62,19 @@ export class Start extends Scene {
                 {
                     fontFamily: "serif",
                     fontSize: 20,
-                    color: "#C04000",
-                    backgroundColor: "#E5AA70",
-                    stroke: "#C04000",
+                    color: MAHOGANYHEX, // Using MAHOGANYHEX here
+                    backgroundColor: FAWNHEX, // Using FAWNHEX here
+                    stroke: MAHOGANYHEX, // Using MAHOGANYHEX here
                     strokeThickness: 0,
                     align: "center",
                 }
             )
-
             .setOrigin(0.5)
             .setDepth(100);
+
         const startButton = this.add.text(100, 100, "Start Game", {
-            fill: "#F4FFFD",
-            backgroundColor: "#C04000",
+            fill: CREAMHEX, // Using CREAMHEX here
+            backgroundColor: MAHOGANYHEX, // Using MAHOGANYHEX here
             padding: { left: 20, right: 20, top: 10, bottom: 10 },
         });
         startButton.setPosition(440, 400);
@@ -97,8 +97,8 @@ export class Start extends Scene {
         );
 
         const settingsButton = this.add.text(100, 100, "Settings", {
-            fill: "#F4FFFD",
-            backgroundColor: "#C04000",
+            fill: CREAMHEX, // Using CREAMHEX here
+            backgroundColor: MAHOGANYHEX, // Using MAHOGANYHEX here
             padding: { left: 20, right: 20, top: 10, bottom: 10 },
         });
         settingsButton.setPosition(870, 70);
@@ -121,8 +121,8 @@ export class Start extends Scene {
         );
 
         const rulesButton = this.add.text(100, 100, "See Rules", {
-            fill: "#F4FFFD",
-            backgroundColor: "#C04000",
+            fill: CREAMHEX, // Using CREAMHEX here
+            backgroundColor: MAHOGANYHEX, // Using MAHOGANYHEX here
             padding: { left: 20, right: 20, top: 10, bottom: 10 },
         });
         rulesButton.setPosition(870, 650);
