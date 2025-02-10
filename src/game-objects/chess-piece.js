@@ -1,20 +1,18 @@
 export class ChessPiece extends Phaser.GameObjects.Image {
     #rank;
     #alignment;
-    
+
     constructor(scene, x, y, rank, alignment) {
-        super(scene, x, y, rank+alignment);
+        super(scene, x, y, rank + alignment);
         this.#rank = rank;
         this.#alignment = alignment;
     }
 
-    getRank()
-    {
+    getRank() {
         return this.#rank;
     }
 
-    getAlignment()
-    {
+    getAlignment() {
         return this.#alignment;
     }
 }  

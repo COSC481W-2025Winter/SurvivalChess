@@ -1,16 +1,8 @@
 import { Scene } from "phaser";
 import { EventBus } from "../EventBus";
 
-import {
-    PAWN,
-    ROOK,
-    KNIGHT,
-    BISHOP,
-    QUEEN,
-    KING,
-    CREAMHEX,
-    ONYXHEX,
-} from "../../game-objects/constants";
+import { PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING } from "../../game-objects/constants";
+import { CREAMHEX, ONYXHEX } from "../../game-objects/constants";
 import { PLAYER, COMPUTER } from "../../game-objects/constants";
 import { ChessTiles } from "../../game-objects/chess-tiles";
 
