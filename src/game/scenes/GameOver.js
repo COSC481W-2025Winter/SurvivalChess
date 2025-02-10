@@ -37,11 +37,11 @@ export class GameOver extends Scene {
 
         restartButton.setInteractive();
 
-      
+
         restartButton.on(
             "pointerdown",
             () => {
-                this.scene.start("Game"); // Ensuring 'this' is correctly referenced
+                this.scene.start("Game Over"); // Ensuring 'this' is correctly referenced
             }
         );
 
