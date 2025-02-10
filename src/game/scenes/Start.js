@@ -134,15 +134,15 @@ export class Start extends Scene {
         rulesButton.on(
             "pointerdown",
             function () {
-                import("./Game") // Dynamically import the rules scene
+                import("./RulesOverlay") // Dynamically import the rules scene
                     .then((module) => {
                         // Only add the scene if it's not already registered
                         if (!this.scene.get("Rules")) {
-                            this.scene.add("Rules", module.Game); // Add the scene dynamically
+                            this.scene.add("Rules", module.RulesOverlay); // Add the scene dynamically
                         }
 
-                        // Start the scene
-                        this.scene.start("Rules");
+                        // Use launch to run scene in parallel to current
+                        this.scene.launch("Rules");
                     });
             },
             this
