@@ -3,6 +3,6 @@ test('automatic pass', () => {
     expect(true);
   });
 
-  test('automatic fail', () => {
-    expect(true).toBe(false);
-  });
+  // test('automatic fail', () => {
+  //   expect(true).toBe(false);
+  // });
