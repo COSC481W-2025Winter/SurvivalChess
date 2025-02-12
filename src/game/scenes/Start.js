@@ -1,6 +1,6 @@
 import { Scene } from "phaser";
 import { EventBus } from "../EventBus";
-import { RulesOverlay } from "./RulesOverlay";
+import { RulesButton } from "./RulesButton";
 import {
     FAWNHEX,
     MAHOGANYHEX,
@@ -133,20 +133,10 @@ export class Start extends Scene {
 
         rulesButton.on(
             "pointerdown",
-            function () {
-                import("./RulesOverlay") // Dynamically import the rules scene
-                    .then((module) => {
-                        // Only add the scene if it's not already registered
-                        if (!this.scene.get("Rules")) {
-                            this.scene.add("Rules", module.RulesOverlay); // Add the scene dynamically
-                        }
-
-                        // Use launch to run scene in parallel to current
-                        this.scene.launch("Rules");
-                    });
-            },
+            new RulesButton(this).click,
             this
         );
+        
 
         // When the pointer hovers over the button, scale it up
         startButton.on("pointerover", () => {
