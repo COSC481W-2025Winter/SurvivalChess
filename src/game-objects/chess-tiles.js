@@ -2,10 +2,9 @@ import { TILE_SIZE, X_ANCHOR, Y_ANCHOR } from "./constants";
 import { HOVER_COLOR, WHITE_TILE_COLOR, BLACK_TILE_COLOR, NON_LETHAL_COLOR, LETHAL_COLOR, THREAT_COLOR, STAGE_COLOR } from "./constants";
 import { PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING } from "./constants";
 import { PLAYER, COMPUTER } from "./constants";
-import { BoardState } from "./board-state";
 import { isSamePoint } from "./constants";
-
 import { DEV_MODE } from "./constants";
+import { BoardState } from "./board-state";
 
 export class ChessTiles {
     constructor(scene) {
@@ -43,144 +42,23 @@ export class ChessTiles {
 
                 // When the pointer hovers over a tile, highlight it
                 this.chessTiles[i][j].on("pointerover", () => {
-                    // if highlighted as possible move, save state to restore on pointerout
-                    let color = this.chessTiles[i][j].fillColor;
-                    if (color == NON_LETHAL_COLOR || color == LETHAL_COLOR)
-                        this.temp = [{ xy: [i, j], color: color }];
-
-                    // highlight tile
-                    this.highlightColor([i, j], HOVER_COLOR);
-
-                    // if hovering over a piece and either 1. is selected piece or 2. no piece is selected, highlight this.threats
-                    if ((!this.xy || isSamePoint(this.xy, [i, j])) && this.boardState.isOccupied(i, j)) {
-                        this.threats = this.boardState.seekThreats(i, j, this.boardState.getAlignment(i, j))
-                        if (!this.temp)
-                            this.temp = [];
-                        for (let tile of this.threats) {
-                            let colo = this.chessTiles[tile[0]][tile[1]].fillColor;
-                            if (colo == NON_LETHAL_COLOR || colo == LETHAL_COLOR)
-                                this.temp.push({ xy: tile, color: colo });
-                            this.highlightColor(tile, THREAT_COLOR);
-                        }
-                    }
+                    this.pointerOver(i, j);
                 });
 
                 // When the pointer moves away from a tile, restore original color
                 this.chessTiles[i][j].on("pointerout", () => {
-                    // restore non-selected tiles to board color
-                    if (!this.xy || !isSamePoint(this.xy, [i, j]))
-                        this.restoreColor([i, j]);
-
-                    // restore highlighted lethal / non-lethal tile colors, if selected piece exists
-                    if (this.temp)
-                        for (let tile of this.temp)
-                            this.highlightColor(tile.xy, tile.color);
-
-                    // restore highlighted this.threats to board color, unless already restored to lethal / non-lethal tile colors
-                    if (this.threats && (!this.temp || this.temp.length != 1))
-                        for (let tile of this.threats)
-                            this.restoreColor(tile);
-
-                    this.temp = null;
-                    this.threats = null;
+                    this.pointerOut(i, j);
                 });
 
                 // When the pointer pushes down a tile, select/move piece & highlight selected tile / possible moves
                 this.chessTiles[i][j].on("pointerdown", () => {
-                    // if tile is same as selected, unselect piece
-                    if (this.xy && isSamePoint(this.xy, [i, j]))
-                        this.clearBoard();
-                    // else if tile is occupied re-select new piece or move & eliminate piece
-                    else if (this.boardState.isOccupied(i, j))
-                        switch (this.boardState.getAlignment(i, j)) {
-                            case PLAYER: // if PLAYER's piece
-                                this.clearBoard();
-
-                                // highlight tile & possible moves & record selected piece into xy
-                                this.highlightColor([i, j], HOVER_COLOR);
-                                this.moves = this.boardState.searchMoves(i, j);
-                                for (let move of this.moves)
-                                    this.highlightColor(
-                                        move.xy,
-                                        move.isEnemy ? LETHAL_COLOR : NON_LETHAL_COLOR
-                                    );
-                                this.xy = [i, j];
-                                break;
-                            case COMPUTER: // if COMPUTER's piece
-                                // if previously selected piece exists & move is valid, destroy then move piece
-                                if (this.xy && this.isValidMove([i, j])) {
-                                    this.boardState.destroyPiece(i, j);
-                                    this.boardState.movePiece(this.xy, [i, j]);
-                                    this.clearBoard();
-                                }
-                                break;
-                        }
-                    // if not occupied & move is valid, move piece
-                    else if (this.xy && this.isValidMove([i, j])) {
-                        // if en passant move, destroy enemy pawn
-                        if (
-                            this.boardState.getRank(this.xy[0], this.xy[1]) == PAWN &&
-                            this.boardState.isEnPassant(i, j)
-                        )
-                            this.boardState.destroyPiece(i, this.xy[1]);
-
-                        // move piece & clear board
-                        this.boardState.movePiece(this.xy, [i, j]);
-                        this.clearBoard();
-                    }
-
-                    this.temp = null;
-                    this.threats = null;
+                    this.pointerSelect(i, j, true);
                 });
 
                 // if DEV_MODE is enabled; Enable COMPUTER moves via substituting pointerdown with scrolling
                 if (DEV_MODE)
-                    // When the pointer scrolls on a tile, select/move piece & highlight selected tile / possible moves
                     this.chessTiles[i][j].on("wheel", () => {
-                        // if tile is same as selected, unselect piece
-                        if (this.xy && isSamePoint(this.xy, [i, j]))
-                            this.clearBoard();
-                        // else if tile is occupied re-select new piece or move & eliminate piece
-                        else if (this.boardState.isOccupied(i, j))
-                            switch (this.boardState.getAlignment(i, j)) {
-                                case COMPUTER: // if COMPUTER's piece
-                                    this.clearBoard();
-
-                                    // highlight tile & possible moves & record selected piece into xy
-                                    this.highlightColor([i, j], HOVER_COLOR);
-                                    this.moves = this.boardState.searchMoves(i, j);
-                                    for (let move of this.moves)
-                                        this.highlightColor(
-                                            move.xy,
-                                            move.isEnemy ? LETHAL_COLOR : NON_LETHAL_COLOR
-                                        );
-                                    this.xy = [i, j];
-                                    break;
-                                case PLAYER: // if PLAYER's piece
-                                    // if previously selected piece exists & move is valid, destroy then move piece
-                                    if (this.xy && this.isValidMove([i, j])) {
-                                        this.boardState.destroyPiece(i, j);
-                                        this.boardState.movePiece(this.xy, [i, j]);
-                                        this.clearBoard();
-                                    }
-                                    break;
-                            }
-                        // if not occupied & move is valid, move piece
-                        else if (this.xy && this.isValidMove([i, j])) {
-                            // if en passant move, destroy enemy pawn
-                            if (
-                                this.boardState.getRank(this.xy[0], this.xy[1]) == PAWN &&
-                                this.boardState.isEnPassant(i, j)
-                            )
-                                this.boardState.destroyPiece(i, this.xy[1]);
-
-                            // move piece & clear board
-                            this.boardState.movePiece(this.xy, [i, j]);
-                            this.clearBoard();
-                        }
-
-                        this.temp = null;
-                        this.threats = null;
+                        this.pointerSelect(i, j, false);
                     });
             }
         }
@@ -188,9 +66,124 @@ export class ChessTiles {
         this.boardState = new BoardState(this.scene);
     }
 
+    // ================================================================
+    // Pointer Events
+
+    // Executes when pointer enters tile, or upon manual trigger from pointerSelect
+    pointerOver(i, j) {
+        // if highlighted as possible move, save state to restore on pointerout
+        let color = this.chessTiles[i][j].fillColor;
+        if (color == NON_LETHAL_COLOR || color == LETHAL_COLOR)
+            this.temp = [{ xy: [i, j], color: color }];
+
+        // highlight tile
+        this.highlightColor([i, j], HOVER_COLOR);
+
+        // if hovering over a piece and either highlight this.threats excluding the selected piece
+        if (this.boardState.isOccupied(i, j)) {
+            this.threats = this.boardState.seekThreats(i, j, this.boardState.getAlignment(i, j))
+            if (!this.temp)
+                this.temp = [];
+            for (let tile of this.threats)
+                if (!this.xy || !isSamePoint(this.xy, tile)) {
+                    color = this.chessTiles[tile[0]][tile[1]].fillColor;
+                    if (color == NON_LETHAL_COLOR || color == LETHAL_COLOR)
+                        this.temp.push({ xy: tile, color: color });
+                    this.highlightColor(tile, THREAT_COLOR);
+                }
+        }
+    }
+
+    // Executes when pointer exits tile
+    pointerOut(i, j) {
+        // restore non-selected tiles to board color
+        if (!this.xy || !isSamePoint(this.xy, [i, j]))
+            this.restoreColor([i, j]);
+
+        // restore highlighted lethal / non-lethal tile colors, if selected piece exists
+        if (this.temp)
+            for (let tile of this.temp)
+                this.highlightColor(tile.xy, tile.color);
+
+        // restore highlighted this.threats to board color, unless is HOVER or LETHAL color
+        if (this.threats)
+            for (let tile of this.threats) {
+                let color = this.chessTiles[tile[0]][tile[1]].fillColor;
+                if (color != HOVER_COLOR && color != LETHAL_COLOR)
+                    this.restoreColor(tile);
+            }
+
+        this.temp = null;
+        this.threats = null;
+    }
+
+    // Executes when tile is clicked
+    pointerSelect(i, j, isPlayer) {
+        let pointerOver = true;
+
+        // if tile is same as selected, unselect piece
+        if (this.xy && isSamePoint(this.xy, [i, j]))
+            this.clearBoard();
+        // else if tile is occupied, re-select new piece or move & eliminate piece
+        else if (this.boardState.isOccupied(i, j))
+            switch (this.boardState.getAlignment(i, j)) {
+                case isPlayer ? PLAYER : COMPUTER: // if ally piece
+                    this.clearBoard();
+
+                    // highlight tile & possible moves & record selected piece into xy
+                    this.highlightColor([i, j], HOVER_COLOR);
+                    this.moves = this.boardState.searchMoves(i, j);
+                    for (let move of this.moves)
+                        this.highlightColor(
+                            move.xy,
+                            move.isEnemy ? LETHAL_COLOR : NON_LETHAL_COLOR
+                        );
+                    this.xy = [i, j];
+                    pointerOver = false;
+                    break;
+                case isPlayer ? COMPUTER : PLAYER: // if enemy piece
+                    // if previously selected piece exists & move is valid, destroy then move piece
+                    if (this.xy && this.isValidMove([i, j])) {
+                        this.boardState.destroyPiece(i, j);
+                        this.boardState.movePiece(this.xy, [i, j]);
+                        this.clearBoard();
+                    }
+                    break;
+            }
+        // else if not occupied & move is valid, move piece
+        else if (this.xy && this.isValidMove([i, j])) {
+            // if en passant move, destroy enemy pawn
+            if (
+                this.boardState.getRank(this.xy[0], this.xy[1]) == PAWN &&
+                this.boardState.isEnPassant(i, j)
+            )
+                this.boardState.destroyPiece(i, this.xy[1]);
+
+            // move piece & clear board
+            this.boardState.movePiece(this.xy, [i, j]);
+            this.clearBoard();
+        }
+        else
+            pointerOver = false;
+
+        this.temp = null;
+
+        // if something happened resulting in un-selection, trigger pointerover event
+        if (pointerOver)
+            this.pointerOver(i, j);
+    }
+
+    // ================================================================
+    // Tile Highlight & Restoration
+
     // Highlight selected tile
     highlightColor([col, row], color) {
         this.chessTiles[col][row].setFillStyle(color);
+    }
+
+    // Get original tile color
+    getTileColor([col, row]) {
+        return (col + row) % 2 == 0 ? WHITE_TILE_COLOR : BLACK_TILE_COLOR;
     }
 
     // Restore original tile color
@@ -198,24 +191,19 @@ export class ChessTiles {
         this.chessTiles[col][row].setFillStyle(this.getTileColor([col, row]));
     }
 
-    // Restore original tile color
+    // Restore original colors to all tiles
     clearBoard() {
         if (this.xy)
             this.restoreColor(this.xy);
         if (this.moves)
             for (let move of this.moves)
                 this.restoreColor(move.xy);
-        if (this.threats)
-            for (let tile of this.threats)
-                this.restoreColor(tile);
         this.xy = null;
         this.moves = null;
     }
 
-    // Get original tile color
-    getTileColor([col, row]) {
-        return (col + row) % 2 == 0 ? WHITE_TILE_COLOR : BLACK_TILE_COLOR;
-    }
+    // ================================================================
+    // Miscellaneous Methods
 
     // Check whether the coordinate would be a valid move
     isValidMove([col, row]) {
