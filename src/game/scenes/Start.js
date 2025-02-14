@@ -1,5 +1,12 @@
 import { Scene } from "phaser";
 import { EventBus } from "../EventBus";
+import {
+    FAWNHEX,
+    MAHOGANYHEX,
+    ONYXHEX,
+    CREAMHEX,
+    GREENHEX,
+} from "../../game-objects/constants";
 
 export class Start extends Scene {
     constructor() {
@@ -14,27 +21,65 @@ export class Start extends Scene {
     }
 
     create() {
-        //this.add.image(0, 0, "background");
-        this.add.image(512, 200, "logo").setDepth(100);
+
+        // Set the background color of the scene to a light neutral color
+        this.cameras.main.setBackgroundColor(0xeeeeee); // Light gray background
+
         this.add
-            .text(512, 490, "Welcome to our game, click \"Start Game!\" to play", {
-                fontFamily: "Courier New",
-                fontSize: 30,
-                color: "#ffffff",
-                stroke: "#000000",
+            .text(512, 200, "Survival Chess", {
+                fontFamily: "serif",
+                fontSize: 100,
+                color: FAWNHEX, // Using FAWNHEX here
+                stroke: MAHOGANYHEX, // Using MAHOGANYHEX here
+
                 strokeThickness: 8,
                 align: "center",
             })
             .setOrigin(0.5)
             .setDepth(100);
+        
+        this.add
+            .text(
+                512,
+                300,
+                "Description of game: Survival Chess is an arcade style chess game. ",
+                {
+                    fontFamily: "serif",
+                    fontSize: 20,
+                    color: MAHOGANYHEX, // Using MAHOGANYHEX here
+                    backgroundColor: FAWNHEX, // Using FAWNHEX here
+                    stroke: MAHOGANYHEX, // Using MAHOGANYHEX here
+                    strokeThickness: 0,
+                    align: "center",
+                }
+            )
+            .setOrigin(0.5)
+            .setDepth(100);
 
-        const startButton = this.add.text(100, 100, "Chess Game!", {
-            fill: "#0099ff",
+        this.add
+            .text(
+                512,
+                600,
+                "Credits: Riana Therrien, Marley Higbee, David Goh, \nKaydee Ferrel, Durva Kadam, Mohamad Tiba, Ritu Ghosh",
+                {
+                    fontFamily: "serif",
+                    fontSize: 20,
+                    color: MAHOGANYHEX, // Using MAHOGANYHEX here
+                    backgroundColor: FAWNHEX, // Using FAWNHEX here
+                    stroke: MAHOGANYHEX, // Using MAHOGANYHEX here
+                    strokeThickness: 0,
+                    align: "center",
+                }
+            )
+            .setOrigin(0.5)
+            .setDepth(100);
 
-            backgroundColor: "#ffff",
+        const startButton = this.add.text(100, 100, "Start Game", {
+            fill: CREAMHEX, // Using CREAMHEX here
+            backgroundColor: MAHOGANYHEX, // Using MAHOGANYHEX here
             padding: { left: 20, right: 20, top: 10, bottom: 10 },
         });
-        startButton.setPosition(425, 600);
+        startButton.setPosition(440, 400);
         startButton.setInteractive();
         startButton.on(
             "pointerdown",
@@ -52,6 +97,7 @@ export class Start extends Scene {
             },
             this
         );
+        /*
         this.add
             .text(512, 720, "Credits: David - Deployment, Durva - Documentation, Hope – Developer, Kaydee – SCRUM, Marley – Co-lead, Moe - Deployment, Riana – Team Lead, Ritu – SCRUM", {
                 fontFamily: "Courier New",
@@ -63,6 +109,57 @@ export class Start extends Scene {
             })
             .setOrigin(0.5)
             .setDepth(100);
+        */
+
+        const settingsButton = this.add.text(100, 100, "Settings", {
+            fill: CREAMHEX, // Using CREAMHEX here
+            backgroundColor: MAHOGANYHEX, // Using MAHOGANYHEX here
+            padding: { left: 20, right: 20, top: 10, bottom: 10 },
+        });
+        settingsButton.setPosition(870, 70);
+        settingsButton.setInteractive();
+        settingsButton.on(
+            "pointerdown",
+            function () {
+                import("./Game") // Dynamically import the Settings scene
+                    .then((module) => {
+                        // Only add the scene if it's not already registered
+                        if (!this.scene.get("Settings")) {
+                            this.scene.add("Settings", module.Game); // Add the scene dynamically
+                        }
+
+                        // Start the scene
+                        this.scene.start("Settings");
+                    });
+            },
+            this
+        );
+
+        const rulesButton = this.add.text(100, 100, "See Rules", {
+            fill: CREAMHEX, // Using CREAMHEX here
+            backgroundColor: MAHOGANYHEX, // Using MAHOGANYHEX here
+            padding: { left: 20, right: 20, top: 10, bottom: 10 },
+        });
+        rulesButton.setPosition(870, 650);
+        rulesButton.setInteractive();
+
+        rulesButton.on(
+            "pointerdown",
+            function () {
+                import("./Game") // Dynamically import the rules scene
+                    .then((module) => {
+                        // Only add the scene if it's not already registered
+                        if (!this.scene.get("Rules")) {
+                            this.scene.add("Rules", module.Game); // Add the scene dynamically
+                        }
+
+                        // Start the scene
+                        this.scene.start("Rules");
+                    });
+            },
+            this
+        );
+        
         // When the pointer hovers over the button, scale it up
         startButton.on("pointerover", () => {
             startButton.setScale(1.2); // Increase the scale (grow the button by 20%)
