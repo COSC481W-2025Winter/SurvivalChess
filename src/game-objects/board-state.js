@@ -138,7 +138,7 @@ export class BoardState {
 
     // Completely destroy the piece
     destroyPiece(col,row)
-    {
+    {      
         this.#boardState[col][row].destroy();
     }
 

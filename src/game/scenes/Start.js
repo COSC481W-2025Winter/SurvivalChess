@@ -9,12 +9,12 @@ export class Start extends Scene {
     preload() {
         this.load.setPath("assets");
 
-        this.load.image("background", "bg.png");
+        //this.load.image("background", "bg.png");
         this.load.image("logo", "logo.png");
     }
 
     create() {
-        this.add.image(0, 0, "background");
+        //this.add.image(0, 0, "background");
         this.add.image(512, 200, "logo").setDepth(100);
         this.add
             .text(512, 490, "Welcome to our game, click \"Start Game!\" to play", {

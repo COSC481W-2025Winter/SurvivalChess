@@ -9,7 +9,6 @@ export class ChessTiles {
     constructor(scene)
     {
         this.scene=scene;
-
         this.chessTiles=[];     // 8x8 array of chess tiles
         this.boardState;        // contains BoardState object that manages an 8x8 array of chess pieces
         this.xy;                // coordinate of selected chess piece; list of [i,j]
@@ -101,6 +100,7 @@ export class ChessTiles {
                                 case PLAYER:    // if PLAYER's piece
                                     if (this.xy && this.isValidMove([i,j])) // if previously selected piece exists & move is valid, destroy then move piece
                                     {
+                                        this.capturePiece(i,j);
                                         this.boardState.destroyPiece(i,j);
                                         this.boardState.movePiece(this.xy,[i,j]);
                                         this.clearBoard();
@@ -160,5 +160,12 @@ export class ChessTiles {
             if (move.xy[0]==col && move.xy[1]==row)
                 return true;
         return false;
+    }
+
+    //add the png of a piece to the captured pieces
+    capturePiece(i, j)
+    {
+        
+
     }
 }
