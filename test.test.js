@@ -1,4 +1,8 @@
-// This is a sample test to ensure that tests actually are run
-test('1=1', () => {
-    expect(1).toBe(1);
+// This is a sample test to ensure that tests actually are run. This test should fail and block the merge.
+test('automatic pass', () => {
+    expect(true);
   });
+
+  // test('automatic fail', () => {
+  //   expect(true).toBe(false);
+  // });
