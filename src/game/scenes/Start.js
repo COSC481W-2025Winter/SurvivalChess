@@ -1,14 +1,9 @@
 import { Scene } from "phaser";
 import { EventBus } from "../EventBus";
 import {
-    FAWNHEX,
-    MAHOGANYHEX,
-    ONYXHEX,
-    CREAMHEX,
-    GREENHEX,
-    ONYX,
-    GREEN,
-    FAWN,
+    START_BACKGROUND_COLOR,
+    START_TEXT_ONE,
+    START_TEXT_TWO,
 } from "../../game-objects/constants";
 
 export class Start extends Scene {
@@ -35,14 +30,14 @@ export class Start extends Scene {
     }
 
     create() {
-        this.cameras.main.setBackgroundColor(FAWN);
+        this.cameras.main.setBackgroundColor(START_BACKGROUND_COLOR);
 
         this.add
             .text(512, 230, "Survival Chess", {
                 fontFamily: "'Pixelify Sans', sans-serif",
                 fontSize: 130,
-                color: CREAMHEX,
-                stroke: MAHOGANYHEX,
+                color: START_TEXT_ONE,
+                stroke: START_TEXT_TWO,
                 strokeThickness: 8,
                 align: "center",
             })
@@ -57,9 +52,9 @@ export class Start extends Scene {
                 {
                     fontFamily: "'Pixelify Sans', sans-serif",
                     fontSize: 20,
-                    color: MAHOGANYHEX,
-                    backgroundColor: CREAMHEX,
-                    stroke: MAHOGANYHEX,
+                    color: START_TEXT_TWO,
+                    backgroundColor: START_TEXT_ONE,
+                    stroke: START_TEXT_TWO,
                     strokeThickness: 0,
                     align: "center",
                     padding: 15,
@@ -78,9 +73,9 @@ export class Start extends Scene {
                 {
                     fontFamily: "'Pixelify Sans', sans-serif",
                     fontSize: 15,
-                    color: MAHOGANYHEX,
-                    backgroundColor: CREAMHEX,
-                    stroke: MAHOGANYHEX,
+                    color: START_TEXT_TWO,
+                    backgroundColor: START_TEXT_ONE,
+                    stroke: START_TEXT_TWO,
                     strokeThickness: 0,
                     align: "center",
                     padding: 10,
@@ -92,8 +87,8 @@ export class Start extends Scene {
 
         const startButton = this.add.text(100, 100, "Start Game", {
             fontFamily: "'Pixelify Sans', sans-serif",
-            fill: CREAMHEX,
-            backgroundColor: MAHOGANYHEX,
+            fill: START_TEXT_ONE,
+            backgroundColor: START_TEXT_TWO,
             padding: { left: 20, right: 20, top: 10, bottom: 10 },
         });
         startButton.setPosition(440, 370);
@@ -117,8 +112,8 @@ export class Start extends Scene {
 
         const settingsButton = this.add.text(100, 100, "Settings", {
             fontFamily: "'Pixelify Sans', sans-serif",
-            fill: CREAMHEX, // Using CREAMHEX here
-            backgroundColor: MAHOGANYHEX, // Using MAHOGANYHEX here
+            fill: START_TEXT_ONE,
+            backgroundColor: START_TEXT_TWO,
             padding: { left: 20, right: 20, top: 10, bottom: 10 },
         });
         settingsButton.setPosition(870, 70);
@@ -142,8 +137,8 @@ export class Start extends Scene {
 
         const rulesButton = this.add.text(100, 100, "See Rules", {
             fontFamily: "'Pixelify Sans', sans-serif",
-            fill: CREAMHEX, // Using CREAMHEX here
-            backgroundColor: MAHOGANYHEX, // Using MAHOGANYHEX here
+            fill: START_TEXT_ONE, // Using START_TEXT_ONE here
+            backgroundColor: START_TEXT_TWO, // Using START_TEXT_TWO here
             padding: { left: 20, right: 20, top: 10, bottom: 10 },
         });
         rulesButton.setPosition(870, 625);
