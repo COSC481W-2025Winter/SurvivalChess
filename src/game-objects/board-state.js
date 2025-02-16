@@ -9,11 +9,15 @@ export class BoardState {
     #scene;
     #boardState;
     #enPassantCoordinate;
+    #currentPlayer;
+    #isPlayerTurn; 
 
     constructor(scene) {
         this.#scene = scene;
 
         this.#boardState = []; // 8x8 array of chess pieces
+        this.#currentPlayer = PLAYER; // White starts first
+        this.#isPlayerTurn = true;  // Player's turn first
 
         // set up boardState & initialize player pieces (and computer pieces for testing purposes)
         for (let i = 0; i < 8; i++) {
@@ -126,12 +130,25 @@ export class BoardState {
         this.#scene.add.existing(this.#boardState[col][row]);
     }
 
+    // Check if it's the current player's turn
+    canMove(col, row) {
+        if (this.getAlignment(col, row) !== this.#currentPlayer || !this.#isPlayerTurn) {
+            return false;  // Can't move if it's not your turn
+        }
+        return true;
+    }
+
     // Move piece in input coordinate to output coordinate
     movePiece(input, output) {
         let incol = input[0];
         let inrow = input[1];
         let outcol = output[0];
         let outrow = output[1];
+
+        if (!this.canMove(incol, inrow)) {
+            console.log("It's not your turn!");
+            return;  // Ignore the move if it's not the player's turn
+        }
 
         this.destroyEnPassantToken();
         if (this.getRank(incol, inrow) == PAWN && Math.abs(inrow - outrow) == 2)
@@ -140,6 +157,16 @@ export class BoardState {
         this.#boardState[incol][inrow].setPosition(X_ANCHOR + outcol * TILE_SIZE, Y_ANCHOR + outrow * TILE_SIZE);
         this.#boardState[outcol][outrow] = this.#boardState[incol][inrow];
         this.#boardState[incol][inrow] = null;
+
+        // End turn after a successful move
+        this.endTurn();
+    }
+
+    // Switch turns after a move
+    endTurn() {
+        // Switch player and allow the other player to move
+        this.#currentPlayer = this.#currentPlayer === PLAYER ? COMPUTER : PLAYER;
+        this.#isPlayerTurn = !this.#isPlayerTurn;
     }
 
     // Completely destroy the piece
