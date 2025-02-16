@@ -1,5 +1,7 @@
 import { Scene } from "phaser";
 import { EventBus } from "../EventBus";
+import Phaser from "phaser";
+
 
 import {
     PAWN,
@@ -59,22 +61,25 @@ export class Game extends Scene {
         });
         endButton.setPosition(425, 600);
         endButton.setInteractive();
-        endButton.on(
-            "pointerdown",
-            function () {
-                import("./Start") // Dynamically import the Game scene
-                    .then((module) => {
-                        // Only add the scene if it's not already registered
-                        if (!this.scene.get("Game")) {
-                            this.scene.add("Game", module.Game); // Add the MainGame scene dynamically
-                        }
+        // endButton.on(
+        //     "pointerdown",
+        //     function () {
+        //         import("./Start") // Dynamically import the Game scene
+        //             .then((module) => {
+        //                 // Only add the scene if it's not already registered
+        //                 if (!this.scene.get("Game")) {
+        //                     this.scene.add("Game", module.Game); // Add the MainGame scene dynamically
+        //                 }
 
-                        // Start the MainGame scene
-                        this.scene.start("Game");
-                    });
-            },
-            this
-        );
+        //                 // Start the MainGame scene
+        //                 this.scene.start("Game");
+        //             });
+        //     },
+        //     this
+        // );
+        endButton.on("pointerout", () => {
+            this.scene.start("GameOver"); // Reset to original size
+        });
 
         // When the pointer hovers over the button, scale it up
         endButton.on("pointerover", () => {
