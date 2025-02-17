@@ -114,7 +114,7 @@ export class Start extends Scene {
                         }
 
                         // Start the scene
-                        this.scene.start("Settings");
+                        this.scene.launch("Settings");
                     });
             },
             this
