@@ -230,7 +230,16 @@ export class ChessTiles {
             // do the promotion
             console.log("Player promotion")
             // let piece = 
-            this.runPromotion();
+            import("../game/scenes/Promotion") // Dynamically import the rules scene
+            .then((module) => {
+        // Only add the scene if it's not already registered
+        if (!this.scene.scene.get("Promotion")) {
+            this.scene.scene.add("Promotion", module.Promotion); // Add the scene dynamically
+        }
+
+        // Use launch to run scene in parallel to current
+        this.scene.scene.launch("Promotion");
+    });
     
         } else if (this.boardState.getAlignment(col, row)==COMPUTER && this.boardState.getRank(col, row) == PAWN && row==7) {
             // set black piece to queen which is almost always correct choice, 
@@ -241,16 +250,16 @@ export class ChessTiles {
         }
     }
     
-    runPromotion() {
-        import("../game/scenes/Promotion") // Dynamically import the rules scene
-            .then((module) => {
-        // Only add the scene if it's not already registered
-        if (!this.scene.get("Promotion")) {
-            this.scene.add("game/scenes/Promotion", module.Promotion); // Add the scene dynamically
-        }
+    // runPromotion() {
+    //     import("../game/scenes/Promotion") // Dynamically import the rules scene
+    //         .then((module) => {
+    //     // Only add the scene if it's not already registered
+    //     if (!this.scene.scene.get("Promotion")) {
+    //         this.scene.scene.add("Promotion", module.Promotion); // Add the scene dynamically
+    //     }
 
-        // Use launch to run scene in parallel to current
-        this.scene.launch("game/scenes/Promotion");
-    });}
+    //     // Use launch to run scene in parallel to current
+    //     this.scene.scene.launch("Promotion");
+    // });}
 }
 

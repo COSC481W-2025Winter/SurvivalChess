@@ -14,7 +14,7 @@ export class Promotion extends Scene {
     }
 
     create() {
-        this.add.image(512, 384, "background").alpha = 0.0;
+        this.add.image(512, 384, "background").alpha = 0.5;
         this.add.image(512, 350, "star").setDepth(100);
         this.add
             .text(512, 490, "These are the rules", {
