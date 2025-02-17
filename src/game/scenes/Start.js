@@ -1,10 +1,12 @@
 import { Scene } from "phaser";
 import { EventBus } from "../EventBus";
+import { RulesButton } from "./RulesButton";
 import {
     START_BACKGROUND_COLOR,
     START_TEXT_ONE,
     START_TEXT_TWO,
 } from "../../game-objects/constants";
+
 
 export class Start extends Scene {
     constructor() {
@@ -96,6 +98,7 @@ export class Start extends Scene {
         startButton.on(
             "pointerdown",
             function () {
+                
                 import("./Game") // Dynamically import the Game scene
                     .then((module) => {
                         // Only add the scene if it's not already registered
@@ -146,20 +149,9 @@ export class Start extends Scene {
 
         rulesButton.on(
             "pointerdown",
-            function () {
-                import("./Game") // Dynamically import the rules scene
-                    .then((module) => {
-                        // Only add the scene if it's not already registered
-                        if (!this.scene.get("Rules")) {
-                            this.scene.add("Rules", module.Game); // Add the scene dynamically
-                        }
-
-                        // Start the scene
-                        this.scene.start("Rules");
-                    });
-            },
+            new RulesButton(this).click,
             this
-        );
+        );   
 
         // When the pointer hovers over the button, scale it up
         startButton.on("pointerover", () => {
