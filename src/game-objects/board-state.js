@@ -219,7 +219,7 @@ export class BoardState {
         // En passant
         if (!this.isOccupied(col, j)) {
             j += (alignment == PLAYER ? -1 : 1);
-            if (this.getMoveCounter(col, row) == 0 && !this.isOccupied(col, j))
+            if (!this.getMoveCounter(col, row) && !this.isOccupied(col, j))
                 moves.push({ xy: [col, j], isEnemy: false });
         }
 
@@ -255,26 +255,27 @@ export class BoardState {
                     this.searchTile(i, j, alignment, moves);
 
         // Castling
-        if (this.getMoveCounter(col, row) == 0) {
+        if (!this.getMoveCounter(col, row)) {
+            // Queenside castling
             if (this.isOccupied(0, row) &&
                 !this.isOccupied(1, row) &&
                 !this.isOccupied(2, row) &&
                 !this.isOccupied(3, row) &&
-                this.getMoveCounter(0, row) == 0 &&
-                this.seekThreats(1, row, alignment, [col, row]).length == 0 &&
-                this.seekThreats(2, row, alignment, [col, row]).length == 0 &&
-                this.seekThreats(3, row, alignment, [col, row]).length == 0 &&
-                this.seekThreats(col, row, alignment).length == 0
+                !this.getMoveCounter(0, row) &&
+                !this.seekThreats(1, row, alignment, [col, row]).length &&
+                !this.seekThreats(2, row, alignment, [col, row]).length &&
+                !this.seekThreats(3, row, alignment, [col, row]).length &&
+                !this.seekThreats(col, row, alignment).length
             )
                 moves.push({ xy: [col - 2, row], isEnemy: false });
-
+            // Kingside castling
             if (this.isOccupied(7, row) &&
                 !this.isOccupied(6, row) &&
                 !this.isOccupied(5, row) &&
-                this.getMoveCounter(7, row) == 0 &&
-                this.seekThreats(6, row, alignment, [col, row]).length == 0 &&
-                this.seekThreats(5, row, alignment, [col, row]).length == 0 &&
-                this.seekThreats(col, row, alignment).length == 0
+                !this.getMoveCounter(7, row) &&
+                !this.seekThreats(6, row, alignment, [col, row]).length &&
+                !this.seekThreats(5, row, alignment, [col, row]).length &&
+                !this.seekThreats(col, row, alignment).length
             )
                 moves.push({ xy: [col + 2, row], isEnemy: false });
         }
