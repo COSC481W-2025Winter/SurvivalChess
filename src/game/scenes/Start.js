@@ -33,7 +33,7 @@ export class Start extends Scene {
         this.cameras.main.setBackgroundColor(START_BACKGROUND_COLOR);
 
         this.add
-            .text(512, 230, "Survival Chess", {
+            .text(630, 230, "Survival Chess", {
                 fontFamily: "'Pixelify Sans', sans-serif",
                 fontSize: 130,
                 color: START_TEXT_ONE,
@@ -46,7 +46,7 @@ export class Start extends Scene {
 
         this.add
             .text(
-                512,
+                630,
                 525,
                 "Survival Chess is an arcade style chess game. In this game, you play chess against a computer while trying to survive waves of incoming pieces. Capture as many pieces as you can while avoiding checkmate. Good Luck!",
                 {
@@ -67,19 +67,19 @@ export class Start extends Scene {
 
         this.add
             .text(
-                512,
+                625,
                 710,
                 "Credits: Riana Therrien, Marley Higbee, David Goh, Kaydee Ferrel, Hope Heck, Durva Kadam, Mohamad Tiba, Ritu Ghosh",
                 {
                     fontFamily: "'Pixelify Sans', sans-serif",
-                    fontSize: 15,
+                    fontSize: 20,
                     color: START_TEXT_TWO,
                     backgroundColor: START_TEXT_ONE,
                     stroke: START_TEXT_TWO,
                     strokeThickness: 0,
                     align: "center",
                     padding: 10,
-                    fixedWidth: 1050,
+                    fixedWidth: 1500,
                 }
             )
             .setOrigin(0.5)
@@ -91,7 +91,7 @@ export class Start extends Scene {
             backgroundColor: START_TEXT_TWO,
             padding: { left: 20, right: 20, top: 10, bottom: 10 },
         });
-        startButton.setPosition(440, 370);
+        startButton.setPosition(550, 370);
         startButton.setInteractive();
         startButton.on(
             "pointerdown",
@@ -116,7 +116,7 @@ export class Start extends Scene {
             backgroundColor: START_TEXT_TWO,
             padding: { left: 20, right: 20, top: 10, bottom: 10 },
         });
-        settingsButton.setPosition(870, 70);
+        settingsButton.setPosition(1100, 70);
         settingsButton.setInteractive();
         settingsButton.on(
             "pointerdown",
@@ -137,11 +137,11 @@ export class Start extends Scene {
 
         const rulesButton = this.add.text(100, 100, "See Rules", {
             fontFamily: "'Pixelify Sans', sans-serif",
-            fill: START_TEXT_ONE, // Using START_TEXT_ONE here
-            backgroundColor: START_TEXT_TWO, // Using START_TEXT_TWO here
+            fill: START_TEXT_ONE,
+            backgroundColor: START_TEXT_TWO,
             padding: { left: 20, right: 20, top: 10, bottom: 10 },
         });
-        rulesButton.setPosition(870, 625);
+        rulesButton.setPosition(1100, 625);
         rulesButton.setInteractive();
 
         rulesButton.on(
