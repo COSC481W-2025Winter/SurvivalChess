@@ -16,6 +16,7 @@ export class ChessTiles {
         this.moves;             // possible moves of selected chess piece; list of dictionaries of {'xy':[#,#],'isEnemy':boolean}
         this.temp;              // temporary storage of coordinate & color; list of dictionaries of {'xy':[#,#],'color':color}
         this.threats;           // temporary storage of threats to chess piece, list of lists of [#,#]
+        this.isWhiteTurn = true;
 
         // Set up stage behind (surrounding) chessboard
         this.scene.add.rectangle(
@@ -120,17 +121,21 @@ export class ChessTiles {
     // Executes when tile is clicked
     pointerSelect(i, j, isPlayer) {
         let pointerOver = true;
-
-        // if tile is same as selected, unselect piece
-        if (this.xy && isSamePoint(this.xy, [i, j]))
+    
+        // Check whose turn it is
+        const currentPlayer = this.isWhiteTurn ? PLAYER : COMPUTER;
+    
+        // If the tile is the same as the selected, unselect the piece
+        if (this.xy && isSamePoint(this.xy, [i, j])) {
             this.clearBoard();
-        // else if tile is occupied, re-select new piece or move & eliminate piece
-        else if (this.boardState.isOccupied(i, j))
+        }
+        // If the tile is occupied, check if the selected piece is the player's piece
+        else if (this.boardState.isOccupied(i, j)) {
             switch (this.boardState.getAlignment(i, j)) {
-                case isPlayer ? PLAYER : COMPUTER: // if ally piece
+                case currentPlayer: // If it's the current player's piece
                     this.clearBoard();
-
-                    // highlight tile & possible moves & record selected piece into xy
+    
+                    // Highlight tile and possible moves, and record the selected piece in xy
                     this.highlightColor([i, j], HOVER_COLOR);
                     this.moves = this.boardState.searchMoves(i, j);
                     for (let move of this.moves)
@@ -141,37 +146,46 @@ export class ChessTiles {
                     this.xy = [i, j];
                     pointerOver = false;
                     break;
-                case isPlayer ? COMPUTER : PLAYER: // if enemy piece
-                    // if previously selected piece exists & move is valid, destroy then move piece
+                case (currentPlayer === PLAYER ? COMPUTER : PLAYER): // If it's the opponent's piece
+                    // If previously selected piece exists and move is valid, destroy and move the piece
                     if (this.xy && this.isValidMove([i, j])) {
                         this.boardState.destroyPiece(i, j);
                         this.boardState.movePiece(this.xy, [i, j]);
                         this.clearBoard();
+                        // Toggle turn after the move
+                        this.isWhiteTurn = !this.isWhiteTurn;
                     }
                     break;
             }
-        // else if not occupied & move is valid, move piece
+        }
+        // If not occupied and move is valid, move the piece
         else if (this.xy && this.isValidMove([i, j])) {
-            // if en passant move, destroy enemy pawn
+            // If en passant move, destroy enemy pawn
             if (
                 this.boardState.getRank(this.xy[0], this.xy[1]) == PAWN &&
                 this.boardState.isEnPassant(i, j)
             )
                 this.boardState.destroyPiece(i, this.xy[1]);
-
-            // move piece & clear board
+    
+            // Move the piece and clear the board
             this.boardState.movePiece(this.xy, [i, j]);
             this.clearBoard();
+    
+            // Toggle turn after the move
+            this.isWhiteTurn = !this.isWhiteTurn;
         }
-        else
+        else {
             pointerOver = false;
-
+        }
+    
         this.temp = null;
-
-        // if something happened resulting in un-selection, trigger pointerover event
+    
+        // If something happened resulting in un-selection, trigger pointerover event
         if (pointerOver)
             this.pointerOver(i, j);
     }
+    
+    
 
     // ================================================================
     // Tile Highlight & Restoration
