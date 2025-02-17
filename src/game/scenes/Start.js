@@ -16,11 +16,12 @@ export class Start extends Scene {
     preload() {
         this.load.setPath("assets");
 
-        this.load.image("background", "bg.png");
+        //this.load.image("background", "bg.png");
         this.load.image("logo", "logo.png");
     }
 
     create() {
+
         // Set the background color of the scene to a light neutral color
         this.cameras.main.setBackgroundColor(0xeeeeee); // Light gray background
 
@@ -30,12 +31,13 @@ export class Start extends Scene {
                 fontSize: 100,
                 color: FAWNHEX, // Using FAWNHEX here
                 stroke: MAHOGANYHEX, // Using MAHOGANYHEX here
+
                 strokeThickness: 8,
                 align: "center",
             })
             .setOrigin(0.5)
             .setDepth(100);
-
+        
         this.add
             .text(
                 512,
@@ -95,6 +97,19 @@ export class Start extends Scene {
             },
             this
         );
+        /*
+        this.add
+            .text(512, 720, "Credits: David - Deployment, Durva - Documentation, Hope – Developer, Kaydee – SCRUM, Marley – Co-lead, Moe - Deployment, Riana – Team Lead, Ritu – SCRUM", {
+                fontFamily: "Courier New",
+                fontSize: 12,
+                color: "#ffffff",
+                stroke: "#000000",
+                strokeThickness: 4,
+                align: "center",
+            })
+            .setOrigin(0.5)
+            .setDepth(100);
+        */
 
         const settingsButton = this.add.text(100, 100, "Settings", {
             fill: CREAMHEX, // Using CREAMHEX here
@@ -144,7 +159,7 @@ export class Start extends Scene {
             },
             this
         );
-
+        
         // When the pointer hovers over the button, scale it up
         startButton.on("pointerover", () => {
             startButton.setScale(1.2); // Increase the scale (grow the button by 20%)

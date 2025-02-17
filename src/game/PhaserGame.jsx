@@ -2,10 +2,12 @@ import PropTypes from 'prop-types';
 import { forwardRef, useEffect, useLayoutEffect, useRef } from 'react';
 import StartGame from './main';
 import { EventBus } from './EventBus';
+import { CapturedPieces } from './CapturedPieces';
 
 export const PhaserGame = forwardRef(function PhaserGame ({ currentActiveScene }, ref)
 {
     const game = useRef();
+    const captured = CapturedPieces;
 
     // Create the game inside a useLayoutEffect hook to avoid the game being created outside the DOM
     useLayoutEffect(() => {
@@ -52,7 +54,9 @@ export const PhaserGame = forwardRef(function PhaserGame ({ currentActiveScene }
     }, [currentActiveScene, ref])
 
     return (
-        <div id="game-container"></div>
+        <div id="game-container">
+            
+        </div>
     );
 
 });
