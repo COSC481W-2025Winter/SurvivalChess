@@ -135,8 +135,7 @@ export class Start extends Scene {
             "pointerdown",
             new RulesButton(this).click,
             this
-        );
-        
+        );   
 
         // When the pointer hovers over the button, scale it up
         startButton.on("pointerover", () => {

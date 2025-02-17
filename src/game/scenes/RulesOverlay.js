@@ -14,7 +14,13 @@ export class RulesOverlay extends Scene {
     }
 
     create() {
-        this.add.image(512, 384, "background").alpha = 0.5;
+        // Creates a visual background that also blocks input on the scene underneath
+        bgX = this.cameras.main.width;
+        bgY = this.cameras.main.height;
+        const bg = this.add.rectangle(bgX / 2, bgX / 2, bgX, bgY, 0x00ff00, 0.5);
+        bg.setInteractive();
+
+        // Placeholder visual elements
         this.add.image(512, 350, "star").setDepth(100);
         this.add
             .text(512, 490, "These are the rules", {
@@ -28,6 +34,7 @@ export class RulesOverlay extends Scene {
             .setOrigin(0.5)
             .setDepth(100);
 
+        // Button for closing out (this should stay unlike the above)
         const closeButton = this.add.text(100, 100, "Close Rules", {
             fill: "#0099ff",
             backgroundColor: "#ffff",
