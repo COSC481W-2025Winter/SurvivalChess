@@ -5,6 +5,9 @@ import { PLAYER, COMPUTER } from "./constants";
 import { isSamePoint } from "./constants";
 import { DEV_MODE } from "./constants";
 import { BoardState } from "./board-state";
+// import { Scene } from "phaser";
+// import { EventBus } from "../EventBus";
+
 
 export class ChessTiles {
     constructor(scene) {
@@ -146,6 +149,9 @@ export class ChessTiles {
                     if (this.xy && this.isValidMove([i, j])) {
                         this.boardState.destroyPiece(i, j);
                         this.boardState.movePiece(this.xy, [i, j]);
+                        
+                        this.checkPromotion([i, j])
+                        
                         this.clearBoard();
                     }
                     break;
@@ -161,6 +167,9 @@ export class ChessTiles {
 
             // move piece & clear board
             this.boardState.movePiece(this.xy, [i, j]);
+
+            this.checkPromotion([i, j])
+
             this.clearBoard();
         }
         else
@@ -214,5 +223,34 @@ export class ChessTiles {
                 return true;
         return false;
     }
+
+    // check whether the move results in a promotion
+    checkPromotion([col, row]) {
+        if (this.boardState.getAlignment(col, row)==PLAYER && this.boardState.getRank(col, row) == PAWN && row==0) {
+            // do the promotion
+            console.log("Player promotion")
+            // let piece = 
+            this.runPromotion();
+    
+        } else if (this.boardState.getAlignment(col, row)==COMPUTER && this.boardState.getRank(col, row) == PAWN && row==7) {
+            // set black piece to queen which is almost always correct choice, 
+            // ocassionally knight might be correct but this is less computationally intensive
+            this.boardState.destroyPiece(col,row); // might need update with capture
+            this.boardState.addPiece(col,row,QUEEN,COMPUTER);
+            
+        }
+    }
+    
+    runPromotion() {
+        import("../game/scenes/Promotion") // Dynamically import the rules scene
+            .then((module) => {
+        // Only add the scene if it's not already registered
+        if (!this.scene.get("Promotion")) {
+            this.scene.add("game/scenes/Promotion", module.Promotion); // Add the scene dynamically
+        }
+
+        // Use launch to run scene in parallel to current
+        this.scene.launch("game/scenes/Promotion");
+    });}
 }
 
