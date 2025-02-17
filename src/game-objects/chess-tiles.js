@@ -5,12 +5,13 @@ import { PLAYER, COMPUTER } from "./constants";
 import { isSamePoint } from "./constants";
 import { DEV_MODE } from "./constants";
 import { BoardState } from "./board-state";
+import { PiecesTaken } from "./pieces-taken";
 
 export class ChessTiles {
 
     constructor(scene) {
         this.scene = scene;
-
+        this.piecesTaken;
         this.chessTiles = [];   // 8x8 array of chess tiles
         this.boardState;        // contains BoardState object that manages an 8x8 array of chess pieces
         this.xy;                // coordinate of selected chess piece; list of [i,j]
@@ -67,6 +68,7 @@ export class ChessTiles {
         }
 
         this.boardState = new BoardState(this.scene);
+        this.piecesTaken = new PiecesTaken(this.scene);
     }
 
     // ================================================================
@@ -147,6 +149,7 @@ export class ChessTiles {
                 case isPlayer ? COMPUTER : PLAYER: // if enemy piece
                     // if previously selected piece exists & move is valid, destroy then move piece
                     if (this.xy && this.isValidMove([i, j])) {
+                        //this.capturePiece(i, j);
                         this.boardState.destroyPiece(i, j);
                         this.boardState.movePiece(this.xy, [i, j]);
                         this.clearBoard();
@@ -160,6 +163,7 @@ export class ChessTiles {
                 this.boardState.getRank(this.xy[0], this.xy[1]) == PAWN &&
                 this.boardState.isEnPassant(i, j)
             )
+                //this.capturePiece(i, j);
                 this.boardState.destroyPiece(i, this.xy[1]);
 
             // move piece & clear board
@@ -219,9 +223,9 @@ export class ChessTiles {
     }
 
     //add the png of a piece to the captured pieces
-    capturePiece(i, j)
-    {
-        
-
+    capturePiece(col, row) {
+        alignment = this.boardState.getAlignment(col,row);
+        rank = this.boardState.getRank(col,row);
+        this.piecesTaken.addPiece(rank, alignment);
     }
 }
