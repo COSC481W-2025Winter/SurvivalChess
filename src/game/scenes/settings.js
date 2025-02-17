@@ -39,6 +39,8 @@ export class Settings extends Scene {
             "pointerdown",
             function () {
                 this.scene.stop("Settings");
+                this.scene.stop("Settings"); 
+                this.scene.start("MainMenu"); // Change "MainMenu" to the correct scene name
             },
             this
         );
