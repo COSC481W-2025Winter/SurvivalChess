@@ -140,6 +140,8 @@ export class BoardState {
         this.#boardState[incol][inrow].setPosition(X_ANCHOR + outcol * TILE_SIZE, Y_ANCHOR + outrow * TILE_SIZE);
         this.#boardState[outcol][outrow] = this.#boardState[incol][inrow];
         this.#boardState[incol][inrow] = null;
+
+        this.incrementMoveCounter(outcol, outrow);
     }
 
     // Completely destroy the piece
@@ -149,7 +151,7 @@ export class BoardState {
     }
 
     // ================================================================
-    // Chess Piece Info (Alignment & Rank) Retrieval
+    // Chess Piece Info (Alignment & Rank) Management
 
     // Get alignment info of piece
     getAlignment(col, row) {
@@ -159,6 +161,16 @@ export class BoardState {
     // Get rank info of piece
     getRank(col, row) {
         return this.#boardState[col][row].getRank();
+    }
+
+    // Get move counter info of piece
+    getMoveCounter(col, row) {
+        return this.#boardState[col][row].getMoveCounter();
+    }
+
+    // Increment move counter of piece
+    incrementMoveCounter(col, row) {
+        this.#boardState[col][row].incrementMoveCounter();
     }
 
     // Check whether coordinate has different alignment
@@ -204,9 +216,12 @@ export class BoardState {
                     moves.push({ xy: [i, j], isEnemy: true });
             }
 
-        j += (alignment == PLAYER ? -1 : 1);
-        if (((j == 3 && alignment == COMPUTER) || (j == 4 && alignment == PLAYER)) && !this.isOccupied(col, j))
-            moves.push({ xy: [col, j], isEnemy: false });
+        // En passant
+        if (!this.isOccupied(col, j)) {
+            j += (alignment == PLAYER ? -1 : 1);
+            if (this.getMoveCounter(col, row) == 0 && !this.isOccupied(col, j))
+                moves.push({ xy: [col, j], isEnemy: false });
+        }
 
         return moves;
     }
@@ -238,6 +253,31 @@ export class BoardState {
             for (let j = row - 1; j <= row + 1; j++)
                 if (this.isValid(i, j))
                     this.searchTile(i, j, alignment, moves);
+
+        // Castling
+        if (this.getMoveCounter(col, row) == 0) {
+            if (this.isOccupied(0, row) &&
+                !this.isOccupied(1, row) &&
+                !this.isOccupied(2, row) &&
+                !this.isOccupied(3, row) &&
+                this.getMoveCounter(0, row) == 0 &&
+                this.seekThreats(1, row, alignment, [col, row]).length == 0 &&
+                this.seekThreats(2, row, alignment, [col, row]).length == 0 &&
+                this.seekThreats(3, row, alignment, [col, row]).length == 0 &&
+                this.seekThreats(col, row, alignment).length == 0
+            )
+                moves.push({ xy: [col - 2, row], isEnemy: false });
+
+            if (this.isOccupied(7, row) &&
+                !this.isOccupied(6, row) &&
+                !this.isOccupied(5, row) &&
+                this.getMoveCounter(7, row) == 0 &&
+                this.seekThreats(6, row, alignment, [col, row]).length == 0 &&
+                this.seekThreats(5, row, alignment, [col, row]).length == 0 &&
+                this.seekThreats(col, row, alignment).length == 0
+            )
+                moves.push({ xy: [col + 2, row], isEnemy: false });
+        }
 
         return moves;
     }
@@ -305,6 +345,7 @@ export class BoardState {
         return this.searchRook(col, row).concat(this.searchBishop(col, row));
     }
 
+    // Check whether a coordinate is a possible move
     searchTile(col, row, alignment, moves) {
         if (!this.isOccupied(col, row))
             moves.push({ xy: [col, row], isEnemy: false });
