@@ -34,59 +34,7 @@ export class PiecesTaken{
                     TILE_SIZE,
                     TILE_SIZE,
                     CREAMHEX
-                );/*
-                switch (j){
-                    case 0:
-                        switch (i){
-                            case 0:
-                            case 7:
-                                this.addPiece(i, j, ROOK, COMPUTER);
-                                break; 
-                            case 1:
-                            case 6:
-                                this.addPiece(i, j, KNIGHT, COMPUTER);
-                                break;
-                            case 2:
-                            case 5:
-                                this.addPiece(i, j, BISHOP, COMPUTER);
-                                break;
-                            case 3:
-                                this.addPiece(i, j, QUEEN, COMPUTER);
-                                break;
-                            case 4:
-                                this.addPiece(i, j, KING, COMPUTER);
-                                break;
-                        }
-                        break;
-                    case 1:
-                        this.addPiece(i, j, PAWN, COMPUTER);
-                        break;
-                    case 6:
-                        this.addPiece(i, j, PAWN, PLAYER);
-                        break;
-                    case 7:
-                        switch (i){
-                            case 0:
-                            case 7:
-                                this.addPiece(i, j, ROOK, PLAYER);
-                                break; 
-                            case 1:
-                            case 6:
-                                this.addPiece(i, j, KNIGHT, PLAYER);
-                                break;
-                            case 2:
-                            case 5:
-                                this.addPiece(i, j, BISHOP, PLAYER);
-                                break;
-                            case 3:
-                                this.addPiece(i, j, QUEEN, PLAYER);
-                                break;
-                            case 4:
-                                this.addPiece(i, j, KING, PLAYER);
-                                break;
-                        }
-                        break;
-                }*/
+                );
         
             }
         }
