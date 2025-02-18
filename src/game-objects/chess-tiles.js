@@ -160,14 +160,19 @@ export class ChessTiles {
         }
         // If not occupied and move is valid, move the piece
         else if (this.xy && this.isValidMove([i, j])) {
-            // If en passant move, destroy enemy pawn
-            if (
-                this.boardState.getRank(this.xy[0], this.xy[1]) == PAWN &&
+            // if en passant move, destroy enemy pawn
+            if (this.boardState.getRank(this.xy[0], this.xy[1]) == PAWN &&
                 this.boardState.isEnPassant(i, j)
             )
                 this.boardState.destroyPiece(i, this.xy[1]);
-    
-            // Move the piece and clear the board
+
+            // if castling move, also move rook
+            if (this.boardState.getRank(this.xy[0], this.xy[1]) == KING &&
+                Math.abs(this.xy[0] - i) == 2
+            )
+                this.boardState.movePiece([i < this.xy[0] ? 0 : 7, j], [i < this.xy[0] ? 3 : 5, this.xy[1]])
+
+            // move piece & clear board
             this.boardState.movePiece(this.xy, [i, j]);
             this.clearBoard();
     
