@@ -53,13 +53,13 @@ export class ChessTiles {
 
                 // When the pointer pushes down a tile, select/move piece & highlight selected tile / possible moves
                 this.chessTiles[i][j].on("pointerdown", () => {
-                    this.pointerSelect(i, j, true);
+                    this.pointerSelect(i, j);
                 });
 
                 // if DEV_MODE is enabled; Enable COMPUTER moves via substituting pointerdown with scrolling
                 if (DEV_MODE)
                     this.chessTiles[i][j].on("wheel", () => {
-                        this.pointerSelect(i, j, false);
+                        this.pointerSelect(i, j);
                     });
             }
         }
@@ -119,7 +119,7 @@ export class ChessTiles {
     }
 
     // Executes when tile is clicked
-    pointerSelect(i, j, isPlayer) {
+    pointerSelect(i, j) {
         let pointerOver = true;
     
         // Check whose turn it is
