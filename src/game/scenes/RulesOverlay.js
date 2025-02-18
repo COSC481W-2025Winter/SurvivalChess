@@ -8,22 +8,18 @@ export class RulesOverlay extends Scene {
 
     preload() {
         this.load.setPath("assets");
-
         this.load.image("star", "star.png");
         this.load.image("background", "bg.png");
     }
 
     create() {
         // Creates a visual background that also blocks input on the scene underneath
-        bgX = this.cameras.main.width;
-        bgY = this.cameras.main.height;
-        const bg = this.add.rectangle(bgX / 2, bgX / 2, bgX, bgY, 0x00ff00, 0.5);
-        bg.setInteractive();
+        const bg = this.add.rectangle(625, 384, 1250, 768, 0x00ff00, 0.5);
 
         // Placeholder visual elements
-        this.add.image(512, 350, "star").setDepth(100);
+        this.add.image(625, 300, "star").setDepth(100);
         this.add
-            .text(512, 490, "These are the rules", {
+            .text(625, 490, "These are the rules", {
                 fontFamily: "Arial Black",
                 fontSize: 38,
                 color: "#ffffff",
@@ -40,7 +36,8 @@ export class RulesOverlay extends Scene {
             backgroundColor: "#ffff",
             padding: { left: 20, right: 20, top: 10, bottom: 10 },
         });
-        closeButton.setPosition(425, 600);
+        closeButton.setOrigin(0.5);
+        closeButton.setPosition(625, 600);
         closeButton.setInteractive();
         closeButton.on(
             "pointerdown",
@@ -59,6 +56,8 @@ export class RulesOverlay extends Scene {
         closeButton.on("pointerout", () => {
             closeButton.setScale(1); // Reset to original size
         });
+
+        bg.setInteractive();
 
         EventBus.emit("current-scene-ready", this);
     }

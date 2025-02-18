@@ -1,11 +1,13 @@
+import { Scene} from "phaser";
+import { EventBus } from "../EventBus";
+
 export class RulesButton {
     constructor(s) {
         this.scene = s;
     }
 
     click() {
-        import("./RulesOverlay") // Dynamically import the rules scene
-        .then((module) => {
+        import("./RulesOverlay").then((module) => {
             // Only add the scene if it's not already registered
             if (!this.scene.get("Rules")) {
                 this.scene.add("Rules", module.RulesOverlay); // Add the scene dynamically
@@ -13,6 +15,7 @@ export class RulesButton {
 
             // Use launch to run scene in parallel to current
             this.scene.launch("Rules");
+            // this.scene.moveAbove("Game", "Rules");
         });
     }
 
