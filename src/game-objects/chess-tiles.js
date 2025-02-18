@@ -16,7 +16,7 @@ export class ChessTiles {
         this.moves;             // possible moves of selected chess piece; list of dictionaries of {'xy':[#,#],'isEnemy':boolean}
         this.temp;              // temporary storage of coordinate & color; list of dictionaries of {'xy':[#,#],'color':color}
         this.threats;           // temporary storage of threats to chess piece, list of lists of [#,#]
-        this.isWhiteTurn = true;
+        this.currentPlayer = PLAYER;
 
         // Set up stage behind (surrounding) chessboard
         this.scene.add.rectangle(
@@ -123,7 +123,7 @@ export class ChessTiles {
         let pointerOver = true;
     
         // Check whose turn it is
-        const currentPlayer = this.isWhiteTurn ? PLAYER : COMPUTER;
+        const currentPlayer = this.currentPlayer;
     
         // If the tile is the same as the selected, unselect the piece
         if (this.xy && isSamePoint(this.xy, [i, j])) {
@@ -153,7 +153,7 @@ export class ChessTiles {
                         this.boardState.movePiece(this.xy, [i, j]);
                         this.clearBoard();
                         // Toggle turn after the move
-                        this.isWhiteTurn = !this.isWhiteTurn;
+                        this.toggleTurn();
                     }
                     break;
             }
@@ -172,7 +172,7 @@ export class ChessTiles {
             this.clearBoard();
     
             // Toggle turn after the move
-            this.isWhiteTurn = !this.isWhiteTurn;
+            this.toggleTurn();
         }
         else {
             pointerOver = false;
@@ -185,7 +185,9 @@ export class ChessTiles {
             this.pointerOver(i, j);
     }
     
-    
+    toggleTurn() {
+        this.currentPlayer = (this.currentPlayer === PLAYER) ? COMPUTER : PLAYER;
+    }
 
     // ================================================================
     // Tile Highlight & Restoration
