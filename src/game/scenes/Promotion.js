@@ -1,15 +1,10 @@
 import { Scene } from "phaser";
 import { EventBus } from "../EventBus";
 import {QUEEN, BISHOP, ROOK, KNIGHT } from "../../game-objects/constants";
-import {PLAYER, COMPUTER } from "../../game-objects/constants";
-import { Game } from "./Game";
-import { ChessTiles } from "../../game-objects/chess-tiles";
 
 export class Promotion extends Scene {
     constructor() {
         super("Promotion");
-        this.rank;
-        this.alignment;
     }
 
     preload() {
@@ -24,7 +19,7 @@ export class Promotion extends Scene {
         let bgX = this.cameras.main.width;
         let bgY = this.cameras.main.height;
         this.add
-            .text(512, 490, "Select what piece to promote your pawn into", {
+            .text(500, 490, "Select what piece to promote your pawn into", {
                 fontFamily: "Arial Black",
                 fontSize: 38,
                 color: "#ffffff",
@@ -41,15 +36,12 @@ export class Promotion extends Scene {
         const rook = this.add.image(bgX/2+150,bgY/2, "rook").setDepth(5).setScale(1.5);
         const pieces = [queen, bishop, knight, rook];
 
-        // Some sort of event listener maybe?
-        // const promotionEvent = new CustomEvent("PawnPromoted", {detail: { rank: this.rank}});
-
         
         queen.setInteractive();
         queen.on(
             "pointerdown",
             function () {
-                // sends event telling promotion happened
+                // sends event telling promotion is to queen
                 EventBus.emit("PawnPromoted", QUEEN);
                 this.scene.stop("Promotion");
                 },
@@ -60,7 +52,7 @@ export class Promotion extends Scene {
         rook.on(
             "pointerdown",
             function () {
-                // sends event telling promotion happened
+                // sends event telling promotion is to rook
                 EventBus.emit("PawnPromoted", ROOK);
                 this.scene.stop("Promotion");
                 },
@@ -71,7 +63,7 @@ export class Promotion extends Scene {
         bishop.on(
             "pointerdown",
             function () {
-                // sends event telling promotion happened
+                // sends event telling promotion is to bishop
                 EventBus.emit("PawnPromoted", BISHOP);
                 this.scene.stop("Promotion");
                 },
@@ -82,44 +74,30 @@ export class Promotion extends Scene {
         knight.on(
             "pointerdown",
             function () {
-                // sends event telling promotion happened
+                // sends event telling promotion is to knight
                 EventBus.emit("PawnPromoted", KNIGHT);
                 this.scene.stop("Promotion");
                 },
                 this
         );
 
-        // Creates a visual background that also blocks input on the scene underneath
+        // make pieces larger when moused over to indicate selection
+        for (let piece in pieces) {
+            // When the pointer hovers over a piece, scale it up
+            pieces[piece].on("pointerover", () => {
+                pieces[piece].setScale(2);
+            });
 
-        const bg = this.add.rectangle(bgX / 2, bgY / 2, bgX, bgY, 0x00ff00, 0.5);
+            // When the pointer moves away from the piece, reset the scale to normal
+            pieces[piece].on("pointerout", () => {
+                pieces[piece].setScale(1.5);
+            });
+        }
+
+        // Creates a visual background that also blocks input on the scene underneath
+        const bg = this.add.rectangle(bgX / 2, bgY / 2, bgX, bgY, 0x3B3B3B, 0.5);
         bg.setOrigin(0.5);
         bg.setInteractive();
-
-
-        const closeButton = this.add.text(100, 100, "Close", {
-            fill: "#0099ff",
-            backgroundColor: "#ffff",
-            padding: { left: 20, right: 20, top: 10, bottom: 10 },
-        });
-        closeButton.setPosition(425, 600);
-        closeButton.setInteractive();
-        closeButton.on(
-            "pointerdown",
-            function () {
-                this.scene.stop("Promotion");
-            },
-            this
-        );
-
-        // When the pointer hovers over the button, scale it up
-        closeButton.on("pointerover", () => {
-            closeButton.setScale(1.2); // Increase the scale (grow the button by 20%)
-        });
-
-        // When the pointer moves away from the button, reset the scale to normal
-        closeButton.on("pointerout", () => {
-            closeButton.setScale(1); // Reset to original size
-        });
 
         EventBus.emit("current-scene-ready", this);
     }

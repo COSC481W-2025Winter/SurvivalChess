@@ -250,15 +250,13 @@ export class ChessTiles {
             // ocassionally knight might be correct but this is less computationally intensive
             this.promotionCol = col;
             this.promotionRow = row;
-            this.boardState.addPiece(col,row,QUEEN,COMPUTER);
-            
+            this.setPromotion(QUEEN,COMPUTER);
         }
     }
 
     setPromotion(rank, alignment) {
         this.boardState.destroyPiece(this.promotionCol, this.promotionRow); // might need update with capture
         this.boardState.addPiece(this.promotionCol, this.promotionRow, rank, alignment);
-        console.log("promotion!")
     }
 }
 
