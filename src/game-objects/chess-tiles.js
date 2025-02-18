@@ -240,8 +240,8 @@ export class ChessTiles {
         this.promotionRow = row;
         // Use launch to run scene in parallel to current
         EventBus.once("PawnPromoted", (detail) => {
-            this.boardState.destroyPiece(this.promotionCol, this.promotionRow); // might need update with capture
-            this.boardState.addPiece(this.promotionCol, this.promotionRow, detail, PLAYER);});
+            // this.boardState.destroyPiece(this.promotionCol, this.promotionRow); // might need update with capture
+            this.setPromotion(detail, PLAYER);});
         this.scene.scene.launch("Promotion");
     });
     
