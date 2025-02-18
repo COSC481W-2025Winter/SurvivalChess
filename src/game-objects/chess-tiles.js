@@ -5,8 +5,7 @@ import { PLAYER, COMPUTER } from "./constants";
 import { isSamePoint } from "./constants";
 import { DEV_MODE } from "./constants";
 import { BoardState } from "./board-state";
-// import { Scene } from "phaser";
-// import { EventBus } from "../EventBus";
+
 
 
 export class ChessTiles {
@@ -19,6 +18,8 @@ export class ChessTiles {
         this.moves;             // possible moves of selected chess piece; list of dictionaries of {'xy':[#,#],'isEnemy':boolean}
         this.temp;              // temporary storage of coordinate & color; list of dictionaries of {'xy':[#,#],'color':color}
         this.threats;           // temporary storage of threats to chess piece, list of lists of [#,#]
+        this.promotionCol;      // temporary storage of column of piece to promote
+        this.promotionRow;      // temporary storage of row of piece to promote
 
         // Set up stage behind (surrounding) chessboard
         this.scene.add.rectangle(
@@ -228,15 +229,14 @@ export class ChessTiles {
     checkPromotion([col, row]) {
         if (this.boardState.getAlignment(col, row)==PLAYER && this.boardState.getRank(col, row) == PAWN && row==0) {
             // do the promotion
-            console.log("Player promotion")
-            // let piece = 
             import("../game/scenes/Promotion") // Dynamically import the rules scene
             .then((module) => {
         // Only add the scene if it's not already registered
         if (!this.scene.scene.get("Promotion")) {
             this.scene.scene.add("Promotion", module.Promotion); // Add the scene dynamically
         }
-
+        this.promotionCol = col;
+        this.promotionRow = row;
         // Use launch to run scene in parallel to current
         this.scene.scene.launch("Promotion");
     });
@@ -244,22 +244,18 @@ export class ChessTiles {
         } else if (this.boardState.getAlignment(col, row)==COMPUTER && this.boardState.getRank(col, row) == PAWN && row==7) {
             // set black piece to queen which is almost always correct choice, 
             // ocassionally knight might be correct but this is less computationally intensive
-            this.boardState.destroyPiece(col,row); // might need update with capture
+            this.promotionCol = col;
+            this.promotionRow = row;
             this.boardState.addPiece(col,row,QUEEN,COMPUTER);
             
         }
     }
-    
-    // runPromotion() {
-    //     import("../game/scenes/Promotion") // Dynamically import the rules scene
-    //         .then((module) => {
-    //     // Only add the scene if it's not already registered
-    //     if (!this.scene.scene.get("Promotion")) {
-    //         this.scene.scene.add("Promotion", module.Promotion); // Add the scene dynamically
-    //     }
 
-    //     // Use launch to run scene in parallel to current
-    //     this.scene.scene.launch("Promotion");
-    // });}
+    setPromotion(rank, alignment) {
+        this.boardState.destroyPiece(this.promotionCol, this.promotionRow); // might need update with capture
+        this.boardState.addPiece(this.promotionCol, this.promotionRow, rank, alignment);
+        // this.promotionCol = null; // should be unnecessary to reinitialize
+        // this.promotionRow = null;
+    }
 }
 

@@ -1,5 +1,9 @@
 import { Scene } from "phaser";
 import { EventBus } from "../EventBus";
+import {QUEEN, BISHOP, ROOK, KNIGHT } from "../../game-objects/constants";
+import {PLAYER, COMPUTER } from "../../game-objects/constants";
+import { Game } from "./Game";
+import { ChessTiles } from "../../game-objects/chess-tiles";
 
 export class Promotion extends Scene {
     constructor() {
@@ -7,17 +11,18 @@ export class Promotion extends Scene {
     }
 
     preload() {
-        this.load.setPath("assets");
-
-        this.load.image("star", "star.png");
-        this.load.image("background", "bg.png");
+        this.load.setPath("assets/drummyfish chess/");
+        this.load.image("queen", "queenB.png");
+        this.load.image("knight", "knightB.png");
+        this.load.image("rook", "rookB.png");
+        this.load.image("bishop", "bishopB.png");
     }
 
     create() {
-        this.add.image(512, 384, "background").alpha = 0.5;
-        this.add.image(512, 350, "star").setDepth(100);
+        let bgX = this.cameras.main.width;
+        let bgY = this.cameras.main.height;
         this.add
-            .text(512, 490, "These are the rules", {
+            .text(512, 490, "Select what piece to promote your pawn into", {
                 fontFamily: "Arial Black",
                 fontSize: 38,
                 color: "#ffffff",
@@ -28,7 +33,36 @@ export class Promotion extends Scene {
             .setOrigin(0.5)
             .setDepth(100);
 
-        const closeButton = this.add.text(100, 100, "Close Rules", {
+        const queen = this.add.image(bgX/2-150,bgY/2, "queen").setDepth(5).setScale(1.5);
+        const bishop = this.add.image(bgX/2-50,bgY/2, "bishop").setDepth(5).setScale(1.5);
+        const knight = this.add.image(bgX/2+50,bgY/2, "knight").setDepth(5).setScale(1.5);
+        const rook = this.add.image(bgX/2+150,bgY/2, "rook").setDepth(5).setScale(1.5);
+        const pieces = [queen, bishop, knight, rook];
+
+        for (let piece in pieces) {
+            console.log("piece:" + piece)
+            pieces[piece].setInteractive();
+            pieces[piece].on(
+                "pointerdown",
+                function () {
+                    // console.log(this.scene.get("MainGame").children);
+                    console.log(ChessTiles);
+                    // ChessTiles.setPromotion(QUEEN,PLAYER);
+                    // this.scene.get("MainGame").scene.setPromotion(QUEEN,PLAYER);
+                    this.scene.stop("Promotion");
+                },
+                this
+            );
+        };
+
+        // Creates a visual background that also blocks input on the scene underneath
+
+        const bg = this.add.rectangle(bgX / 2, bgY / 2, bgX, bgY, 0x00ff00, 0.5);
+        bg.setOrigin(0.5);
+        bg.setInteractive();
+
+
+        const closeButton = this.add.text(100, 100, "Close", {
             fill: "#0099ff",
             backgroundColor: "#ffff",
             padding: { left: 20, right: 20, top: 10, bottom: 10 },
@@ -38,7 +72,7 @@ export class Promotion extends Scene {
         closeButton.on(
             "pointerdown",
             function () {
-                this.scene.stop("Rules");
+                this.scene.stop("Promotion");
             },
             this
         );
