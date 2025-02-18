@@ -5,6 +5,7 @@ import { PLAYER, COMPUTER } from "./constants";
 import { isSamePoint } from "./constants";
 import { DEV_MODE } from "./constants";
 import { BoardState } from "./board-state";
+import { EventBus } from "../game/EventBus";
 
 
 
@@ -238,6 +239,9 @@ export class ChessTiles {
         this.promotionCol = col;
         this.promotionRow = row;
         // Use launch to run scene in parallel to current
+        EventBus.once("PawnPromoted", (detail) => {
+            this.boardState.destroyPiece(this.promotionCol, this.promotionRow); // might need update with capture
+            this.boardState.addPiece(this.promotionCol, this.promotionRow, detail, PLAYER);});
         this.scene.scene.launch("Promotion");
     });
     
@@ -254,8 +258,7 @@ export class ChessTiles {
     setPromotion(rank, alignment) {
         this.boardState.destroyPiece(this.promotionCol, this.promotionRow); // might need update with capture
         this.boardState.addPiece(this.promotionCol, this.promotionRow, rank, alignment);
-        // this.promotionCol = null; // should be unnecessary to reinitialize
-        // this.promotionRow = null;
+        console.log("promotion!")
     }
 }
 

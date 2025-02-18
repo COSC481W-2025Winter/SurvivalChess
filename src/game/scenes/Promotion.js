@@ -8,6 +8,8 @@ import { ChessTiles } from "../../game-objects/chess-tiles";
 export class Promotion extends Scene {
     constructor() {
         super("Promotion");
+        this.rank;
+        this.alignment;
     }
 
     preload() {
@@ -39,21 +41,53 @@ export class Promotion extends Scene {
         const rook = this.add.image(bgX/2+150,bgY/2, "rook").setDepth(5).setScale(1.5);
         const pieces = [queen, bishop, knight, rook];
 
-        for (let piece in pieces) {
-            console.log("piece:" + piece)
-            pieces[piece].setInteractive();
-            pieces[piece].on(
-                "pointerdown",
-                function () {
-                    // console.log(this.scene.get("MainGame").children);
-                    console.log(ChessTiles);
-                    // ChessTiles.setPromotion(QUEEN,PLAYER);
-                    // this.scene.get("MainGame").scene.setPromotion(QUEEN,PLAYER);
-                    this.scene.stop("Promotion");
+        // Some sort of event listener maybe?
+        // const promotionEvent = new CustomEvent("PawnPromoted", {detail: { rank: this.rank}});
+
+        
+        queen.setInteractive();
+        queen.on(
+            "pointerdown",
+            function () {
+                // sends event telling promotion happened
+                EventBus.emit("PawnPromoted", QUEEN);
+                this.scene.stop("Promotion");
                 },
                 this
             );
-        };
+        
+        rook.setInteractive();
+        rook.on(
+            "pointerdown",
+            function () {
+                // sends event telling promotion happened
+                EventBus.emit("PawnPromoted", ROOK);
+                this.scene.stop("Promotion");
+                },
+                this
+        );
+
+        bishop.setInteractive();
+        bishop.on(
+            "pointerdown",
+            function () {
+                // sends event telling promotion happened
+                EventBus.emit("PawnPromoted", BISHOP);
+                this.scene.stop("Promotion");
+                },
+                this
+        );
+
+        knight.setInteractive();
+        knight.on(
+            "pointerdown",
+            function () {
+                // sends event telling promotion happened
+                EventBus.emit("PawnPromoted", KNIGHT);
+                this.scene.stop("Promotion");
+                },
+                this
+        );
 
         // Creates a visual background that also blocks input on the scene underneath
 
