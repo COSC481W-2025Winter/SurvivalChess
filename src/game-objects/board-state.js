@@ -9,13 +9,11 @@ export class BoardState {
     #scene;
     #boardState;
     #enPassantCoordinate;
-    #turn
 
     constructor(scene) {
         this.#scene = scene;
 
         this.#boardState = []; // 8x8 array of chess pieces
-        this.#turn = PLAYER;
 
         // set up boardState & initialize player pieces (and computer pieces for testing purposes)
         for (let i = 0; i < 8; i++) {
@@ -73,15 +71,6 @@ export class BoardState {
         }
     }
 
-    getTurn() {
-        return this.#turn;
-    }
-
-    // Switch turn after a valid move
-    switchTurn() {
-        this.#turn = (this.#turn === PLAYER) ? COMPUTER : PLAYER;
-    }
-
     // ================================================================
     // Check Tile Validity & Occupancy
 
@@ -137,19 +126,8 @@ export class BoardState {
         this.#scene.add.existing(this.#boardState[col][row]);
     }
 
-    // Check if it's the current player's turn
-    canMove(col, row) {
-        return this.getTurn() === this.getAlignment(col, row);
-    }
-
     // Move piece in input coordinate to output coordinate
     movePiece(input, output) {
-        // Only allow movement if it's the player's turn
-        if (this.getTurn() !== this.getAlignment(input[0], input[1])) {
-            console.log("It's not your turn!");
-            return;  // Return early if it's not the current player's turn.
-        }
-
         let incol = input[0];
         let inrow = input[1];
         let outcol = output[0];
@@ -162,9 +140,6 @@ export class BoardState {
         this.#boardState[incol][inrow].setPosition(X_ANCHOR + outcol * TILE_SIZE, Y_ANCHOR + outrow * TILE_SIZE);
         this.#boardState[outcol][outrow] = this.#boardState[incol][inrow];
         this.#boardState[incol][inrow] = null;
-
-        // After a valid move, switch the turn
-        this.switchTurn();
     }
 
     // Completely destroy the piece
