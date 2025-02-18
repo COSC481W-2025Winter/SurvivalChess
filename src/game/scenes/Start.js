@@ -94,7 +94,7 @@ export class Start extends Scene {
                     });
             },
             this
-        );  
+        );
 
         const settingsButton = this.add.text(100, 100, "Settings", {
             fill: CREAMHEX, // Using CREAMHEX here

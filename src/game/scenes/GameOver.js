@@ -17,10 +17,7 @@ export class GameOver extends Scene {
     create() {
 
         this.add.image(512, 384, "background");  //console.log("GameOver scene initialized.");
-        console.log("GameOver scene preloaded.");
-        console.log("GameOver scene created.");
-        console.log("GameOver scene button created.");
-        console.log("GameOver scene button clicked.");//add background
+       
 
         this.add.text(512, 250, "Game Over", {
             fontFamily: "Arial Black",
