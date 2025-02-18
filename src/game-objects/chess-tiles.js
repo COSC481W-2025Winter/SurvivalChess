@@ -149,7 +149,7 @@ export class ChessTiles {
                 case isPlayer ? COMPUTER : PLAYER: // if enemy piece
                     // if previously selected piece exists & move is valid, destroy then move piece
                     if (this.xy && this.isValidMove([i, j])) {
-                        this.capturePiece(i, j);
+                        this.capturePiece(this.boardState.getRank(i, j), this.boardState.getAlignment(i, j));
                         this.boardState.destroyPiece(i, j);
                         this.boardState.movePiece(this.xy, [i, j]);
                         this.clearBoard();
@@ -223,9 +223,8 @@ export class ChessTiles {
     }
 
     //add captured piece to the captured pieces
-    capturePiece([col, row]) {
-        alignment = this.boardState.getAlignment(col,row);
-        rank = this.boardState.getRank(col,row);
+    capturePiece(rank, alignment) {
+        
         this.piecesTaken.addPiece(rank, alignment);
     }
 }
