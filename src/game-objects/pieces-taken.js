@@ -10,6 +10,9 @@ import { ChessPiece } from './chess-piece';
 
 export class PiecesTaken{
 
+    scene;
+    piecesTaken;
+
     constructor (scene){
 
         this.scene = scene;
@@ -47,6 +50,7 @@ export class PiecesTaken{
     getTileColor([col, row]) {
         return (col + row) % 2 == 0 ? WHITE_TILE_COLOR : BLACK_TILE_COLOR;
     }
+
     addPiece(rank, alignment) {
         col = this.x;
         row = this.y;
@@ -58,5 +62,6 @@ export class PiecesTaken{
             alignment
         );
         this.scene.add.existing(this.piecesTaken[col][row]);
+        
     }
 }
