@@ -1,3 +1,4 @@
+//local constants for my "captured pieces" container
 const TILE_SIZE = 40;                       // width & height of each tile
 const X_ANCHOR = 1056 - 3.5 * TILE_SIZE;     // x pixel of leftmost tile
 const Y_ANCHOR = 194 - 3.5 * TILE_SIZE;     // y pixel of topmost tile
