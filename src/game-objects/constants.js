@@ -32,8 +32,8 @@ const START_TEXT_TWO = HASH + MAHOGANY;     // secondary text color / outline co
 
 const FAWNHEX = "E5AA70";
 const MAHOGANYHEX = "C04000";
-const ONYXHEX = "3B3B3B";
-const CREAMHEX = "F4FFFD";
+const ONYXHEX = HASH + "3B3B3B";
+const CREAMHEX = HASH+ "F4FFFD";
 const GREENHEX = "6E9075";
 
 const PAWN = "pawn";                        // pawn rank
