@@ -13,6 +13,8 @@ export class RulesOverlay extends Scene {
     }
 
     create() {
+        // put Rules over game screen
+        this.scene.moveAbove("MainGame", "Rules");
         // Creates a visual background that also blocks input on the scene underneath
         const bg = this.add.rectangle(625, 384, 1250, 768, 0x00ff00, 0.5);
         bg.setDepth(50);
