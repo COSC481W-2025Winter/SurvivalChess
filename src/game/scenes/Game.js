@@ -47,8 +47,9 @@ export class Game extends Scene {
             backgroundColor: ONYXHEX,
             padding: { left: 20, right: 20, top: 10, bottom: 10 },
         });
-        endButton.setPosition(1000, 708);
+        endButton.setPosition(1050, 700);
         endButton.setInteractive();
+        endButton.setOrigin(0.5);
 
         // endButton.on("pointerdown", () => {
         //     this.scene.start("GameOver"); // Reset to original size
@@ -87,7 +88,7 @@ export class Game extends Scene {
             backgroundColor: ONYXHEX,
             padding: { left: 20, right: 20, top: 10, bottom: 10 },
         });
-        rulesButton.setPosition(950, 600);
+        rulesButton.setPosition(1050, 650);
         rulesButton.setInteractive();
         rulesButton.setOrigin(0.5);
         rulesButton.on("pointerdown", new RulesButton(this).click, this);
