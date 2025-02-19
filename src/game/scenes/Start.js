@@ -32,16 +32,10 @@ export class Start extends Scene {
     }
 
     create() {
-<<<<<<< HEAD
+
         //this.add.image(0, 0, "background");
         this.add.image(512, 200, "logo").setDepth(100);
-        this.add
-            .text(512, 490, "Welcome to our game, click \"Start Game!\" to play", {
-                fontFamily: "Courier New",
-                fontSize: 30,
-                color: "#ffffff",
-                stroke: "#000000",
-=======
+        
         this.cameras.main.setBackgroundColor(START_BACKGROUND_COLOR);
 
         this.add
@@ -50,19 +44,13 @@ export class Start extends Scene {
                 fontSize: 130,
                 color: START_TEXT_ONE,
                 stroke: START_TEXT_TWO,
->>>>>>> f3a7818a105925361879056e6054c588d22984a9
                 strokeThickness: 8,
                 align: "center",
             })
             .setOrigin(0.5)
             .setDepth(100);
 
-<<<<<<< HEAD
-        const startButton = this.add.text(100, 100, "Chess Game!", {
-            fill: "#0099ff",
 
-            backgroundColor: "#ffff",
-=======
         this.add
             .text(
                 630,
@@ -108,7 +96,6 @@ export class Start extends Scene {
             fontFamily: "'Pixelify Sans', sans-serif",
             fill: START_TEXT_ONE,
             backgroundColor: START_TEXT_TWO,
->>>>>>> f3a7818a105925361879056e6054c588d22984a9
             padding: { left: 20, right: 20, top: 10, bottom: 10 },
         });
         startButton.setPosition(550, 370);
@@ -130,7 +117,6 @@ export class Start extends Scene {
             },
             this
         );
-<<<<<<< HEAD
         this.add
             .text(512, 720, "Credits: David - Deployment, Durva - Documentation, Hope – Developer, Kaydee – SCRUM, Marley – Co-lead, Moe - Deployment, Riana – Team Lead, Ritu – SCRUM", {
                 fontFamily: "Courier New",
@@ -142,7 +128,6 @@ export class Start extends Scene {
             })
             .setOrigin(0.5)
             .setDepth(100);
-=======
 
         const settingsButton = this.add.text(100, 100, "Settings", {
             fontFamily: "'Pixelify Sans', sans-serif",
@@ -170,7 +155,6 @@ export class Start extends Scene {
         
         );
 
->>>>>>> f3a7818a105925361879056e6054c588d22984a9
         // When the pointer hovers over the button, scale it up
         startButton.on("pointerover", () => {
             startButton.setScale(1.2); // Increase the scale (grow the button by 20%)

@@ -1,24 +1,13 @@
 import { Scene } from "phaser";
 import { EventBus } from "../EventBus";
 import { RulesButton } from "./RulesButton";
-
-<<<<<<< HEAD
-<<<<<<< HEAD
-import { PAWN,ROOK,KNIGHT,BISHOP,QUEEN,KING } from '../../game-objects/constants';
-import { PLAYER,COMPUTER } from '../../game-objects/constants';
 import { ChessTiles } from '../../game-objects/chess-tiles';
 import { CapturedPieces } from "../CapturedPieces";
-=======
-=======
->>>>>>> f3a7818a105925361879056e6054c588d22984a9
+
 import { PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING } from "../../game-objects/constants";
 import { CREAMHEX, ONYXHEX } from "../../game-objects/constants";
 import { PLAYER, COMPUTER } from "../../game-objects/constants";
 import { ChessTiles } from "../../game-objects/chess-tiles";
-<<<<<<< HEAD
->>>>>>> f3a7818a105925361879056e6054c588d22984a9
-=======
->>>>>>> f3a7818a105925361879056e6054c588d22984a9
 
 export class Game extends Scene {
     constructor() {
@@ -35,8 +24,7 @@ export class Game extends Scene {
     }
 
     create() {
-<<<<<<< HEAD
-=======
+
         this.add.image(512, 384, "background");
         //         this.add.image(512, 350, "star").setDepth(100);
         //         this.add
@@ -50,10 +38,7 @@ export class Game extends Scene {
         //             })
         //             .setOrigin(0.5)
         //             .setDepth(100);
-<<<<<<< HEAD
->>>>>>> f3a7818a105925361879056e6054c588d22984a9
-=======
->>>>>>> f3a7818a105925361879056e6054c588d22984a9
+
 
         // 4 new files in src/game-objects
         // 6 sets of chess pieces (3 pairs of BW) in pubic/assets/drummyfish chess; Brought to you by Hope!
@@ -61,18 +46,9 @@ export class Game extends Scene {
         new ChessTiles(this);
 
         const endButton = this.add.text(100, 100, "End Game!", {
-<<<<<<< HEAD
-<<<<<<< HEAD
-            fill: "#000000",
-            backgroundColor: "#ffff",
-=======
+
             fill: CREAMHEX,
             backgroundColor: ONYXHEX,
->>>>>>> f3a7818a105925361879056e6054c588d22984a9
-=======
-            fill: CREAMHEX,
-            backgroundColor: ONYXHEX,
->>>>>>> f3a7818a105925361879056e6054c588d22984a9
             padding: { left: 20, right: 20, top: 10, bottom: 10 },
         });
         endButton.setPosition(1000, 708);

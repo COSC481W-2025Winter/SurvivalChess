@@ -145,16 +145,7 @@ export class BoardState {
     }
 
     // Completely destroy the piece
-<<<<<<< HEAD
-<<<<<<< HEAD
-    destroyPiece(col,row)
-    {      
-=======
     destroyPiece(col, row) {
->>>>>>> f3a7818a105925361879056e6054c588d22984a9
-=======
-    destroyPiece(col, row) {
->>>>>>> f3a7818a105925361879056e6054c588d22984a9
         this.#boardState[col][row].destroy();
         this.#boardState[col][row] = null;
     }

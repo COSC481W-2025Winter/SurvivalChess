@@ -10,15 +10,7 @@ const config = {
     width: 1250,
     height: 768,
     parent: "game-container",
-<<<<<<< HEAD
-<<<<<<< HEAD
-    backgroundColor: "#000000",
-=======
     backgroundColor: BACKGROUND_COLOR,
->>>>>>> f3a7818a105925361879056e6054c588d22984a9
-=======
-    backgroundColor: BACKGROUND_COLOR,
->>>>>>> f3a7818a105925361879056e6054c588d22984a9
     scene: [StartScene],
 };
 
