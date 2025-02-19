@@ -128,8 +128,8 @@ export class PiecesTaken{
     }
 
     takePiece(rank, alignment) {
-        inrow;
-        incol;
+        var inrow;
+        var incol;
 
         //determine which rows to select from based on rank, alignment, and what pieces have been taken
         if (alignment == PLAYER){
@@ -138,7 +138,7 @@ export class PiecesTaken{
                 incol = this.nextPawnW;
                 this.nextPawnB += 1;
             } else {
-                inrow = 2;
+                inrow = 4;
                 if (rank == KNIGHT){
                     if (this.wknightTaken){
                         incol = 3;
@@ -176,7 +176,7 @@ export class PiecesTaken{
                 incol = this.nextPawnB;
                 this.nextPawnB += 1;
             } else {
-                inrow = 4;
+                inrow = 2;
                 if (rank == KNIGHT){
                     if (this.bknightTaken){
                         incol = 3;
@@ -211,18 +211,19 @@ export class PiecesTaken{
         }
 
 
-        this.piecesTaken[incol][inrow].setPosition(X_ANCHOR + y * TILE_SIZE, Y_ANCHOR + x * TILE_SIZE);
-        this.piecesTaken[y][x] = this.piecesTaken[incol][inrow];
+        this.piecesTaken[incol][inrow].setPosition(X_ANCHOR + this.y * TILE_SIZE, Y_ANCHOR + this.x * TILE_SIZE);
+        this.piecesTaken[this.y][this.x] = this.piecesTaken[incol][inrow];
         this.piecesTaken[incol][inrow] = null;
+        this.updateXY();
     }
 
     //updates x and y to keep track of where to put the next captured piece
     updateXY(){
         if (this.y == 7){
-            x += 1;
-            y = 0;
+            this.x += 1;
+            this.y = 0;
         }else{
-            y += 1;
+            this.y += 1;
         }
     }
 }

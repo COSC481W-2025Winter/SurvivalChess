@@ -163,7 +163,7 @@ export class ChessTiles {
                 this.boardState.getRank(this.xy[0], this.xy[1]) == PAWN &&
                 this.boardState.isEnPassant(i, j)
             ){
-                this.capturePiece(i, this.xy[1]);
+                this.capturePiece(this.boardState.getRank(i, j), this.boardState.getAlignment(i, j));
                 this.boardState.destroyPiece(i, this.xy[1]);
             }
             // move piece & clear board
