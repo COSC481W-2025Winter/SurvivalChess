@@ -1,4 +1,4 @@
-import { GameOver } from "../scenes/GameOver"; // Import the Game Over scene
+import { GameOver } from "./GameOver"; // Import the Game Over scene
 import Phaser from "phaser"; // Import Phaser
 
 // We are mocking the Game Over Scene instead of running the whole game loop
