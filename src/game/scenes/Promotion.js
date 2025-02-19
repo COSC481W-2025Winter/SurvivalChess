@@ -1,6 +1,6 @@
 import { Scene } from "phaser";
 import { EventBus } from "../EventBus";
-import {QUEEN, BISHOP, ROOK, KNIGHT } from "../../game-objects/constants";
+import {QUEEN, BISHOP, ROOK, KNIGHT, X_ANCHOR, Y_ANCHOR, TILE_SIZE } from "../../game-objects/constants";
 
 export class Promotion extends Scene {
     constructor() {
@@ -9,10 +9,10 @@ export class Promotion extends Scene {
 
     preload() {
         this.load.setPath("assets/drummyfish chess/");
-        this.load.image("queen", "queenB.png");
-        this.load.image("knight", "knightB.png");
-        this.load.image("rook", "rookB.png");
-        this.load.image("bishop", "bishopB.png");
+        this.load.image("queen", "queenW.png");
+        this.load.image("knight", "knightW.png");
+        this.load.image("rook", "rookW.png");
+        this.load.image("bishop", "bishopW.png");
     }
 
     create() {
@@ -30,10 +30,10 @@ export class Promotion extends Scene {
             .setOrigin(0.5)
             .setDepth(100);
 
-        const queen = this.add.image(bgX/2-150,bgY/2, "queen").setDepth(5).setScale(1.5);
-        const bishop = this.add.image(bgX/2-50,bgY/2, "bishop").setDepth(5).setScale(1.5);
-        const knight = this.add.image(bgX/2+50,bgY/2, "knight").setDepth(5).setScale(1.5);
-        const rook = this.add.image(bgX/2+150,bgY/2, "rook").setDepth(5).setScale(1.5);
+        const queen = this.add.image(X_ANCHOR + 3.5 * TILE_SIZE-150, Y_ANCHOR + 3.5 * TILE_SIZE, "queen").setDepth(5).setScale(1.5);
+        const bishop = this.add.image(X_ANCHOR + 3.5 * TILE_SIZE-50, Y_ANCHOR + 3.5 * TILE_SIZE, "bishop").setDepth(5).setScale(1.5);
+        const knight = this.add.image(X_ANCHOR + 3.5 * TILE_SIZE+50, Y_ANCHOR + 3.5 * TILE_SIZE, "knight").setDepth(5).setScale(1.5);
+        const rook = this.add.image(X_ANCHOR + 3.5 * TILE_SIZE+150 ,Y_ANCHOR + 3.5 * TILE_SIZE, "rook").setDepth(5).setScale(1.5);
         const pieces = [queen, bishop, knight, rook];
 
         
