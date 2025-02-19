@@ -50,8 +50,9 @@ new ChessTiles(this);
             backgroundColor: ONYXHEX,
             padding: { left: 20, right: 20, top: 10, bottom: 10 },
         });
-        endButton.setPosition(1000, 708);
+        endButton.setPosition(1050, 700);
         endButton.setInteractive();
+        endButton.setOrigin(0.5);
 
         // endButton.on("pointerdown", () => {
         //     this.scene.start("GameOver"); // Reset to original size
@@ -99,6 +100,7 @@ new ChessTiles(this);
             padding: { left: 20, right: 20, top: 10, bottom: 10 },
         });
 
+
         settingsButton.setPosition(950, 60);
         settingsButton.setInteractive();
         settingsButton.setOrigin(0.5);
@@ -114,7 +116,10 @@ new ChessTiles(this);
 
 
 
-        rulesButton.setPosition(950, 600);
+       
+
+        rulesButton.setPosition(1050, 650);
+
         rulesButton.setInteractive();
    rulesButton.setOrigin(0.5);
         rulesButton.on("pointerdown", new RulesButton(this).click, this);

@@ -60,48 +60,6 @@ export class ChessTiles {
                 this.chessTiles[i][j].on("pointerdown", () => {
                     this.pointerSelect(i, j);
                 });
-
-                // if DEV_MODE is enabled; Enable COMPUTER moves via substituting pointerdown with scrolling
-                if (DEV_MODE)
-                    this.chessTiles[i][j].on("wheel", () => {
-
-                        this.pointerSelect(i, j, false);
-                        
-                        if (this.xy && this.xy[0]==i && this.xy[1]==j) // if tile is same as selected, unselect piece
-                            this.clearBoard();
-                        else if (this.boardState.isOccupied(i,j)) // else if tile is occupied
-                            switch (this.boardState.getAlignment(i,j))
-                            {   
-                                case COMPUTER:  // if COMPUTER's piece
-                                    if (this.xy) // if previously selected piece exists, restore corresponding tile to original color
-                                        this.clearBoard();
-                                    this.highlightColor([i,j],GRAY);
-                                    this.moves = this.boardState.searchMoves(i,j);
-                                    for (let move of this.moves)
-                                        this.highlightColor(move.xy, move.isEnemy ? MAGNETA : VIOLET);
-                                    this.xy = [i,j];
-                                    break;
-                                case PLAYER:    // if PLAYER's piece
-                                    if (this.xy && this.isValidMove([i,j])) // if previously selected piece exists & move is valid, destroy then move piece
-                                    {
-                                        this.capturePiece(i,j);
-                                        this.boardState.destroyPiece(i,j);
-                                        this.boardState.movePiece(this.xy,[i,j]);
-                                        this.clearBoard();
-                                    }
-                                    break;
-                            }
-                        else if (this.xy && this.isValidMove([i,j])) // if not occupied & move is valid, move piece
-                        {
-                            if (this.boardState.isEnPassant(i,j)) // if en passant move, destroy enemy pawn
-                                this.boardState.destroyPiece(i,this.xy[1]);
-                            this.boardState.movePiece(this.xy,[i,j]);
-                            this.clearBoard();
-                        }
-
-                        temp=null;
-                        this.pointerSelect(i, j);
-                    });
             }
         }
 
@@ -122,7 +80,7 @@ export class ChessTiles {
         // highlight tile
         this.highlightColor([i, j], HOVER_COLOR);
 
-        // if hovering over a piece and either highlight this.threats excluding the selected piece
+        // if hovering over a piece then highlight this.threats excluding the selected piece
         if (this.boardState.isOccupied(i, j)) {
             this.threats = this.boardState.seekThreats(i, j, this.boardState.getAlignment(i, j))
             if (!this.temp)
@@ -194,9 +152,8 @@ export class ChessTiles {
                         this.capturePiece(this.boardState.getRank(i, j), this.boardState.getAlignment(i, j));
                         this.boardState.destroyPiece(i, j);
                         this.boardState.movePiece(this.xy, [i, j]);
-                        
+                        // check to see if move results in pawn promotion
                         this.checkPromotion([i, j])
-                        
                         this.clearBoard();
                         // Toggle turn after the move
                         this.toggleTurn();
@@ -221,9 +178,8 @@ export class ChessTiles {
 
             // move piece & clear board
             this.boardState.movePiece(this.xy, [i, j]);
-
+            // check to see if move results in pawn promotion
             this.checkPromotion([i, j])
-
             this.clearBoard();
     
             // Toggle turn after the move
@@ -235,9 +191,12 @@ export class ChessTiles {
     
         this.temp = null;
     
-        // If something happened resulting in un-selection, trigger pointerover event
+        // If something happened resulting in un-selection, trigger pointerout & pointerover event
         if (pointerOver)
+        {
+            this.pointerOut(i, j);
             this.pointerOver(i, j);
+        }
     }
     
     toggleTurn() {
@@ -293,7 +252,7 @@ export class ChessTiles {
 
     // check whether the move results in a promotion
     checkPromotion([col, row]) {
-        if (this.boardState.getAlignment(col, row)==PLAYER && this.boardState.getRank(col, row) == PAWN && row==0) {
+        if (this.boardState.getRank(col, row) == PAWN && row==0 && this.boardState.getAlignment(col, row)==PLAYER ) {
             // do the promotion
             import("../game/scenes/Promotion") // Dynamically import the rules scene
             .then((module) => {
@@ -305,13 +264,12 @@ export class ChessTiles {
                 this.promotionRow = row;
                 // Use launch to run scene in parallel to current
                 EventBus.once("PawnPromoted", (detail) => {
-                    // this.boardState.destroyPiece(this.promotionCol, this.promotionRow); // might need update with capture
                     this.setPromotion(detail, PLAYER);
                 });
                 this.scene.scene.launch("Promotion");
             });
     
-        } else if (this.boardState.getAlignment(col, row)==COMPUTER && this.boardState.getRank(col, row) == PAWN && row==7) {
+        } else if (this.boardState.getRank(col, row) == PAWN && row==7 && this.boardState.getAlignment(col, row)==COMPUTER ) {
             // set black piece to queen which is almost always correct choice, 
             // ocassionally knight might be correct but this is less computationally intensive
             this.promotionCol = col;

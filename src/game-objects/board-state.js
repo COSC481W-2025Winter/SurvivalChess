@@ -208,15 +208,18 @@ export class BoardState {
 
         for (let i = col - 1; i <= col + 1; i++)
             if (this.isValid(i, j)) {
+                // forward
                 if (i == col && !this.isOccupied(i, j))
                     moves.push({ xy: [i, j], isEnemy: false });
+                // elimination
                 else if (i != col && this.isOccupied(i, j) && this.isDiffAlignment(i, j, alignment))
                     moves.push({ xy: [i, j], isEnemy: true });
+                // en passant
                 else if (i != col && this.isEnPassant(i, j) && this.isOccupied(i, row) && this.isDiffAlignment(i, row, alignment))
                     moves.push({ xy: [i, j], isEnemy: true });
             }
 
-        // En passant
+        // 2 tiles with first move
         if (!this.isOccupied(col, j)) {
             j += (alignment == PLAYER ? -1 : 1);
             if (!this.getMoveCounter(col, row) && !this.isOccupied(col, j))
