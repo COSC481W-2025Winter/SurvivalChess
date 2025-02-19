@@ -51,6 +51,7 @@ export class Start extends Scene {
             .setDepth(100);
 
 
+        
         this.add
             .text(
                 630,
@@ -117,6 +118,7 @@ export class Start extends Scene {
             },
             this
         );
+        /*
         this.add
             .text(512, 720, "Credits: David - Deployment, Durva - Documentation, Hope – Developer, Kaydee – SCRUM, Marley – Co-lead, Moe - Deployment, Riana – Team Lead, Ritu – SCRUM", {
                 fontFamily: "Courier New",
@@ -128,6 +130,7 @@ export class Start extends Scene {
             })
             .setOrigin(0.5)
             .setDepth(100);
+        */
 
         const settingsButton = this.add.text(100, 100, "Settings", {
             fontFamily: "'Pixelify Sans', sans-serif",
