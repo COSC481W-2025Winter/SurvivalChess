@@ -1,9 +1,10 @@
 import "phaser";
-import { PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING } from "./constants";
-import { PLAYER, COMPUTER } from './constants';
+import { PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING } from "../constants";
+import { PLAYER, COMPUTER } from '../constants';
 jest.mock("../chess-piece");
+import { testPosition } from '../pieces-taken';
 
-const { testPosition } = require('../pieces-taken');
+//const { testPosition } = require('../pieces-taken');
 
 test("should return the correct position for this piece's rank and alignment", () => {
     const result = testPosition(PAWN, PLAYER);
