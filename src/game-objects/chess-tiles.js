@@ -184,9 +184,8 @@ export class ChessTiles {
                         this.capturePiece(this.boardState.getRank(i, j), this.boardState.getAlignment(i, j));
                         this.boardState.destroyPiece(i, j);
                         this.boardState.movePiece(this.xy, [i, j]);
-                        
+                        // check to see if move results in pawn promotion
                         this.checkPromotion([i, j])
-                        
                         this.clearBoard();
                         // Toggle turn after the move
                         this.toggleTurn();
@@ -211,9 +210,8 @@ export class ChessTiles {
 
             // move piece & clear board
             this.boardState.movePiece(this.xy, [i, j]);
-
+            // check to see if move results in pawn promotion
             this.checkPromotion([i, j])
-
             this.clearBoard();
     
             // Toggle turn after the move
@@ -286,7 +284,7 @@ export class ChessTiles {
 
     // check whether the move results in a promotion
     checkPromotion([col, row]) {
-        if (this.boardState.getAlignment(col, row)==PLAYER && this.boardState.getRank(col, row) == PAWN && row==0) {
+        if (this.boardState.getRank(col, row) == PAWN && row==0 && this.boardState.getAlignment(col, row)==PLAYER ) {
             // do the promotion
             import("../game/scenes/Promotion") // Dynamically import the rules scene
             .then((module) => {
@@ -298,13 +296,12 @@ export class ChessTiles {
                 this.promotionRow = row;
                 // Use launch to run scene in parallel to current
                 EventBus.once("PawnPromoted", (detail) => {
-                    // this.boardState.destroyPiece(this.promotionCol, this.promotionRow); // might need update with capture
                     this.setPromotion(detail, PLAYER);
                 });
                 this.scene.scene.launch("Promotion");
             });
     
-        } else if (this.boardState.getAlignment(col, row)==COMPUTER && this.boardState.getRank(col, row) == PAWN && row==7) {
+        } else if (this.boardState.getRank(col, row) == PAWN && row==7 && this.boardState.getAlignment(col, row)==COMPUTER ) {
             // set black piece to queen which is almost always correct choice, 
             // ocassionally knight might be correct but this is less computationally intensive
             this.promotionCol = col;
