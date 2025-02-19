@@ -1,7 +1,7 @@
 import { Settings } from "../scenes/Settings"; // Adjust path if needed
 import { EventBus } from "../EventBus";
 
-jest.mock("../EventBus", () => ({
+jest.mock("./EventBus", () => ({
     EventBus: { emit: jest.fn() } // Mock EventBus to prevent actual event firing
 }));
 
