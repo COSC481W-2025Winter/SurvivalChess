@@ -136,7 +136,7 @@ export class PiecesTaken{
             if (rank == PAWN){
                 inrow = 5;
                 incol = this.nextPawnW;
-                this.nextPawnB += 1;
+                this.nextPawnW += 1;
             } else {
                 inrow = 4;
                 if (rank == KNIGHT){
@@ -227,88 +227,5 @@ export class PiecesTaken{
         }
     }
 
-    //testing method for Jest - making sure the correct values are given
-    testPosition(rank, alignment){
-        var inrow;
-        var incol;
-        if (alignment == PLAYER){
-            if (rank == PAWN){
-                inrow = 5;
-                incol = this.nextPawnW;
-                this.nextPawnB += 1;
-            } else {
-                inrow = 4;
-                if (rank == KNIGHT){
-                    if (this.wknightTaken){
-                        incol = 3;
-                    } else {
-                        incol = 2;
-                        this.wknightTaken = true;
-                    }
-                }
-                if (rank == ROOK){
-                    if (this.wRookTaken){
-                        incol = 1;
-                    } else {
-                        incol = 0;
-                        this.wRookTaken = true;
-                    }
-                }
-                if (rank == BISHOP){
-                    if (this.wBishopTaken){
-                        incol = 5;
-                    } else {
-                        incol = 4;
-                        this.wBishopTaken = true;
-                    }
-                }
-                if (rank == QUEEN){
-                    incol = 6;
-                }
-                if (rank == KING){
-                    incol = 7;
-                }
-            }
-        } else {
-            if (rank == PAWN){
-                inrow = 3;
-                incol = this.nextPawnB;
-                this.nextPawnB += 1;
-            } else {
-                inrow = 2;
-                if (rank == KNIGHT){
-                    if (this.bknightTaken){
-                        incol = 3;
-                    } else {
-                        incol = 2;
-                        this.bknightTaken = true;
-                    }
-                }
-                if (rank == ROOK){
-                    if (this.bRookTaken){
-                        incol = 1;
-                    } else {
-                        incol = 0;
-                        this.bRookTaken = true;
-                    }
-                }
-                if (rank == BISHOP){
-                    if (this.bBishopTaken){
-                        incol = 5;
-                    } else {
-                        incol = 4;
-                        this.bBishopTaken = true;
-                    }
-                }
-                if (rank == QUEEN){
-                    incol = 6;
-                }
-                if (rank == KING){
-                    incol = 7;
-                }
-            }
-        }
-
-        return ([inrow, incol]);
-    }
+    
 }
