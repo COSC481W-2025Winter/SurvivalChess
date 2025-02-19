@@ -1,4 +1,4 @@
-import { settings } from "./settings"; // Import the settings scene
+import { Settings } from "./settings"; // Import the settings scene
 
 // We are mocking the Start Scene instead of running the whole game loop
 // Running the whole game loop takes too long and will result in the test timing out and failing
@@ -7,7 +7,7 @@ describe("settings Scene", () => {
 
     beforeEach(() => {
         // Setup: Create a new instance of the Start scene for each test
-        scene = new settings();
+        scene = new Settings();
 
         // Mock the cameras object since it is normally initialized by Phaser
         scene.cameras = {
@@ -56,7 +56,7 @@ describe("settings Scene", () => {
         // Find the start button from the mocked children
         const closeSettingsButton = scene.children
             .getChildren()
-            .find((child) => child.text === "Close Settings");
+            .find((child) => child.text === "Close settings");
 
         // Assertions to check if the start button exists and is interactive
         expect(closeSettingsButton).toBeDefined(); // Ensure the button exists
