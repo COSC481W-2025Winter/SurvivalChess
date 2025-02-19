@@ -10,7 +10,6 @@ const config = {
     width: 1250,
     height: 768,
     parent: "game-container",
-
     backgroundColor: BACKGROUND_COLOR,
     scene: [StartScene],
 };
