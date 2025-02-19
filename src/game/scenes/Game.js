@@ -27,18 +27,6 @@ export class Game extends Scene {
 
     create() {
         this.add.image(512, 384, "background");
-        //         this.add.image(512, 350, "star").setDepth(100);
-        //         this.add
-        //             .text(512, 490, "You are currently playing the game", {
-        //                 fontFamily: "Arial Black",
-        //                 fontSize: 38,
-        //                 color: "#ffffff",
-        //                 stroke: "#000000",
-        //                 strokeThickness: 8,
-        //                 align: "center",
-        //             })
-        //             .setOrigin(0.5)
-        //             .setDepth(100);
 
         // 4 new files in src/game-objects
         // 6 sets of chess pieces (3 pairs of BW) in pubic/assets/drummyfish chess; Brought to you by Hope!

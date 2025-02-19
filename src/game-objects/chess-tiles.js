@@ -5,6 +5,9 @@ import { PLAYER, COMPUTER } from "./constants";
 import { isSamePoint } from "./constants";
 import { DEV_MODE } from "./constants";
 import { BoardState } from "./board-state";
+import { EventBus } from "../game/EventBus";
+
+
 
 export class ChessTiles {
     constructor(scene) {
@@ -16,6 +19,8 @@ export class ChessTiles {
         this.moves;             // possible moves of selected chess piece; list of dictionaries of {'xy':[#,#],'isEnemy':boolean}
         this.temp;              // temporary storage of coordinate & color; list of dictionaries of {'xy':[#,#],'color':color}
         this.threats;           // temporary storage of threats to chess piece, list of lists of [#,#]
+        this.promotionCol;      // temporary storage of column of piece to promote
+        this.promotionRow;      // temporary storage of row of piece to promote
         this.currentPlayer = PLAYER;
 
         // Set up stage behind (surrounding) chessboard
@@ -151,6 +156,9 @@ export class ChessTiles {
                     if (this.xy && this.isValidMove([i, j])) {
                         this.boardState.destroyPiece(i, j);
                         this.boardState.movePiece(this.xy, [i, j]);
+                        
+                        this.checkPromotion([i, j])
+                        
                         this.clearBoard();
                         // Toggle turn after the move
                         this.toggleTurn();
@@ -174,6 +182,9 @@ export class ChessTiles {
 
             // move piece & clear board
             this.boardState.movePiece(this.xy, [i, j]);
+
+            this.checkPromotion([i, j])
+
             this.clearBoard();
     
             // Toggle turn after the move
@@ -234,6 +245,40 @@ export class ChessTiles {
             if (move.xy[0] == col && move.xy[1] == row)
                 return true;
         return false;
+    }
+
+    // check whether the move results in a promotion
+    checkPromotion([col, row]) {
+        if (this.boardState.getAlignment(col, row)==PLAYER && this.boardState.getRank(col, row) == PAWN && row==0) {
+            // do the promotion
+            import("../game/scenes/Promotion") // Dynamically import the rules scene
+            .then((module) => {
+                // Only add the scene if it's not already registered
+                if (!this.scene.scene.get("Promotion")) {
+                    this.scene.scene.add("Promotion", module.Promotion); // Add the scene dynamically
+                }
+                this.promotionCol = col;
+                this.promotionRow = row;
+                // Use launch to run scene in parallel to current
+                EventBus.once("PawnPromoted", (detail) => {
+                    // this.boardState.destroyPiece(this.promotionCol, this.promotionRow); // might need update with capture
+                    this.setPromotion(detail, PLAYER);
+                });
+                this.scene.scene.launch("Promotion");
+            });
+    
+        } else if (this.boardState.getAlignment(col, row)==COMPUTER && this.boardState.getRank(col, row) == PAWN && row==7) {
+            // set black piece to queen which is almost always correct choice, 
+            // ocassionally knight might be correct but this is less computationally intensive
+            this.promotionCol = col;
+            this.promotionRow = row;
+            this.setPromotion(QUEEN,COMPUTER);
+        }
+    }
+
+    setPromotion(rank, alignment) {
+        this.boardState.destroyPiece(this.promotionCol, this.promotionRow); // might need update with capture
+        this.boardState.addPiece(this.promotionCol, this.promotionRow, rank, alignment);
     }
 }
 
