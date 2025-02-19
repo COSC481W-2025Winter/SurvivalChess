@@ -224,7 +224,6 @@ export class ChessTiles {
 
     //add captured piece to the captured pieces
     capturePiece(rank, alignment) {
-        
-        this.piecesTaken.addPiece(rank, alignment);
+        this.piecesTaken.takePiece(rank, alignment);
     }
 }
