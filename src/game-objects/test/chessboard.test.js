@@ -3,7 +3,7 @@ import { ChessTiles } from "../chess-tiles.js";
 jest
   .spyOn(ChessTiles.prototype, 'checkPromotion')
   .mockImplementation(([col, row]) => {
-    console.log('mocked function');
+    return false;
   });
 import { ChessPiece } from "../chess-piece.js";
 // Mock ChessPiece class
