@@ -6,13 +6,13 @@ import { isSamePoint } from "./constants";
 import { DEV_MODE } from "./constants";
 import { BoardState } from "./board-state";
 import { EventBus } from "../game/EventBus";
-
-
+import { PiecesTaken } from "./pieces-taken";
 
 export class ChessTiles {
+
     constructor(scene) {
         this.scene = scene;
-
+        this.piecesTaken;
         this.chessTiles = [];   // 8x8 array of chess tiles
         this.boardState;        // contains BoardState object that manages an 8x8 array of chess pieces
         this.xy;                // coordinate of selected chess piece; list of [i,j]
@@ -64,12 +64,49 @@ export class ChessTiles {
                 // if DEV_MODE is enabled; Enable COMPUTER moves via substituting pointerdown with scrolling
                 if (DEV_MODE)
                     this.chessTiles[i][j].on("wheel", () => {
+
+                        this.pointerSelect(i, j, false);
+                        
+                        if (this.xy && this.xy[0]==i && this.xy[1]==j) // if tile is same as selected, unselect piece
+                            this.clearBoard();
+                        else if (this.boardState.isOccupied(i,j)) // else if tile is occupied
+                            switch (this.boardState.getAlignment(i,j))
+                            {   
+                                case COMPUTER:  // if COMPUTER's piece
+                                    if (this.xy) // if previously selected piece exists, restore corresponding tile to original color
+                                        this.clearBoard();
+                                    this.highlightColor([i,j],GRAY);
+                                    this.moves = this.boardState.searchMoves(i,j);
+                                    for (let move of this.moves)
+                                        this.highlightColor(move.xy, move.isEnemy ? MAGNETA : VIOLET);
+                                    this.xy = [i,j];
+                                    break;
+                                case PLAYER:    // if PLAYER's piece
+                                    if (this.xy && this.isValidMove([i,j])) // if previously selected piece exists & move is valid, destroy then move piece
+                                    {
+                                        this.capturePiece(i,j);
+                                        this.boardState.destroyPiece(i,j);
+                                        this.boardState.movePiece(this.xy,[i,j]);
+                                        this.clearBoard();
+                                    }
+                                    break;
+                            }
+                        else if (this.xy && this.isValidMove([i,j])) // if not occupied & move is valid, move piece
+                        {
+                            if (this.boardState.isEnPassant(i,j)) // if en passant move, destroy enemy pawn
+                                this.boardState.destroyPiece(i,this.xy[1]);
+                            this.boardState.movePiece(this.xy,[i,j]);
+                            this.clearBoard();
+                        }
+
+                        temp=null;
                         this.pointerSelect(i, j);
                     });
             }
         }
 
         this.boardState = new BoardState(this.scene);
+        this.piecesTaken = new PiecesTaken(this.scene);
     }
 
     // ================================================================
@@ -154,6 +191,7 @@ export class ChessTiles {
                 case (currentPlayer === PLAYER ? COMPUTER : PLAYER): // If it's the opponent's piece
                     // If previously selected piece exists and move is valid, destroy and move the piece
                     if (this.xy && this.isValidMove([i, j])) {
+                        this.capturePiece(this.boardState.getRank(i, j), this.boardState.getAlignment(i, j));
                         this.boardState.destroyPiece(i, j);
                         this.boardState.movePiece(this.xy, [i, j]);
                         
@@ -171,9 +209,10 @@ export class ChessTiles {
             // if en passant move, destroy enemy pawn
             if (this.boardState.getRank(this.xy[0], this.xy[1]) == PAWN &&
                 this.boardState.isEnPassant(i, j)
-            )
+            ){
+                this.capturePiece(this.boardState.getRank(i, j), this.boardState.getAlignment(i, j));
                 this.boardState.destroyPiece(i, this.xy[1]);
-
+            }
             // if castling move, also move rook
             if (this.boardState.getRank(this.xy[0], this.xy[1]) == KING &&
                 Math.abs(this.xy[0] - i) == 2
@@ -247,6 +286,11 @@ export class ChessTiles {
         return false;
     }
 
+    //add captured piece to the captured pieces
+    capturePiece(rank, alignment) {
+        this.piecesTaken.takePiece(rank, alignment);
+    }
+
     // check whether the move results in a promotion
     checkPromotion([col, row]) {
         if (this.boardState.getAlignment(col, row)==PLAYER && this.boardState.getRank(col, row) == PAWN && row==0) {
@@ -281,4 +325,3 @@ export class ChessTiles {
         this.boardState.addPiece(this.promotionCol, this.promotionRow, rank, alignment);
     }
 }
-

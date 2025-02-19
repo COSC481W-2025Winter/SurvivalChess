@@ -16,7 +16,7 @@ export class Start extends Scene {
     preload() {
         this.load.setPath("assets");
 
-        this.load.image("background", "bg.png");
+        //this.load.image("background", "bg.png");
         this.load.image("logo", "logo.png");
 
         // Load the pixel font
@@ -32,6 +32,10 @@ export class Start extends Scene {
     }
 
     create() {
+
+        //this.add.image(0, 0, "background");
+        //this.add.image(512, 200, "logo").setDepth(100);
+        
         this.cameras.main.setBackgroundColor(START_BACKGROUND_COLOR);
 
         this.add
@@ -46,6 +50,8 @@ export class Start extends Scene {
             .setOrigin(0.5)
             .setDepth(100);
 
+
+        
         this.add
             .text(
                 630,
@@ -112,6 +118,19 @@ export class Start extends Scene {
             },
             this
         );
+        /*
+        this.add
+            .text(512, 720, "Credits: David - Deployment, Durva - Documentation, Hope – Developer, Kaydee – SCRUM, Marley – Co-lead, Moe - Deployment, Riana – Team Lead, Ritu – SCRUM", {
+                fontFamily: "Courier New",
+                fontSize: 12,
+                color: "#ffffff",
+                stroke: "#000000",
+                strokeThickness: 4,
+                align: "center",
+            })
+            .setOrigin(0.5)
+            .setDepth(100);
+        */
 
         const settingsButton = this.add.text(100, 100, "Settings", {
             fontFamily: "'Pixelify Sans', sans-serif",
