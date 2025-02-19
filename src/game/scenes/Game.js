@@ -3,15 +3,21 @@ import { EventBus } from "../EventBus";
 import { RulesButton } from "./RulesButton";
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { PAWN,ROOK,KNIGHT,BISHOP,QUEEN,KING } from '../../game-objects/constants';
 import { PLAYER,COMPUTER } from '../../game-objects/constants';
 import { ChessTiles } from '../../game-objects/chess-tiles';
 import { CapturedPieces } from "../CapturedPieces";
 =======
+=======
+>>>>>>> f3a7818a105925361879056e6054c588d22984a9
 import { PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING } from "../../game-objects/constants";
 import { CREAMHEX, ONYXHEX } from "../../game-objects/constants";
 import { PLAYER, COMPUTER } from "../../game-objects/constants";
 import { ChessTiles } from "../../game-objects/chess-tiles";
+<<<<<<< HEAD
+>>>>>>> f3a7818a105925361879056e6054c588d22984a9
+=======
 >>>>>>> f3a7818a105925361879056e6054c588d22984a9
 
 export class Game extends Scene {
@@ -44,6 +50,9 @@ export class Game extends Scene {
         //             })
         //             .setOrigin(0.5)
         //             .setDepth(100);
+<<<<<<< HEAD
+>>>>>>> f3a7818a105925361879056e6054c588d22984a9
+=======
 >>>>>>> f3a7818a105925361879056e6054c588d22984a9
 
         // 4 new files in src/game-objects
@@ -53,8 +62,13 @@ export class Game extends Scene {
 
         const endButton = this.add.text(100, 100, "End Game!", {
 <<<<<<< HEAD
+<<<<<<< HEAD
             fill: "#000000",
             backgroundColor: "#ffff",
+=======
+            fill: CREAMHEX,
+            backgroundColor: ONYXHEX,
+>>>>>>> f3a7818a105925361879056e6054c588d22984a9
 =======
             fill: CREAMHEX,
             backgroundColor: ONYXHEX,
