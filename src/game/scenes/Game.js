@@ -28,8 +28,7 @@ export class Game extends Scene {
     create() {
         this.add.image(512, 384, "background");
 
-        // 4 new files in src/game-objects
-        // 6 sets of chess pieces (3 pairs of BW) in pubic/assets/drummyfish chess; Brought to you by Hope!
+
         // and a board, and an icon, and a black tile, and a white tile; Totaling to 40 images
         new ChessTiles(this);
 
@@ -40,18 +39,24 @@ export class Game extends Scene {
         });
         endButton.setPosition(425, 600);
         endButton.setInteractive();
+
+        // endButton.on("pointerdown", () => {
+        //     this.scene.start("GameOver"); // Reset to original size
+        // });
+
         endButton.on(
             "pointerdown",
             function () {
-                import("./Start") // Dynamically import the Game scene
+                
+                import("./GameOver") // 
                     .then((module) => {
                         // Only add the scene if it's not already registered
-                        if (!this.scene.get("Game")) {
-                            this.scene.add("Game", module.Game); // Add the MainGame scene dynamically
+                        if (!this.scene.get("GameOver")) {
+                            this.scene.add("GameOver", module.GameOver); // Add the MainGame scene dynamically
                         }
 
                         // Start the MainGame scene
-                        this.scene.start("Game");
+                        this.scene.start("GameOver");
                     });
             },
             this
