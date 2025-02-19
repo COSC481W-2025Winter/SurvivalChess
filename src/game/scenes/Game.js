@@ -1,18 +1,9 @@
 import { Scene } from "phaser";
 import { EventBus } from "../EventBus";
-import Phaser from "phaser";
+import { RulesButton } from "./RulesButton";
 
-
-import {
-    PAWN,
-    ROOK,
-    KNIGHT,
-    BISHOP,
-    QUEEN,
-    KING,
-    CREAMHEX,
-    ONYXHEX,
-} from "../../game-objects/constants";
+import { PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING } from "../../game-objects/constants";
+import { CREAMHEX, ONYXHEX } from "../../game-objects/constants";
 import { PLAYER, COMPUTER } from "../../game-objects/constants";
 import { ChessTiles } from "../../game-objects/chess-tiles";
 
@@ -49,9 +40,27 @@ export class Game extends Scene {
         endButton.setPosition(425, 600);
         endButton.setInteractive();
 
-        endButton.on("pointerdown", () => {
-            this.scene.start("GameOver"); // Reset to original size
-        });
+        // endButton.on("pointerdown", () => {
+        //     this.scene.start("GameOver"); // Reset to original size
+        // });
+
+        endButton.on(
+            "pointerdown",
+            function () {
+                
+                import("./GameOver") // 
+                    .then((module) => {
+                        // Only add the scene if it's not already registered
+                        if (!this.scene.get("GameOver")) {
+                            this.scene.add("GameOver", module.GameOver); // Add the MainGame scene dynamically
+                        }
+
+                        // Start the MainGame scene
+                        this.scene.start("GameOver");
+                    });
+            },
+            this
+        );
 
         // When the pointer hovers over the button, scale it up
         endButton.on("pointerover", () => {
@@ -61,6 +70,26 @@ export class Game extends Scene {
         // When the pointer moves away from the button, reset the scale to normal
         endButton.on("pointerout", () => {
             endButton.setScale(1); // Reset to original size
+        });
+
+        const rulesButton = this.add.text(100, 100, "See Rules", {
+            fill: CREAMHEX,
+            backgroundColor: ONYXHEX,
+            padding: { left: 20, right: 20, top: 10, bottom: 10 },
+        });
+        rulesButton.setPosition(950, 600);
+        rulesButton.setInteractive();
+        rulesButton.setOrigin(0.5);
+        rulesButton.on("pointerdown", new RulesButton(this).click, this);
+
+        // When the pointer hovers over the button, scale it up
+        rulesButton.on("pointerover", () => {
+            rulesButton.setScale(1.2); // Increase the scale (grow the button by 20%)
+        });
+
+        // When the pointer moves away from the button, reset the scale to normal
+        rulesButton.on("pointerout", () => {
+            rulesButton.setScale(1); // Reset to original size
         });
 
         EventBus.emit("current-scene-ready", this);
