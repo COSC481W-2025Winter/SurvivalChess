@@ -60,12 +60,6 @@ export class ChessTiles {
                 this.chessTiles[i][j].on("pointerdown", () => {
                     this.pointerSelect(i, j);
                 });
-
-                // if DEV_MODE is enabled; Enable COMPUTER moves via substituting pointerdown with scrolling
-                if (DEV_MODE)
-                    this.chessTiles[i][j].on("wheel", () => {
-                        this.pointerSelect(i, j);
-                    });
             }
         }
 
@@ -85,7 +79,7 @@ export class ChessTiles {
         // highlight tile
         this.highlightColor([i, j], HOVER_COLOR);
 
-        // if hovering over a piece and either highlight this.threats excluding the selected piece
+        // if hovering over a piece then highlight this.threats excluding the selected piece
         if (this.boardState.isOccupied(i, j)) {
             this.threats = this.boardState.seekThreats(i, j, this.boardState.getAlignment(i, j))
             if (!this.temp)
@@ -196,9 +190,12 @@ export class ChessTiles {
     
         this.temp = null;
     
-        // If something happened resulting in un-selection, trigger pointerover event
+        // If something happened resulting in un-selection, trigger pointerout & pointerover event
         if (pointerOver)
+        {
+            this.pointerOut(i, j);
             this.pointerOver(i, j);
+        }
     }
     
     toggleTurn() {

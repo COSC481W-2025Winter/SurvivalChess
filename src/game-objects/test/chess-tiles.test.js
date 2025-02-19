@@ -1,10 +1,59 @@
 import "phaser";
 import { ChessTiles } from "../chess-tiles";
+jest
+  .spyOn(ChessTiles.prototype, 'checkPromotion')
+  .mockImplementation(([col, row]) => {
+    console.log('mocked function');
+  });
 import { ChessPiece } from "../chess-piece";
-jest.mock("../chess-piece");
+// Mock ChessPiece class
+class MockChessPiece {
+    constructor(scene, x, y, rank, alignment) {
+        this.scene = scene;
+        this.x = x;
+        this.y = y;
+        this.rank = rank;
+        this.alignment = alignment;
+        this.moveCounter = 0;
+
+        this.image = rank + alignment;
+    }
+
+    getAlignment() {
+        return this.alignment;
+    }
+
+    getRank() {
+        return this.rank;
+    }
+
+    setPosition(x, y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    getMoveCounter() {
+        return this.moveCounter;
+    }
+
+    incrementMoveCounter() {
+        this.moveCounter++;
+    }
+
+    destroy() { }
+}
+jest.mock("../chess-piece", () => {
+    return {ChessPiece: (scene, x, y, rank, alignment) => {
+        return new MockChessPiece(scene, x, y, rank, alignment);
+    }};
+});
 
 import { POINTER_OVER, POINTER_OUT, POINTER_DOWN, WHEEL } from "./test-constants.js";
 import { LEFT, RIGHT, UP, DOWN } from "./test-constants.js";
+
+import { HOVER_COLOR, WHITE_TILE_COLOR, BLACK_TILE_COLOR, NON_LETHAL_COLOR, LETHAL_COLOR, THREAT_COLOR, STAGE_COLOR } from "../constants.js";
+import { PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING } from "../constants.js";
+import { PLAYER, COMPUTER } from "../constants.js";
 
 describe("", () => {
     let scene;
@@ -45,36 +94,6 @@ describe("", () => {
         }
     }
 
-    // Mock ChessPiece class
-    class MockChessPiece {
-        constructor(x, y, rank, alignment) {
-            this.x = x;
-            this.y = y;
-            this.rank = rank;
-            this.alignment = alignment;
-        }
-
-        getAlignment() {
-            return this.alignment;
-        }
-
-        getRank() {
-            return this.rank;
-        }
-
-        setPosition(x, y) {
-            this.x = x;
-            this.y = y;
-        }
-
-        destroy() { }
-    }
-
-    // Replace ChessPiece constructor
-    ChessPiece.constructor = jest.fn((scene, x, y, rank, alignment) => {
-        return new MockChessPiece(scene, x, y, rank, alignment);
-    })
-
     // Mock Event Listener
     function mockTileEvent(event) {
         switch (event) {
@@ -85,10 +104,7 @@ describe("", () => {
                 tiles.pointerOut(x, y);
                 break;
             case POINTER_DOWN:
-                tiles.pointerSelect(x, y, true);
-                break;
-            case WHEEL:
-                tiles.pointerSelect(x, y, false);
+                tiles.pointerSelect(x, y);
                 break;
         }
     }
@@ -99,22 +115,24 @@ describe("", () => {
     // Simulate Pointer Movement (1 tile)
     function move(direction, repeat = 1) {
         for (let i = 0; i < repeat; i++)
-        mockTileEvent(POINTER_OUT);
-        switch (direction) {
-            case LEFT:
-                x -= 1;
-                break;
-            case RIGHT:
-                x += 1;
-                break;
-            case UP:
-                y -= 1;
-                break;
-            case DOWN:
-                y += 1;
-                break;
+        {
+            mockTileEvent(POINTER_OUT);
+            switch (direction) {
+                case LEFT:
+                    x -= 1;
+                    break;
+                case RIGHT:
+                    x += 1;
+                    break;
+                case UP:
+                    y -= 1;
+                    break;
+                case DOWN:
+                    y += 1;
+                    break;
+            }
+            mockTileEvent(POINTER_OVER);
         }
-        mockTileEvent(POINTER_OVER);
     }
 
     // Simulate Pointer Movement (multiple tiles)
@@ -128,16 +146,9 @@ describe("", () => {
 
     // Simulate Pointer Click
     function click(col = null, row = null) {
-        if (col && row)
+        if (col !== null && row !== null)
             shift(col, row);
         mockTileEvent(POINTER_DOWN);
-    }
-
-    // Simulate Pointer Scroll
-    function scroll(col = null, row = null) {
-        if (col && row)
-            shift(col, row);
-        mockTileEvent(WHEEL);
     }
 
     // ================================================================
@@ -163,8 +174,8 @@ describe("", () => {
     ::: MACRO :::
     X. Do all of the following for when a piece is selected & not
     1. Move pointer & check if colors highlight & un-highlight properly
-    2. Click/scroll tile where non-response is expected & check if nothing happened (as intended)
-    3. Click/scroll tile where response is expected & check if said response happened (as intended)
+    2. Click tile where non-response is expected & check if nothing happened (as intended)
+    3. Click tile where response is expected & check if said response happened (as intended)
         a. selection
         b. re-selection
         c. un-selection
@@ -181,14 +192,147 @@ describe("", () => {
 
 
     // Test Template
-    test("", () => {
+    test("Test Functions Functionality", () => {
         expect(scene).toBeDefined();
         expect(tiles).toBeDefined();
         shift(0, 0);
         click();
-        scroll();
         click(0, 0);
-        scroll(0, 0);
     });
+
+    test("Highlight Possible Moves", () => {
+        click(4, 6);
+        expect(tiles.chessTiles[4][5].fillColor).toBe(NON_LETHAL_COLOR);
+        expect(tiles.chessTiles[4][4].fillColor).toBe(NON_LETHAL_COLOR);
+        click(4, 4);
+        expect(tiles.chessTiles[4][5].fillColor).toBe(tiles.getTileColor([4, 5]));
+        click(7, 1);
+        expect(tiles.chessTiles[7][2].fillColor).toBe(NON_LETHAL_COLOR);
+        expect(tiles.chessTiles[7][3].fillColor).toBe(NON_LETHAL_COLOR);
+        click(7, 3);
+        expect(tiles.chessTiles[7][2].fillColor).toBe(tiles.getTileColor([7, 2]));
+        click(4, 7);
+        click(3, 7);
+        expect(tiles.chessTiles[4][6].fillColor).toBe(NON_LETHAL_COLOR);
+        expect(tiles.chessTiles[5][5].fillColor).toBe(NON_LETHAL_COLOR);
+        expect(tiles.chessTiles[6][4].fillColor).toBe(NON_LETHAL_COLOR);
+        expect(tiles.chessTiles[7][3].fillColor).toBe(LETHAL_COLOR);
+        click(7, 3);
+        expect(tiles.chessTiles[5][5].fillColor).toBe(tiles.getTileColor([5, 5]));
+        click(4, 0);
+        click(6, 0);
+        expect(tiles.chessTiles[7][2].fillColor).toBe(NON_LETHAL_COLOR);
+        click(7, 2);
+        click(7, 3);
+        expect(tiles.chessTiles[7][2].fillColor).toBe(LETHAL_COLOR);
+        expect(tiles.chessTiles[5][1].fillColor).toBe(LETHAL_COLOR);
+        expect(tiles.chessTiles[0][3].fillColor).toBe(NON_LETHAL_COLOR);
+    });
+
+    test("Highlight Hover", () => {
+        shift(1, 4);
+        expect(tiles.chessTiles[1][4].fillColor).toBe(HOVER_COLOR);
+        shift(7, 2);
+        expect(tiles.chessTiles[1][4].fillColor).toBe(tiles.getTileColor([1, 4]));
+        expect(tiles.chessTiles[7][2].fillColor).toBe(HOVER_COLOR);
+        shift(0, 0);
+        expect(tiles.chessTiles[7][2].fillColor).toBe(tiles.getTileColor([7, 2]));
+        expect(tiles.chessTiles[0][0].fillColor).toBe(HOVER_COLOR);
+    });
+
+    test("Make Valid & Invalid Moves", () => {
+        click(7, 7);
+        expect(tiles.xy).toEqual([7, 7]);
+        click(3, 3);
+        expect(tiles.xy).toEqual([7, 7]);
+        click(5, 7);
+        expect(tiles.xy).toEqual([5, 7]);
+        click(4, 7);
+        expect(tiles.xy).toEqual([4, 7]);
+        click(4, 7);
+        expect(tiles.xy).toBe(null);
+        click(3, 3);
+        expect(tiles.xy).toBe(null);
+        click(1, 7);
+        expect(tiles.xy).toEqual([1, 7]);
+        click(6, 1);
+        expect(tiles.xy).toEqual([1, 7]);
+        click(2, 5);
+        expect(tiles.xy).toBe(null);
+        click(3, 0);
+        expect(tiles.xy).toEqual([3, 0]);
+    });
+
+    test("En Passant", () => {
+        click(4, 6);
+        click(4, 4);
+        click(3, 1);
+        click(3, 3);
+        click(4, 4);
+        click(3, 3);
+        click(4, 1);
+        click(4, 3);
+        expect(tiles.boardState.isEnPassant(4, 2)).toBe(true);
+        click(3, 3);
+        expect(tiles.chessTiles[4][2].fillColor).toBe(LETHAL_COLOR);
+        click(4, 2);
+        expect(tiles.boardState.isOccupied(4, 3)).toBeFalsy();
+    });
+
+    test("Castling", () => {
+        for (let i = 0; i<8; i++)
+            if (i != 0 && i != 4 && i != 7)
+                tiles.boardState.destroyPiece(i, 7);
+        click(4, 7);
+        expect(tiles.chessTiles[2][7].fillColor).toBe(NON_LETHAL_COLOR);
+        expect(tiles.chessTiles[6][7].fillColor).toBe(NON_LETHAL_COLOR);
+        click(2, 7);
+        expect(tiles.boardState.getRank(2, 7)).toBe(KING);
+        expect(tiles.boardState.getRank(3, 7)).toBe(ROOK);
+        for (let i = 0; i<8; i++)
+            if (i != 0 && i != 4 && i != 7)
+                tiles.boardState.destroyPiece(i, 0);
+        click(4, 0);
+        expect(tiles.chessTiles[2][0].fillColor).toBe(NON_LETHAL_COLOR);
+        expect(tiles.chessTiles[6][0].fillColor).toBe(NON_LETHAL_COLOR);
+        click(6, 0);
+        expect(tiles.boardState.getRank(6, 0)).toBe(KING);
+        expect(tiles.boardState.getRank(5, 0)).toBe(ROOK);
+        tiles.boardState.movePiece([2, 7], [4, 7]);
+        click(4, 7);
+        expect(tiles.chessTiles[2][7].fillColor).toBe(tiles.getTileColor([4, 7]));
+        expect(tiles.chessTiles[6][7].fillColor).toBe(tiles.getTileColor([2, 7]));
+    })
+
+    test("Threat Detection", () => {
+        tiles.boardState.addPiece(6, 5, KING, COMPUTER);
+        click(6, 6);
+        expect(tiles.chessTiles[6][5].fillColor).toBe(THREAT_COLOR);
+        for (let i = 0; i < 8; i++)
+            for (let j = 0; j < 8; j++)
+                if (tiles.boardState.isOccupied(i, j))
+                    tiles.boardState.destroyPiece(i, j);
+        tiles.boardState.addPiece(3, 3, QUEEN, PLAYER);
+        click(3, 3);
+        for (let i = 0; i < 8; i++)
+            for (let j = 0; j < 8; j++)
+                if ((Math.abs(i - 3) == 2 && Math.abs(j - 3) == 1) || (Math.abs(i - 3) == 1 && Math.abs(j - 3) == 2))
+                    tiles.boardState.addPiece(i, j, KNIGHT, COMPUTER);
+                else if (i < 2 || i > 4 || j < 2 || j > 4)
+                    tiles.boardState.addPiece(i, j, QUEEN, COMPUTER);
+        click(3, 3);
+        shift(0, 0);
+        shift(3, 3);
+        for (let i = 0; i < 8; i++)
+            for (let j = 0; j < 8; j++)
+                if ((Math.abs(i - 3) == 2 && j >=1 && j <= 5) || (i >=1 && i <= 5 && Math.abs(j - 3) == 2))
+                    expect(tiles.chessTiles[i][j].fillColor).toBe(THREAT_COLOR);
+                else if (i < 2 && i > 4 && j < 2 && j > 4)
+                    expect(tiles.chessTiles[i][j].fillColor).toBe(tiles.getTileColor([i, j]));
+        shift(7, 7);
+        tiles.boardState.addPiece(2, 3, KING, COMPUTER);
+        shift(3, 3);
+        expect(tiles.chessTiles[2][3].fillColor).toBe(THREAT_COLOR);
+    })
 });
 
