@@ -15,6 +15,7 @@ export class RulesOverlay extends Scene {
     create() {
         // Creates a visual background that also blocks input on the scene underneath
         const bg = this.add.rectangle(625, 384, 1250, 768, 0x00ff00, 0.5);
+        bg.setDepth(50);
 
         // Placeholder visual elements
         this.add.image(625, 300, "star").setDepth(100);
@@ -46,6 +47,7 @@ export class RulesOverlay extends Scene {
             },
             this
         );
+        closeButton.setDepth(100);
 
         // When the pointer hovers over the button, scale it up
         closeButton.on("pointerover", () => {
