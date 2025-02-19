@@ -31,14 +31,14 @@ export class PiecesTaken{
         this.piecesTaken = [];
         this.x = 0;
         this.y = 0;
-        this.wknightTaken = false;
+        this.wKnightTaken = false;
         this.wRookTaken = false;
         this.wBishopTaken = false;
-        this.bknightTaken = false;
+        this.bKnightTaken = false;
         this.bRookTaken = false;
         this.bBishopTaken = false;
         this.nextPawnW = 0;
-        this. nextPawnB = 0;
+        this.nextPawnB = 0;
 
         this.scene.add.rectangle(
             X_ANCHOR + 3.5 * TILE_SIZE,
@@ -140,11 +140,11 @@ export class PiecesTaken{
             } else {
                 inrow = 4;
                 if (rank == KNIGHT){
-                    if (this.wknightTaken){
+                    if (this.wKnightTaken){
                         incol = 3;
                     } else {
                         incol = 2;
-                        this.wknightTaken = true;
+                        this.wKnightTaken = true;
                     }
                 }
                 if (rank == ROOK){
@@ -178,11 +178,11 @@ export class PiecesTaken{
             } else {
                 inrow = 2;
                 if (rank == KNIGHT){
-                    if (this.bknightTaken){
+                    if (this.bKnightTaken){
                         incol = 3;
                     } else {
                         incol = 2;
-                        this.bknightTaken = true;
+                        this.bKnightTaken = true;
                     }
                 }
                 if (rank == ROOK){
