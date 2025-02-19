@@ -6,8 +6,6 @@ import { isSamePoint } from "./constants";
 import { DEV_MODE } from "./constants";
 import { BoardState } from "./board-state";
 import { EventBus } from "../game/EventBus";
-
-
 import { PiecesTaken } from "./pieces-taken";
 
 export class ChessTiles {

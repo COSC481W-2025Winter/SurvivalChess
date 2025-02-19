@@ -2,12 +2,10 @@ import { Scene } from "phaser";
 import { EventBus } from "../EventBus";
 import { RulesButton } from "./RulesButton";
 import { ChessTiles } from '../../game-objects/chess-tiles';
-import { CapturedPieces } from "../CapturedPieces";
 
 import { PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING } from "../../game-objects/constants";
 import { CREAMHEX, ONYXHEX } from "../../game-objects/constants";
 import { PLAYER, COMPUTER } from "../../game-objects/constants";
-import { ChessTiles } from "../../game-objects/chess-tiles";
 
 export class Game extends Scene {
     constructor() {
