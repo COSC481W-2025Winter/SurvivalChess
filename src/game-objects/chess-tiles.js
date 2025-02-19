@@ -21,6 +21,7 @@ export class ChessTiles {
         this.threats;           // temporary storage of threats to chess piece, list of lists of [#,#]
         this.promotionCol;      // temporary storage of column of piece to promote
         this.promotionRow;      // temporary storage of row of piece to promote
+        this.currentPlayer = PLAYER;
 
         // Set up stage behind (surrounding) chessboard
         this.scene.add.rectangle(
@@ -57,13 +58,13 @@ export class ChessTiles {
 
                 // When the pointer pushes down a tile, select/move piece & highlight selected tile / possible moves
                 this.chessTiles[i][j].on("pointerdown", () => {
-                    this.pointerSelect(i, j, true);
+                    this.pointerSelect(i, j);
                 });
 
                 // if DEV_MODE is enabled; Enable COMPUTER moves via substituting pointerdown with scrolling
                 if (DEV_MODE)
                     this.chessTiles[i][j].on("wheel", () => {
-                        this.pointerSelect(i, j, false);
+                        this.pointerSelect(i, j);
                     });
             }
         }
@@ -123,19 +124,23 @@ export class ChessTiles {
     }
 
     // Executes when tile is clicked
-    pointerSelect(i, j, isPlayer) {
+    pointerSelect(i, j) {
         let pointerOver = true;
-
-        // if tile is same as selected, unselect piece
-        if (this.xy && isSamePoint(this.xy, [i, j]))
+    
+        // Check whose turn it is
+        const currentPlayer = this.currentPlayer;
+    
+        // If the tile is the same as the selected, unselect the piece
+        if (this.xy && isSamePoint(this.xy, [i, j])) {
             this.clearBoard();
-        // else if tile is occupied, re-select new piece or move & eliminate piece
-        else if (this.boardState.isOccupied(i, j))
+        }
+        // If the tile is occupied, check if the selected piece is the player's piece
+        else if (this.boardState.isOccupied(i, j)) {
             switch (this.boardState.getAlignment(i, j)) {
-                case isPlayer ? PLAYER : COMPUTER: // if ally piece
+                case currentPlayer: // If it's the current player's piece
                     this.clearBoard();
-
-                    // highlight tile & possible moves & record selected piece into xy
+    
+                    // Highlight tile and possible moves, and record the selected piece in xy
                     this.highlightColor([i, j], HOVER_COLOR);
                     this.moves = this.boardState.searchMoves(i, j);
                     for (let move of this.moves)
@@ -146,8 +151,8 @@ export class ChessTiles {
                     this.xy = [i, j];
                     pointerOver = false;
                     break;
-                case isPlayer ? COMPUTER : PLAYER: // if enemy piece
-                    // if previously selected piece exists & move is valid, destroy then move piece
+                case (currentPlayer === PLAYER ? COMPUTER : PLAYER): // If it's the opponent's piece
+                    // If previously selected piece exists and move is valid, destroy and move the piece
                     if (this.xy && this.isValidMove([i, j])) {
                         this.boardState.destroyPiece(i, j);
                         this.boardState.movePiece(this.xy, [i, j]);
@@ -155,17 +160,25 @@ export class ChessTiles {
                         this.checkPromotion([i, j])
                         
                         this.clearBoard();
+                        // Toggle turn after the move
+                        this.toggleTurn();
                     }
                     break;
             }
-        // else if not occupied & move is valid, move piece
+        }
+        // If not occupied and move is valid, move the piece
         else if (this.xy && this.isValidMove([i, j])) {
             // if en passant move, destroy enemy pawn
-            if (
-                this.boardState.getRank(this.xy[0], this.xy[1]) == PAWN &&
+            if (this.boardState.getRank(this.xy[0], this.xy[1]) == PAWN &&
                 this.boardState.isEnPassant(i, j)
             )
                 this.boardState.destroyPiece(i, this.xy[1]);
+
+            // if castling move, also move rook
+            if (this.boardState.getRank(this.xy[0], this.xy[1]) == KING &&
+                Math.abs(this.xy[0] - i) == 2
+            )
+                this.boardState.movePiece([i < this.xy[0] ? 0 : 7, j], [i < this.xy[0] ? 3 : 5, this.xy[1]])
 
             // move piece & clear board
             this.boardState.movePiece(this.xy, [i, j]);
@@ -173,15 +186,23 @@ export class ChessTiles {
             this.checkPromotion([i, j])
 
             this.clearBoard();
+    
+            // Toggle turn after the move
+            this.toggleTurn();
         }
-        else
+        else {
             pointerOver = false;
-
+        }
+    
         this.temp = null;
-
-        // if something happened resulting in un-selection, trigger pointerover event
+    
+        // If something happened resulting in un-selection, trigger pointerover event
         if (pointerOver)
             this.pointerOver(i, j);
+    }
+    
+    toggleTurn() {
+        this.currentPlayer = (this.currentPlayer === PLAYER) ? COMPUTER : PLAYER;
     }
 
     // ================================================================
@@ -232,18 +253,19 @@ export class ChessTiles {
             // do the promotion
             import("../game/scenes/Promotion") // Dynamically import the rules scene
             .then((module) => {
-        // Only add the scene if it's not already registered
-        if (!this.scene.scene.get("Promotion")) {
-            this.scene.scene.add("Promotion", module.Promotion); // Add the scene dynamically
-        }
-        this.promotionCol = col;
-        this.promotionRow = row;
-        // Use launch to run scene in parallel to current
-        EventBus.once("PawnPromoted", (detail) => {
-            // this.boardState.destroyPiece(this.promotionCol, this.promotionRow); // might need update with capture
-            this.setPromotion(detail, PLAYER);});
-        this.scene.scene.launch("Promotion");
-    });
+                // Only add the scene if it's not already registered
+                if (!this.scene.scene.get("Promotion")) {
+                    this.scene.scene.add("Promotion", module.Promotion); // Add the scene dynamically
+                }
+                this.promotionCol = col;
+                this.promotionRow = row;
+                // Use launch to run scene in parallel to current
+                EventBus.once("PawnPromoted", (detail) => {
+                    // this.boardState.destroyPiece(this.promotionCol, this.promotionRow); // might need update with capture
+                    this.setPromotion(detail, PLAYER);
+                });
+                this.scene.scene.launch("Promotion");
+            });
     
         } else if (this.boardState.getAlignment(col, row)==COMPUTER && this.boardState.getRank(col, row) == PAWN && row==7) {
             // set black piece to queen which is almost always correct choice, 
