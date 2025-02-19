@@ -22,7 +22,6 @@ export class ChessTiles {
         this.promotionCol;      // temporary storage of column of piece to promote
         this.promotionRow;      // temporary storage of row of piece to promote
         this.currentPlayer = PLAYER;
-        this.sideBulb;
 
         // Set up stage behind (surrounding) chessboard
         this.scene.add.rectangle(
@@ -32,37 +31,6 @@ export class ChessTiles {
             9 * TILE_SIZE,
             STAGE_COLOR
         );
-
-        // for (let i = 0; i < 8; i++)
-        // {
-        //     this.sideBulb[0][i] = this.scene.add.text(
-        //         X_ANCHOR + i * TILE_SIZE,
-        //         Y_ANCHOR - 0.75 * TILE_SIZE,
-        //         String.fromCharCode(i + 65),
-        //         { fontSize: TILE_SIZE/2+'px' }
-        //     ).setOrigin(0.5);
-
-        //     this.sideBulb[1][i] = this.scene.add.text(
-        //         X_ANCHOR + i * TILE_SIZE,
-        //         Y_ANCHOR + 7.75 * TILE_SIZE,
-        //         String.fromCharCode(i + 65),
-        //         { fontSize: TILE_SIZE/2+'px' }
-        //     ).setOrigin(0.5);
-
-        //     this.sideBulb[2][i] = this.scene.add.text(
-        //         X_ANCHOR - 0.75 * TILE_SIZE,
-        //         Y_ANCHOR + i * TILE_SIZE,
-        //         8 - i,
-        //         { fontSize: TILE_SIZE/2+'px' }
-        //     ).setOrigin(0.5);
-
-        //     this.sideBulb[3][i] = this.scene.add.text(
-        //         X_ANCHOR + 7.75 * TILE_SIZE,
-        //         Y_ANCHOR + i * TILE_SIZE,
-        //         8 - i,
-        //         { fontSize: TILE_SIZE/2+'px' }
-        //     ).setOrigin(0.5);
-        // }
 
         // Set up chessTiles & pointer behaviour, as well as interaction with pieces
         for (let i = 0; i < 8; i++) {
