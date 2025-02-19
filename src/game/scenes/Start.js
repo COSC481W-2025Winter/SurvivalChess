@@ -34,7 +34,7 @@ export class Start extends Scene {
     create() {
 
         //this.add.image(0, 0, "background");
-        this.add.image(512, 200, "logo").setDepth(100);
+        //this.add.image(512, 200, "logo").setDepth(100);
         
         this.cameras.main.setBackgroundColor(START_BACKGROUND_COLOR);
 
