@@ -1,5 +1,6 @@
 import { Scene } from "phaser";
 import { EventBus } from "../EventBus";
+import { SettingsButton } from "./SettingsButton";
 
 import {
     PAWN,
@@ -86,7 +87,26 @@ export class Game extends Scene {
             endButton.setScale(1); // Reset to original size
         });
 
+
+        const settingsButton = this.add.text(100, 100, "See Settings", {
+            fill: CREAMHEX,
+            backgroundColor: ONYXHEX,
+            padding: { left: 20, right: 20, top: 10, bottom: 10 },
+        });
+        settingsButton.setPosition(950, 60);
+        settingsButton.setInteractive();
+        settingsButton.setOrigin(0.5);
+        settingsButton.on("pointerdown", new SettingsButton(this).click, this);
+        // When the pointer hovers over the button, scale it up
+        settingsButton.on("pointerover", () => {
+            settingsButton.setScale(1.2); // Increase the scale (grow the button by 20%)
+        });
+        // When the pointer moves away from the button, reset the scale to normal
+        settingsButton.on("pointerout", () => {
+            settingsButton.setScale(1); // Reset to original size
+        });
+
+
         EventBus.emit("current-scene-ready", this);
     }
 }
-

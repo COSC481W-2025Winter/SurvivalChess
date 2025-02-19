@@ -8,12 +8,15 @@ export class Settings extends Scene {
 
     preload() {
         this.load.setPath("assets");
-
         this.load.image("star", "star.png");
         this.load.image("background", "bg.png");
     }
 
     create() {
+        // Creates a visual background that also blocks input on the scene underneath
+        const bg = this.add.rectangle(625, 384, 1250, 768, 0x00ff00, 0.5);
+
+        // Placeholder visual elements
         this.add.image(512, 384, "background").alpha = 0.5;
         this.add.image(512, 350, "star").setDepth(100);
         this.add
@@ -33,6 +36,8 @@ export class Settings extends Scene {
             backgroundColor: "#ffff",
             padding: { left: 20, right: 20, top: 10, bottom: 10 },
         });
+
+        closeButton.setOrigin(0.5);
         closeButton.setPosition(800, 50);
         closeButton.setInteractive();
         closeButton.on(
@@ -53,6 +58,8 @@ export class Settings extends Scene {
             closeButton.setScale(1); // Reset to original size
         });
 
+        bg.setInteractive();
+        
         EventBus.emit("current-scene-ready", this);
     }
 }
