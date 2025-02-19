@@ -210,7 +210,7 @@ export class ChessTiles {
             if (this.boardState.getRank(this.xy[0], this.xy[1]) == PAWN &&
                 this.boardState.isEnPassant(i, j)
             ){
-                this.capturePiece(this.boardState.getRank(i, j), this.boardState.getAlignment(i, j));
+                this.capturePiece(this.boardState.getRank(i, this.xy[1]), this.boardState.getAlignment(i, this.xy[1]));
                 this.boardState.destroyPiece(i, this.xy[1]);
             }
             // if castling move, also move rook
