@@ -6,13 +6,13 @@ import { isSamePoint } from "./constants";
 import { DEV_MODE } from "./constants";
 import { BoardState } from "./board-state";
 import { EventBus } from "../game/EventBus";
-
-
+import { PiecesTaken } from "./pieces-taken";
 
 export class ChessTiles {
+
     constructor(scene) {
         this.scene = scene;
-
+        this.piecesTaken;
         this.chessTiles = [];   // 8x8 array of chess tiles
         this.boardState;        // contains BoardState object that manages an 8x8 array of chess pieces
         this.xy;                // coordinate of selected chess piece; list of [i,j]
@@ -64,6 +64,7 @@ export class ChessTiles {
         }
 
         this.boardState = new BoardState(this.scene);
+        this.piecesTaken = new PiecesTaken(this.scene);
     }
 
     // ================================================================
@@ -148,6 +149,7 @@ export class ChessTiles {
                 case (currentPlayer === PLAYER ? COMPUTER : PLAYER): // If it's the opponent's piece
                     // If previously selected piece exists and move is valid, destroy and move the piece
                     if (this.xy && this.isValidMove([i, j])) {
+                        this.capturePiece(this.boardState.getRank(i, j), this.boardState.getAlignment(i, j));
                         this.boardState.destroyPiece(i, j);
                         this.boardState.movePiece(this.xy, [i, j]);
                         
@@ -165,9 +167,10 @@ export class ChessTiles {
             // if en passant move, destroy enemy pawn
             if (this.boardState.getRank(this.xy[0], this.xy[1]) == PAWN &&
                 this.boardState.isEnPassant(i, j)
-            )
+            ){
+                this.capturePiece(this.boardState.getRank(i, this.xy[1]), this.boardState.getAlignment(i, this.xy[1]));
                 this.boardState.destroyPiece(i, this.xy[1]);
-
+            }
             // if castling move, also move rook
             if (this.boardState.getRank(this.xy[0], this.xy[1]) == KING &&
                 Math.abs(this.xy[0] - i) == 2
@@ -244,6 +247,11 @@ export class ChessTiles {
         return false;
     }
 
+    //add captured piece to the captured pieces
+    capturePiece(rank, alignment) {
+        this.piecesTaken.takePiece(rank, alignment);
+    }
+
     // check whether the move results in a promotion
     checkPromotion([col, row]) {
         if (this.boardState.getAlignment(col, row)==PLAYER && this.boardState.getRank(col, row) == PAWN && row==0) {
@@ -278,4 +286,3 @@ export class ChessTiles {
         this.boardState.addPiece(this.promotionCol, this.promotionRow, rank, alignment);
     }
 }
-

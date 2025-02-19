@@ -6,7 +6,7 @@ import { EventBus } from './EventBus';
 export const PhaserGame = forwardRef(function PhaserGame ({ currentActiveScene }, ref)
 {
     const game = useRef();
-
+    
     // Create the game inside a useLayoutEffect hook to avoid the game being created outside the DOM
     useLayoutEffect(() => {
         
@@ -52,7 +52,9 @@ export const PhaserGame = forwardRef(function PhaserGame ({ currentActiveScene }
     }, [currentActiveScene, ref])
 
     return (
-        <div id="game-container"></div>
+        <div id="game-container">
+            
+        </div>
     );
 
 });

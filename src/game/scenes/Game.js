@@ -1,11 +1,11 @@
 import { Scene } from "phaser";
 import { EventBus } from "../EventBus";
 import { RulesButton } from "./RulesButton";
+import { ChessTiles } from '../../game-objects/chess-tiles';
 
 import { PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING } from "../../game-objects/constants";
 import { CREAMHEX, ONYXHEX } from "../../game-objects/constants";
 import { PLAYER, COMPUTER } from "../../game-objects/constants";
-import { ChessTiles } from "../../game-objects/chess-tiles";
 
 export class Game extends Scene {
     constructor() {
@@ -14,10 +14,6 @@ export class Game extends Scene {
 
     preload() {
         this.load.setPath("assets");
-
-        this.load.image("star", "star.png");
-        this.load.image("background", "bg.png");
-
         // Load Chess piece pngs
         this.load.setPath("assets/drummyfish chess");
         for (let rank of [PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING])
@@ -26,10 +22,23 @@ export class Game extends Scene {
     }
 
     create() {
-        this.add.image(512, 384, "background");
 
-        // 4 new files in src/game-objects
-        // 6 sets of chess pieces (3 pairs of BW) in pubic/assets/drummyfish chess; Brought to you by Hope!
+        this.add.image(512, 384, "background");
+        //         this.add.image(512, 350, "star").setDepth(100);
+        //         this.add
+        //             .text(512, 490, "You are currently playing the game", {
+        //                 fontFamily: "Arial Black",
+        //                 fontSize: 38,
+        //                 color: "#ffffff",
+        //                 stroke: "#000000",
+        //                 strokeThickness: 8,
+        //                 align: "center",
+        //             })
+        //             .setOrigin(0.5)
+        //             .setDepth(100);
+
+
+
         // and a board, and an icon, and a black tile, and a white tile; Totaling to 40 images
         new ChessTiles(this);
 
@@ -38,20 +47,26 @@ export class Game extends Scene {
             backgroundColor: ONYXHEX,
             padding: { left: 20, right: 20, top: 10, bottom: 10 },
         });
-        endButton.setPosition(425, 600);
+        endButton.setPosition(1000, 708);
         endButton.setInteractive();
+
+        // endButton.on("pointerdown", () => {
+        //     this.scene.start("GameOver"); // Reset to original size
+        // });
+
         endButton.on(
             "pointerdown",
             function () {
-                import("./Start") // Dynamically import the Game scene
+                
+                import("./GameOver") // 
                     .then((module) => {
                         // Only add the scene if it's not already registered
-                        if (!this.scene.get("Game")) {
-                            this.scene.add("Game", module.Game); // Add the MainGame scene dynamically
+                        if (!this.scene.get("GameOver")) {
+                            this.scene.add("GameOver", module.GameOver); // Add the MainGame scene dynamically
                         }
 
                         // Start the MainGame scene
-                        this.scene.start("Game");
+                        this.scene.start("GameOver");
                     });
             },
             this
