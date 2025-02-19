@@ -1,19 +1,13 @@
 import { Scene } from "phaser";
 import { EventBus } from "../EventBus";
 import { SettingsButton } from "./SettingsButton";
+import { RulesButton } from "./RulesButton";
+import { ChessTiles } from '../../game-objects/chess-tiles';
 
-import {
-    PAWN,
-    ROOK,
-    KNIGHT,
-    BISHOP,
-    QUEEN,
-    KING,
-    CREAMHEX,
-    ONYXHEX,
-} from "../../game-objects/constants";
+
+import { PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING } from "../../game-objects/constants";
+import { CREAMHEX, ONYXHEX } from "../../game-objects/constants";
 import { PLAYER, COMPUTER } from "../../game-objects/constants";
-import { ChessTiles } from "../../game-objects/chess-tiles";
 
 export class Game extends Scene {
     constructor() {
@@ -22,10 +16,6 @@ export class Game extends Scene {
 
     preload() {
         this.load.setPath("assets");
-
-        this.load.image("star", "star.png");
-        this.load.image("background", "bg.png");
-
         // Load Chess piece pngs
         this.load.setPath("assets/drummyfish chess");
         for (let rank of [PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING])
@@ -34,6 +24,7 @@ export class Game extends Scene {
     }
 
     create() {
+
         this.add.image(512, 384, "background");
         //         this.add.image(512, 350, "star").setDepth(100);
         //         this.add
@@ -48,8 +39,8 @@ export class Game extends Scene {
         //             .setOrigin(0.5)
         //             .setDepth(100);
 
-        // 4 new files in src/game-objects
-        // 6 sets of chess pieces (3 pairs of BW) in pubic/assets/drummyfish chess; Brought to you by Hope!
+
+
         // and a board, and an icon, and a black tile, and a white tile; Totaling to 40 images
         new ChessTiles(this);
 
@@ -58,20 +49,26 @@ export class Game extends Scene {
             backgroundColor: ONYXHEX,
             padding: { left: 20, right: 20, top: 10, bottom: 10 },
         });
-        endButton.setPosition(425, 600);
+        endButton.setPosition(1000, 708);
         endButton.setInteractive();
+
+        // endButton.on("pointerdown", () => {
+        //     this.scene.start("GameOver"); // Reset to original size
+        // });
+
         endButton.on(
             "pointerdown",
             function () {
-                import("./Start") // Dynamically import the Game scene
+                
+                import("./GameOver") // 
                     .then((module) => {
                         // Only add the scene if it's not already registered
-                        if (!this.scene.get("Game")) {
-                            this.scene.add("Game", module.Game); // Add the MainGame scene dynamically
+                        if (!this.scene.get("GameOver")) {
+                            this.scene.add("GameOver", module.GameOver); // Add the MainGame scene dynamically
                         }
 
                         // Start the MainGame scene
-                        this.scene.start("Game");
+                        this.scene.start("GameOver");
                     });
             },
             this
@@ -87,8 +84,10 @@ export class Game extends Scene {
             endButton.setScale(1); // Reset to original size
         });
 
-
+        //settings button
         const settingsButton = this.add.text(100, 100, "See Settings", {
+
+        const rulesButton = this.add.text(100, 100, "See Rules", {
             fill: CREAMHEX,
             backgroundColor: ONYXHEX,
             padding: { left: 20, right: 20, top: 10, bottom: 10 },
@@ -106,6 +105,21 @@ export class Game extends Scene {
             settingsButton.setScale(1); // Reset to original size
         });
 
+
+        rulesButton.setPosition(950, 600);
+        rulesButton.setInteractive();
+        rulesButton.setOrigin(0.5);
+        rulesButton.on("pointerdown", new RulesButton(this).click, this);
+
+        // When the pointer hovers over the button, scale it up
+        rulesButton.on("pointerover", () => {
+            rulesButton.setScale(1.2); // Increase the scale (grow the button by 20%)
+        });
+
+        // When the pointer moves away from the button, reset the scale to normal
+        rulesButton.on("pointerout", () => {
+            rulesButton.setScale(1); // Reset to original size
+        });
 
         EventBus.emit("current-scene-ready", this);
     }
