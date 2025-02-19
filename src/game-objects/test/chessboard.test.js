@@ -1,11 +1,11 @@
 import "phaser";
-import { ChessTiles } from "../chess-tiles";
+import { ChessTiles } from "../chess-tiles.js";
 jest
   .spyOn(ChessTiles.prototype, 'checkPromotion')
   .mockImplementation(([col, row]) => {
     console.log('mocked function');
   });
-import { ChessPiece } from "../chess-piece";
+import { ChessPiece } from "../chess-piece.js";
 // Mock ChessPiece class
 class MockChessPiece {
     constructor(scene, x, y, rank, alignment) {
