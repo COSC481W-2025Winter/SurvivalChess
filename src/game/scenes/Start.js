@@ -142,7 +142,8 @@ export class Start extends Scene {
         },
         this
     );
-    const rulesButton = this.add.text(100, 100, "See Rules", {
+
+      const rulesButton = this.add.text(100, 100, "See Rules", {
         fill: CREAMHEX, // Using CREAMHEX here
         backgroundColor: MAHOGANYHEX, // Using MAHOGANYHEX here
         padding: { left: 20, right: 20, top: 10, bottom: 10 },
@@ -165,12 +166,12 @@ export class Start extends Scene {
         this
     );
     // When the pointer hovers over the button, scale it up
-    startButton.on("pointerover", () => {
-        startButton.setScale(1.2); // Increase the scale (grow the button by 20%)
+    rulesButton.on("pointerover", () => {
+        rulesButton.setScale(1.2); // Increase the scale (grow the button by 20%)
     });
     // When the pointer moves away from the button, reset the scale to normal
-    startButton.on("pointerout", () => {
-        startButton.setScale(1); // Reset to original size
+    rulesButton.on("pointerout", () => {
+        rulesButton.setScale(1); // Reset to original size
     });
     EventBus.emit("current-scene-ready", this);
 }

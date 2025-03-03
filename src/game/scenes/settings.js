@@ -15,6 +15,7 @@ export class Settings extends Scene {
     create() {
         // Creates a visual background that also blocks input on the scene underneath
         const bg = this.add.rectangle(625, 384, 1250, 768, 0x00ff00, 0.5);
+        bg.setDepth(50);
 
         // Placeholder visual elements
         this.add.image(512, 384, "background").alpha = 0.5;
@@ -38,7 +39,7 @@ export class Settings extends Scene {
         });
 
         closeButton.setOrigin(0.5);
-        closeButton.setPosition(800, 50);
+        closeButton.setPosition(625, 600);
         closeButton.setInteractive();
         closeButton.on(
             "pointerdown",
@@ -47,20 +48,20 @@ export class Settings extends Scene {
             },
             this
         );
+        closeButton.setDepth(100);
 
         // When the pointer hovers over the button, scale it up
         closeButton.on("pointerover", () => {
-            closeButton.setScale(1.2); // Increase the scale (grow the button by 20%)
+            closeButton.setScale(1.2);
         });
 
         // When the pointer moves away from the button, reset the scale to normal
         closeButton.on("pointerout", () => {
-            closeButton.setScale(1); // Reset to original size
+            closeButton.setScale(1);
         });
 
         bg.setInteractive();
-        
+
         EventBus.emit("current-scene-ready", this);
     }
 }
-
