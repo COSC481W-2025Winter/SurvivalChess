@@ -143,36 +143,26 @@ export class Start extends Scene {
         this
     );
 
-      const rulesButton = this.add.text(100, 100, "See Rules", {
-        fill: CREAMHEX, // Using CREAMHEX here
-        backgroundColor: MAHOGANYHEX, // Using MAHOGANYHEX here
+      const rulesButton = this.add.text(1100, 600, "Rules", {
+        fontFamily: "'Pixelify Sans', sans-serif",
+        fill: START_TEXT_ONE,
+        backgroundColor: START_TEXT_TWO,
         padding: { left: 20, right: 20, top: 10, bottom: 10 },
     });
-    rulesButton.setPosition(870, 650);
     rulesButton.setInteractive();
-    rulesButton.on(
-        "pointerdown",
-        function () {
-            import("./Game") // Dynamically import the rules scene
-                .then((module) => {
-                    // Only add the scene if it's not already registered
-                    if (!this.scene.get("Rules")) {
-                        this.scene.add("Rules", module.Game); // Add the scene dynamically
-                    }
-                    // Start the scene
-                    this.scene.start("Rules");
-                });
-        },
-        this
-    );
-    // When the pointer hovers over the button, scale it up
+    rulesButton.on("pointerdown", new RulesButton(this).click, this);
+
+    //When the pointer hovers over the button, scale it up
     rulesButton.on("pointerover", () => {
-        rulesButton.setScale(1.2); // Increase the scale (grow the button by 20%)
+        rulesButton.setScale(1.2); //Increase the scale (grow the button by 20%)
     });
-    // When the pointer moves away from the button, reset the scale to normal
+
+    //When the pointer moves away from the button, reset the scale to normal
     rulesButton.on("pointerout", () => {
-        rulesButton.setScale(1); // Reset to original size
+        rulesButton.setScale(1);
     });
+
     EventBus.emit("current-scene-ready", this);
+    }
 }
-}
+   
