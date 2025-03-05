@@ -2,7 +2,7 @@ import { TILE_SIZE, X_ANCHOR, Y_ANCHOR } from './constants';
 import { PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING } from './constants';
 import { PLAYER, COMPUTER } from './constants';
 import { EN_PASSANT_TOKEN } from './constants';
-import { isSamePoint } from "./constants";
+import { isSamePoint, dim2Array } from "./constants";
 import { ChessPiece } from './chess-piece';
 
 export class BoardState {
@@ -13,11 +13,10 @@ export class BoardState {
     constructor(scene) {
         this.#scene = scene;
 
-        this.#boardState = []; // 8x8 array of chess pieces
+        this.#boardState = dim2Array(8, 8); // 8x8 array of chess pieces
 
         // set up boardState & initialize player pieces (and computer pieces for testing purposes)
         for (let i = 0; i < 8; i++) {
-            this.#boardState.push([]);
             // Initialize Player (white) pieces
             for (let j = 6; j < 8; j++)
                 if (j == 6)

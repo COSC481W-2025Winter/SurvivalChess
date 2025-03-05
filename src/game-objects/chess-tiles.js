@@ -2,7 +2,7 @@ import { TILE_SIZE, X_ANCHOR, Y_ANCHOR } from "./constants";
 import { HOVER_COLOR, WHITE_TILE_COLOR, BLACK_TILE_COLOR, NON_LETHAL_COLOR, LETHAL_COLOR, THREAT_COLOR, STAGE_COLOR } from "./constants";
 import { PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING } from "./constants";
 import { PLAYER, COMPUTER } from "./constants";
-import { isSamePoint } from "./constants";
+import { isSamePoint, dim2Array } from "./constants";
 import { DEV_MODE } from "./constants";
 import { BoardState } from "./board-state";
 import { EventBus } from "../game/EventBus";
@@ -13,7 +13,7 @@ export class ChessTiles {
     constructor(scene) {
         this.scene = scene;
         this.piecesTaken;
-        this.chessTiles = [];   // 8x8 array of chess tiles
+        this.chessTiles;        // 8x8 array of chess tiles
         this.boardState;        // contains BoardState object that manages an 8x8 array of chess pieces
         this.xy;                // coordinate of selected chess piece; list of [i,j]
         this.moves;             // possible moves of selected chess piece; list of dictionaries of {'xy':[#,#],'isEnemy':boolean}
@@ -21,6 +21,7 @@ export class ChessTiles {
         this.threats;           // temporary storage of threats to chess piece, list of lists of [#,#]
         this.promotionCol;      // temporary storage of column of piece to promote
         this.promotionRow;      // temporary storage of row of piece to promote
+        this.sideLights;        // numbers & letters on edge of chessboard that highlight in response to cursor
         this.currentPlayer = PLAYER;
 
         // Set up stage behind (surrounding) chessboard
@@ -32,9 +33,27 @@ export class ChessTiles {
             STAGE_COLOR
         );
 
+        this.sideLights = dim2Array(4, 8);
+        for (let i = 0; i < 4; i++)
+            for (let j = 0; j < 8; j++)
+                switch (i) {
+                    case 0: // [0,1][0~7] top & bottom rows of a~h
+                        this.sideLights[i][j] = this.scene.add.text(X_ANCHOR + j * TILE_SIZE, Y_ANCHOR - 0.75 * TILE_SIZE, String.fromCharCode(65 + j), {fontSize: TILE_SIZE/2}).setOrigin(0.5);
+                        break;
+                    case 1: // [0,1][0~7] top & bottom rows of a~h
+                        this.sideLights[i][j] = this.scene.add.text(X_ANCHOR + j * TILE_SIZE, Y_ANCHOR + 7.75 * TILE_SIZE, String.fromCharCode(65 + j), {fontSize: TILE_SIZE/2}).setOrigin(0.5);
+                        break;
+                    case 2: // [2,3][0~7] left & right columns of 1~8
+                        this.sideLights[i][j] = this.scene.add.text(X_ANCHOR - 0.75 * TILE_SIZE, Y_ANCHOR + j * TILE_SIZE, 8 - j, {fontSize: TILE_SIZE/2}).setOrigin(0.5);
+                        break;
+                    case 3: // [2,3][0~7] left & right columns of 1~8
+                        this.sideLights[i][j] = this.scene.add.text(X_ANCHOR + 7.75 * TILE_SIZE, Y_ANCHOR + j * TILE_SIZE, 8 - j, {fontSize: TILE_SIZE/2}).setOrigin(0.5);
+                        break;
+                }
+
         // Set up chessTiles & pointer behaviour, as well as interaction with pieces
+        this.chessTiles = dim2Array(8, 8);
         for (let i = 0; i < 8; i++) {
-            this.chessTiles.push([]);
             for (let j = 0; j < 8; j++) {
                 // Initialize tiles & enable interaction
                 this.chessTiles[i][j] = this.scene.add.rectangle(
@@ -202,7 +221,7 @@ export class ChessTiles {
     toggleTurn() {
         this.currentPlayer = (this.currentPlayer === PLAYER) ? COMPUTER : PLAYER;
     }
-
+    
     // ================================================================
     // Tile Highlight & Restoration
 
