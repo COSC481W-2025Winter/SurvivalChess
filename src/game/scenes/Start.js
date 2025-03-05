@@ -1,6 +1,10 @@
 import { Scene } from "phaser";
 import { EventBus } from "../EventBus";
+
+import { SettingsButton } from "./SettingsButton";
+
 import { RulesButton } from "./RulesButton";
+
 import {
     START_BACKGROUND_COLOR,
     START_TEXT_ONE,
@@ -12,11 +16,12 @@ export class Start extends Scene {
     constructor() {
         super("Game");
     }
-
+    
     preload() {
         this.load.setPath("assets");
 
         //this.load.image("background", "bg.png");
+
         this.load.image("logo", "logo.png");
 
         // Load the pixel font
@@ -30,7 +35,6 @@ export class Start extends Scene {
             },
         });
     }
-
     create() {
 
         //this.add.image(0, 0, "background");
@@ -50,8 +54,6 @@ export class Start extends Scene {
             .setOrigin(0.5)
             .setDepth(100);
 
-
-        
         this.add
             .text(
                 630,
@@ -72,7 +74,6 @@ export class Start extends Scene {
             )
             .setOrigin(0.5)
             .setDepth(100);
-
         this.add
             .text(
                 625,
@@ -92,7 +93,6 @@ export class Start extends Scene {
             )
             .setOrigin(0.5)
             .setDepth(100);
-
         const startButton = this.add.text(100, 100, "Start Game", {
             fontFamily: "'Pixelify Sans', sans-serif",
             fill: START_TEXT_ONE,
@@ -111,26 +111,12 @@ export class Start extends Scene {
                         if (!this.scene.get("MainGame")) {
                             this.scene.add("MainGame", module.Game); // Add the MainGame scene dynamically
                         }
-
                         // Start the MainGame scene
                         this.scene.start("MainGame");
                     });
             },
             this
         );
-        /*
-        this.add
-            .text(512, 720, "Credits: David - Deployment, Durva - Documentation, Hope – Developer, Kaydee – SCRUM, Marley – Co-lead, Moe - Deployment, Riana – Team Lead, Ritu – SCRUM", {
-                fontFamily: "Courier New",
-                fontSize: 12,
-                color: "#ffffff",
-                stroke: "#000000",
-                strokeThickness: 4,
-                align: "center",
-            })
-            .setOrigin(0.5)
-            .setDepth(100);
-        */
 
         const settingsButton = this.add.text(100, 100, "Settings", {
             fontFamily: "'Pixelify Sans', sans-serif",
@@ -143,51 +129,40 @@ export class Start extends Scene {
         settingsButton.on(
             "pointerdown",
             function () {
-                import("./Game") // Dynamically import the Settings scene
-                    .then((module) => {
-                        // Only add the scene if it's not already registered
-                        if (!this.scene.get("Settings")) {
-                            this.scene.add("Settings", module.Game); // Add the scene dynamically
-                        }
+                import("./settings") // Dynamically import the Settings scene
+                .then((module) => {
+                    // Only add the scene if it's not already registered
+                    if (!this.scene.get("Settings")) {
+                        this.scene.add("Settings", module.Settings); // Add the scene dynamically
+                    }
 
-                        // Start the scene
-                        this.scene.start("Settings");
-                    });
-            },
-            this
-        
-        );
+                    // Start the scene
+                    this.scene.launch("Settings");
+                });
+        },
+        this
+    );
 
-        // When the pointer hovers over the button, scale it up
-        startButton.on("pointerover", () => {
-            startButton.setScale(1.2); // Increase the scale (grow the button by 20%)
-        });
+      const rulesButton = this.add.text(1100, 600, "Rules", {
+        fontFamily: "'Pixelify Sans', sans-serif",
+        fill: START_TEXT_ONE,
+        backgroundColor: START_TEXT_TWO,
+        padding: { left: 20, right: 20, top: 10, bottom: 10 },
+    });
+    rulesButton.setInteractive();
+    rulesButton.on("pointerdown", new RulesButton(this).click, this);
 
-        // When the pointer moves away from the button, reset the scale to normal
-        startButton.on("pointerout", () => {
-            startButton.setScale(1); // Reset to original size
-        });
+    //When the pointer hovers over the button, scale it up
+    rulesButton.on("pointerover", () => {
+        rulesButton.setScale(1.2); //Increase the scale (grow the button by 20%)
+    });
 
-        const rulesButton = this.add.text(1100, 600, "Rules", {
-            fontFamily: "'Pixelify Sans', sans-serif",
-            fill: START_TEXT_ONE,
-            backgroundColor: START_TEXT_TWO,
-            padding: { left: 20, right: 20, top: 10, bottom: 10 },
-        });
-        rulesButton.setInteractive();
-        rulesButton.on("pointerdown", new RulesButton(this).click, this);
+    //When the pointer moves away from the button, reset the scale to normal
+    rulesButton.on("pointerout", () => {
+        rulesButton.setScale(1);
+    });
 
-        // When the pointer hovers over the button, scale it up
-        rulesButton.on("pointerover", () => {
-            rulesButton.setScale(1.2); // Increase the scale (grow the button by 20%)
-        });
-
-        // When the pointer moves away from the button, reset the scale to normal
-        rulesButton.on("pointerout", () => {
-            rulesButton.setScale(1); // Reset to original size
-        });
-
-        EventBus.emit("current-scene-ready", this);
+    EventBus.emit("current-scene-ready", this);
     }
 }
-
+   
