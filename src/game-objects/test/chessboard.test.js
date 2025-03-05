@@ -67,10 +67,13 @@ describe("", () => {
     class MockScene {
         constructor() {}
 
-        // Mock the add.rectangle & add.existing methods
+        // Mock the add.rectangle & add.text & add.existing methods
         add = {
             rectangle: jest.fn((x, y, width, height, color) => {
                 return new MockRectangle(x, y, width, height, color);
+            }),
+            text: jest.fn((x, y, text, style) => {
+                return new MockText(x, y, text, style);
             }),
             existing: jest.fn(),
         }
@@ -91,6 +94,28 @@ describe("", () => {
 
         setFillStyle(color) {
             this.fillColor = color;
+        }
+    }
+
+    // Mock Text class
+    class MockText {
+        constructor(x, y, text, style) {
+            this.x = x;
+            this.y = y;
+            this.text = text;
+            this.style = style;
+            this.origin = 0;
+        }
+
+        setInteractive() { }
+        on() { }
+
+        setFillStyle(color) {
+            this.fillColor = color;
+        }
+
+        setOrigin(origin) {
+            this.origin = origin;
         }
     }
 
