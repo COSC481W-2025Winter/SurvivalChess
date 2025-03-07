@@ -11,6 +11,7 @@ import { PiecesTaken } from "./pieces-taken";
 export class ChessTiles {
 
     constructor(scene) {
+        this.turnsUntilNextWave = 8;
         this.scene = scene;
         this.piecesTaken;
         this.chessTiles;        // 8x8 array of chess tiles
@@ -219,7 +220,72 @@ export class ChessTiles {
     }
     
     toggleTurn() {
-        this.currentPlayer = (this.currentPlayer === PLAYER) ? COMPUTER : PLAYER;
+        if (this.currentPlayer == PLAYER) {
+
+            // If we're about to switch to the computer, check if any piece has valid moves
+            // If they do not, all their pieces are purged and replaced, and player keeps playing
+            // This should also automatically handle being out of pieces
+            let computerHasValidMove = false;
+
+            try {
+                for (let x = 0; x < 8; x++) {
+                    for (let y = 0; y < 8; y++) {
+                        if (this.boardState.getAlignment(x, y) == COMPUTER) {
+                            // If we have any moves, set check variable to true
+                            let moves = this.boardState.searchMoves(x, y);
+                            if (moves.length > 0) {
+                                computerHasValidMove = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    // For escaping out of x row as well
+                    if (computerHasValidMove)
+                        break;
+                }
+            } catch (error) {
+                window.alert("Error while checking computer moves: "+error.message);
+            }
+
+            // If we do, permit the computer to make a move
+            if (computerHasValidMove) {
+                this.currentPlayer = COMPUTER;
+                this.turnsUntilNextWave--;
+                if (this.turnsUntilNextWave == 0) {
+                    this.spawnNextWave();
+                }
+            } else {
+                this.clearAllComputerPieces();
+                this.spawnNextWave();
+            }
+        } else this.currentPlayer = PLAYER;
+    }
+
+    // ================================================================
+    // Wave Spawning
+
+    // Resets turn counter only for now
+    spawnNextWave() {
+        this.turnsUntilNextWave = 8;
+
+        // Debug message box
+        window.alert("next wave spawn called");
+    }
+
+    clearAllComputerPieces() {
+        // Clear all computer pieces
+        try {
+            for (let col = 0; col < 8; col++) {
+                for (let row = 0; row < 8; row++) {
+                    if (this.boardState.pieceIsValid(col, row) && this.boardState.getAlignment(col, row) === COMPUTER) {
+                        this.boardState.destroyPiece(col, row);
+                    }
+                }
+            }
+        } catch (error) {
+            window.alert("Error: "+error.message);
+        }
     }
     
     // ================================================================

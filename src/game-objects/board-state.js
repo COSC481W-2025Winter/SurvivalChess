@@ -154,7 +154,11 @@ export class BoardState {
 
     // Get alignment info of piece
     getAlignment(col, row) {
-        return this.#boardState[col][row].getAlignment();
+        if (this.pieceIsValid(col, row))
+            if (this.#boardState[col][row] instanceof ChessPiece)
+                return this.#boardState[col][row].getAlignment();
+        
+        return "x";
     }
 
     // Get rank info of piece
@@ -483,5 +487,17 @@ export class BoardState {
         }
 
         return false;
+    }
+
+    // ================================================================
+    // Helper methods
+
+    pieceIsValid(col, row) {
+        if (this.#boardState[col][row] === undefined)
+            return false;
+        if (this.#boardState[col][row] === null)
+            return false;
+
+        return true;
     }
 }
