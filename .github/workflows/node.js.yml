@@ -29,10 +29,9 @@ jobs:
         cache: 'npm'
     - run: npm ci
 
-    # Run ESLint checks - commented out for now
-    # - name: Run ESLint
-    #   run: npm run lint  # Make sure you have a "lint" script defined in your package.json
-    #   continue-on-error: false  # Set to false to fail the action if lint errors are found
+    # Runs ESLint checks - commented out for now
+    # - run: npm run lint
+    #   continue-on-error: false  # false = fail the action if lint errors are found
 
     - run: npm run build --if-present
     - run: npm test
