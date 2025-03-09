@@ -15,7 +15,7 @@ export class Game extends Scene {
     preload() {
         this.load.setPath("assets");
         // Load Chess piece pngs
-        this.load.setPath("assets/drummyfish chess");
+        this.load.setPath("assets/ourChessPieces");
         for (let rank of [PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING])
             for (let alignment of [PLAYER, COMPUTER])
                 this.load.image(rank + alignment, rank + alignment + "4.png");
