@@ -4,67 +4,54 @@ import { PLAYER, COMPUTER } from './constants';
 import { EN_PASSANT_TOKEN } from './constants';
 import { isSamePoint, dim2Array } from "./constants";
 import { ChessPiece } from './chess-piece';
+import { PieceCoordinates } from './piece-coordinates';
 
 export class BoardState {
     #scene;
     #boardState;
+    #pieceCoordinates;
     #enPassantCoordinate;
 
-    constructor(scene) {
+    #isChecked;
+
+    constructor(scene, pieceCoordinates) {
         this.#scene = scene;
 
-        this.#boardState = dim2Array(8, 8); // 8x8 array of chess pieces
+        // 8x8 array of chess pieces
+        this.#boardState = dim2Array(8, 8);
+        // contains coordinate info sorted by rank & alignment
+        this.#pieceCoordinates = pieceCoordinates;
 
-        // set up boardState & initialize player pieces (and computer pieces for testing purposes)
+        // Initialize Player/Computer (white/black) pieces
+        this.initializePieces(PLAYER);
+        this.initializePieces(COMPUTER);
+    }
+
+    // initialize player pieces (and computer pieces for testing purposes)
+    initializePieces(alignment) {
         for (let i = 0; i < 8; i++) {
-            // Initialize Player (white) pieces
-            for (let j = 6; j < 8; j++)
-                if (j == 6)
-                    this.addPiece(i, j, PAWN, PLAYER);
+            for (let j of alignment == PLAYER ? [6, 7] : [0, 1])
+                if (j == 6 || j==1)
+                    this.addPiece(i, j, PAWN, alignment);
                 else
                     switch (i) {
                         case 0:
                         case 7:
-                            this.addPiece(i, j, ROOK, PLAYER);
+                            this.addPiece(i, j, ROOK, alignment);
                             break;
                         case 1:
                         case 6:
-                            this.addPiece(i, j, KNIGHT, PLAYER);
+                            this.addPiece(i, j, KNIGHT, alignment);
                             break;
                         case 2:
                         case 5:
-                            this.addPiece(i, j, BISHOP, PLAYER);
+                            this.addPiece(i, j, BISHOP, alignment);
                             break;
                         case 3:
-                            this.addPiece(i, j, QUEEN, PLAYER);
+                            this.addPiece(i, j, QUEEN, alignment);
                             break;
                         case 4:
-                            this.addPiece(i, j, KING, PLAYER);
-                            break;
-                    }
-            // Initialize Computer (black) pieces
-            for (let j = 0; j < 2; j++)
-                if (j == 1)
-                    this.addPiece(i, j, PAWN, COMPUTER);
-                else
-                    switch (i) {
-                        case 0:
-                        case 7:
-                            this.addPiece(i, j, ROOK, COMPUTER);
-                            break;
-                        case 1:
-                        case 6:
-                            this.addPiece(i, j, KNIGHT, COMPUTER);
-                            break;
-                        case 2:
-                        case 5:
-                            this.addPiece(i, j, BISHOP, COMPUTER);
-                            break;
-                        case 3:
-                            this.addPiece(i, j, QUEEN, COMPUTER);
-                            break;
-                        case 4:
-                            this.addPiece(i, j, KING, COMPUTER);
+                            this.addPiece(i, j, KING, alignment);
                             break;
                     }
         }
@@ -107,7 +94,6 @@ export class BoardState {
             this.#boardState[col][row] = null;
             this.#enPassantCoordinate = null;
         }
-
     }
 
     // ================================================================
@@ -120,9 +106,12 @@ export class BoardState {
             X_ANCHOR + col * TILE_SIZE,
             Y_ANCHOR + row * TILE_SIZE,
             rank,
-            alignment
+            alignment,
+            [col, row]
         );
         this.#scene.add.existing(this.#boardState[col][row]);
+
+        this.#pieceCoordinates.addCoordinate(col, row, rank, alignment);
     }
 
     // Move piece in input coordinate to output coordinate
@@ -141,10 +130,20 @@ export class BoardState {
         this.#boardState[incol][inrow] = null;
 
         this.incrementMoveCounter(outcol, outrow);
+
+        this.#boardState[outcol][outrow].setCoordinate(output[0], output[1]);
+
+        let rank = this.#boardState[outcol][outrow].getRank();
+        let alignment = this.#boardState[outcol][outrow].getAlignment();
+        this.#pieceCoordinates.moveCoordinate(input, output, rank, alignment);
     }
 
     // Completely destroy the piece
     destroyPiece(col, row) {
+        let rank = this.#boardState[col][row].getRank();
+        let alignment = this.#boardState[col][row].getAlignment();
+        this.#pieceCoordinates.deleteCoordinate(col, row, rank, alignment);
+
         this.#boardState[col][row].destroy();
         this.#boardState[col][row] = null;
     }
@@ -173,7 +172,9 @@ export class BoardState {
     }
 
     // Check whether coordinate has different alignment
-    isDiffAlignment(col, row, alignment) {
+    isDiffAlignment(col, row, alignment, supposeTile = null) {
+        if (supposeTile && isSamePoint([col, row], supposeTile))
+            return false;
         return alignment != this.getAlignment(col, row);
     }
 
@@ -208,20 +209,25 @@ export class BoardState {
         for (let i = col - 1; i <= col + 1; i++)
             if (this.isValid(i, j)) {
                 // forward
-                if (i == col && !this.isOccupied(i, j))
-                    moves.push({ xy: [i, j], isEnemy: false });
+                if (i == col && !this.isOccupied(i, j)) {
+                    if (this.kingSaved([col, row], [i, j], alignment))
+                        moves.push({ xy: [i, j], isEnemy: false });
+                }
                 // elimination
-                else if (i != col && this.isOccupied(i, j) && this.isDiffAlignment(i, j, alignment))
-                    moves.push({ xy: [i, j], isEnemy: true });
+                else if (i != col && this.isOccupied(i, j) && this.isDiffAlignment(i, j, alignment)) {
+                    if (this.kingSaved([col, row], [i, j], alignment))
+                        moves.push({ xy: [i, j], isEnemy: true });
                 // en passant
-                else if (i != col && this.isEnPassant(i, j) && this.isOccupied(i, row) && this.isDiffAlignment(i, row, alignment))
-                    moves.push({ xy: [i, j], isEnemy: true });
+                } else if (i != col && this.isEnPassant(i, j) && this.isOccupied(i, row) && this.isDiffAlignment(i, row, alignment)) {
+                    if (this.kingSaved([col, row], [i, j], alignment))
+                        moves.push({ xy: [i, j], isEnemy: true });
+                }
             }
 
         // 2 tiles with first move
         if (!this.isOccupied(col, j)) {
             j += (alignment == PLAYER ? -1 : 1);
-            if (!this.getMoveCounter(col, row) && !this.isOccupied(col, j))
+            if (!this.getMoveCounter(col, row) && !this.isOccupied(col, j) && this.kingSaved([col, row], [col, j], alignment))
                 moves.push({ xy: [col, j], isEnemy: false });
         }
 
@@ -240,7 +246,7 @@ export class BoardState {
             x = col + x_s[i];
             y = row + y_s[i];
             if (this.isValid(x, y))
-                this.searchTile(x, y, alignment, moves);
+                this.searchTile([col, row], [x, y], alignment, moves);
         }
 
         return moves;
@@ -254,7 +260,8 @@ export class BoardState {
         for (let i = col - 1; i <= col + 1; i++)
             for (let j = row - 1; j <= row + 1; j++)
                 if (this.isValid(i, j))
-                    this.searchTile(i, j, alignment, moves);
+                    if (!this.seekThreats(i, j, alignment, [col, row]).length)
+                        this.searchTile([col, row], [i, j], alignment, moves);
 
         // Castling
         if (!this.getMoveCounter(col, row)) {
@@ -293,22 +300,22 @@ export class BoardState {
 
         // left
         for (i = col - 1; i >= 0; i--)
-            if (this.searchTile(i, row, alignment, moves))
+            if (this.searchTile([col, row], [i, row], alignment, moves))
                 break;
 
         // right
         for (i = col + 1; i < 8; i++)
-            if (this.searchTile(i, row, alignment, moves))
+            if (this.searchTile([col, row], [i, row], alignment, moves))
                 break;
 
         // top
         for (j = row - 1; j >= 0; j--)
-            if (this.searchTile(col, j, alignment, moves))
+            if (this.searchTile([col, row], [col, j], alignment, moves))
                 break;
 
         // bottom
         for (j = row + 1; j < 8; j++)
-            if (this.searchTile(col, j, alignment, moves))
+            if (this.searchTile([col, row], [col, j], alignment, moves))
                 break;
 
         return moves;
@@ -322,22 +329,22 @@ export class BoardState {
 
         // top left
         for (i = col - 1, j = row - 1; i >= 0 && j >= 0; i--, j--)
-            if (this.searchTile(i, j, alignment, moves))
+            if (this.searchTile([col, row], [i, j], alignment, moves))
                 break;
 
         // top right
         for (i = col + 1, j = row - 1; i < 8 && j >= 0; i++, j--)
-            if (this.searchTile(i, j, alignment, moves))
+            if (this.searchTile([col, row], [i, j], alignment, moves))
                 break;
 
         // bottom left
         for (i = col - 1, j = row + 1; i >= 0 && j < 8; i--, j++)
-            if (this.searchTile(i, j, alignment, moves))
+            if (this.searchTile([col, row], [i, j], alignment, moves))
                 break;
 
         // bottom right
         for (i = col + 1, j = row + 1; i < 8 && j < 8; i++, j++)
-            if (this.searchTile(i, j, alignment, moves))
+            if (this.searchTile([col, row], [i, j], alignment, moves))
                 break;
 
         return moves;
@@ -349,15 +356,19 @@ export class BoardState {
     }
 
     // Check whether a coordinate is a possible move
-    searchTile(col, row, alignment, moves) {
-        if (!this.isOccupied(col, row))
-            moves.push({ xy: [col, row], isEnemy: false });
-        else {
-            if (this.isDiffAlignment(col, row, alignment))
-                moves.push({ xy: [col, row], isEnemy: true });
+    searchTile(input, output, alignment, moves) {
+        let outcol = output[0];
+        let outrow = output[1];
+        if (!this.isOccupied(outcol, outrow)) {
+            if (this.kingSaved(input, output, alignment))
+                moves.push({ xy: [outcol, outrow], isEnemy: false });
+        } else {
+            if (this.isDiffAlignment(outcol, outrow, alignment))
+                if (this.kingSaved(input, output, alignment))
+                    moves.push({ xy: [outcol, outrow], isEnemy: true });
             return true;
         }
-
+        
         return false;
     }
 
@@ -366,21 +377,21 @@ export class BoardState {
 
     // Seek for possible threats to a hypothetical chess piece at a coordinate & of an alignment
     // Whilst Optionally ignoring occupancy of a coordinate (mostly for when moving pieces)
-    seekThreats(col, row, alignment, ignoreTile = null) {
+    seekThreats(col, row, alignment, ignoreTile = null, supposeTile = null) {
         return []
-            .concat(this.seekAdjacent(col, row, alignment))
-            .concat(this.seekSkewed(col, row, alignment))
-            .concat(this.seekOrthogonal(col, row, alignment, ignoreTile = ignoreTile))
-            .concat(this.seekDiagonal(col, row, alignment, ignoreTile = ignoreTile));
+            .concat(this.seekAdjacent(col, row, alignment, supposeTile))
+            .concat(this.seekSkewed(col, row, alignment, supposeTile))
+            .concat(this.seekOrthogonal(col, row, alignment, ignoreTile, supposeTile))
+            .concat(this.seekDiagonal(col, row, alignment, ignoreTile, supposeTile));
     }
 
     // Seek for possible adjacent threats (pawns & kings)
-    seekAdjacent(col, row, alignment) {
+    seekAdjacent(col, row, alignment, supposeTile = null) {
         let threats = [];
 
         for (let i = col - 1; i <= col + 1; i++)
             for (let j = row - 1; j <= row + 1; j++)
-                if (this.isValid(i, j) && this.isOccupied(i, j) && this.isDiffAlignment(i, j, alignment) && (i != col || j != row)) {
+                if (this.isValid(i, j) && this.isOccupied(i, j) && this.isDiffAlignment(i, j, alignment, supposeTile) && (i != col || j != row)) {
                     let rank = this.getRank(i, j);
                     switch (rank) {
                         case PAWN:
@@ -397,7 +408,7 @@ export class BoardState {
     }
 
     // Seek for possible skewed threats (knights)
-    seekSkewed(col, row, alignment) {
+    seekSkewed(col, row, alignment, supposeTile = null) {
         let threats = [];
 
         let x_s = [1, 1, -1, -1, 2, 2, -2, -2];
@@ -407,7 +418,7 @@ export class BoardState {
         for (let i = 0; i < 8; i++) {
             x = col + x_s[i];
             y = row + y_s[i];
-            if (this.isValid(x, y))
+            if (this.isValid(x, y) && !this.seekSupposed(x, y, supposeTile))
                 this.seekTile(x, y, alignment, threats, KNIGHT);
         }
 
@@ -415,58 +426,58 @@ export class BoardState {
     }
 
     // Seek for possible orthogonal threats (rooks & queens)
-    seekOrthogonal(col, row, alignment, ignoreTile = null) {
+    seekOrthogonal(col, row, alignment, ignoreTile = null, supposeTile = null) {
         let threats = [];
 
         let i, j;
 
         // left
         for (i = col - 1; i >= 0; i--)
-            if (this.seekTile(i, row, alignment, threats, ROOK, ignoreTile = ignoreTile))
+            if (this.seekSupposed(i, row, supposeTile) || this.seekTile(i, row, alignment, threats, ROOK, ignoreTile))
                 break;
 
         // right
         for (i = col + 1; i < 8; i++)
-            if (this.seekTile(i, row, alignment, threats, ROOK, ignoreTile = ignoreTile))
+            if (this.seekSupposed(i, row, supposeTile) || this.seekTile(i, row, alignment, threats, ROOK, ignoreTile))
                 break;
 
         // top
         for (j = row - 1; j >= 0; j--)
-            if (this.seekTile(col, j, alignment, threats, ROOK, ignoreTile = ignoreTile))
+            if (this.seekSupposed(col, j, supposeTile) || this.seekTile(col, j, alignment, threats, ROOK, ignoreTile))
                 break;
 
         // bottom
         for (j = row + 1; j < 8; j++)
-            if (this.seekTile(col, j, alignment, threats, ROOK, ignoreTile = ignoreTile))
+            if (this.seekSupposed(col, j, supposeTile) || this.seekTile(col, j, alignment, threats, ROOK, ignoreTile))
                 break;
 
         return threats;
     }
 
     // Seek for possible diagonal threats (bishops & queens)
-    seekDiagonal(col, row, alignment, ignoreTile = null) {
+    seekDiagonal(col, row, alignment, ignoreTile = null, supposeTile = null) {
         let threats = [];
 
         let i, j;
 
         // top left
         for (i = col - 1, j = row - 1; i >= 0 && j >= 0; i--, j--)
-            if (this.seekTile(i, j, alignment, threats, BISHOP, ignoreTile = ignoreTile))
+            if (this.seekSupposed(i, j, supposeTile) || this.seekTile(i, j, alignment, threats, BISHOP, ignoreTile))
                 break;
 
         // top right
         for (i = col + 1, j = row - 1; i < 8 && j >= 0; i++, j--)
-            if (this.seekTile(i, j, alignment, threats, BISHOP, ignoreTile = ignoreTile))
+            if (this.seekSupposed(i, j, supposeTile) || this.seekTile(i, j, alignment, threats, BISHOP, ignoreTile))
                 break;
 
         // bottom left
         for (i = col - 1, j = row + 1; i >= 0 && j < 8; i--, j++)
-            if (this.seekTile(i, j, alignment, threats, BISHOP, ignoreTile = ignoreTile))
+            if (this.seekSupposed(i, j, supposeTile) || this.seekTile(i, j, alignment, threats, BISHOP, ignoreTile))
                 break;
 
         // bottom right
         for (i = col + 1, j = row + 1; i < 8 && j < 8; i++, j++)
-            if (this.seekTile(i, j, alignment, threats, BISHOP, ignoreTile = ignoreTile))
+            if (this.seekSupposed(i, j, supposeTile) || this.seekTile(i, j, alignment, threats, BISHOP, ignoreTile))
                 break;
 
         return threats;
@@ -474,7 +485,7 @@ export class BoardState {
 
     // Check whether a coordinate is a threat
     seekTile(col, row, alignment, threats, compareRank, ignoreTile = null) {
-        if (this.isOccupied(col, row, ignoreTile = ignoreTile)) {
+        if (this.isOccupied(col, row, ignoreTile)) {
             let rank = this.getRank(col, row);
             let isThreat = rank == compareRank || ((compareRank == ROOK || compareRank == BISHOP) && rank == QUEEN);
             if (this.isDiffAlignment(col, row, alignment) && isThreat)
@@ -483,5 +494,59 @@ export class BoardState {
         }
 
         return false;
+    }
+
+    // Check whether a coordinate is supposed by an ally piece
+    seekSupposed(col, row, supposeTile = null) {
+        return supposeTile && isSamePoint(supposeTile, [col, row]);
+    }
+
+    // Check whether king would be saved/un-threatened if move is made
+    kingSaved(input, output, alignment) {
+        if (!this.#isChecked)
+            return true;
+        let coordinate = this.#pieceCoordinates.getCoordinate(KING, alignment);
+        let col = isSamePoint(input, coordinate) ? output[0] : coordinate[0];
+        let row = isSamePoint(input, coordinate) ? output[1] : coordinate[1];
+        return !this.seekThreats(col, row, alignment, input, output).length;
+    }
+
+    // Check whether king of alignment is threatened
+    isChecked(alignment) {
+        let coordinate = this.#pieceCoordinates.getCoordinate(KING, alignment);
+        let col = coordinate[0];
+        let row = coordinate[1];
+
+        this.#isChecked = !!this.seekThreats(col, row, alignment).length;
+        return this.#isChecked;
+    }
+
+    // Check whether king of alignment is threatened
+    isCheckmated(alignment) {
+        let coordinate = this.#pieceCoordinates.getCoordinate(KING, alignment);
+        let col = coordinate[0];
+        let row = coordinate[1];
+
+        if (!this.isChecked(alignment) && this.searchMoves(col, row).length)
+            return false;
+
+        for (let piece of this.#pieceCoordinates.getAllCoordinates(alignment))
+            if (!!this.searchMoves(piece[0], piece[1]).length)
+                return true;
+        
+        return false;
+    }
+
+    // Check whether board is stalemated (not checked & no legal move)
+    isStalemated(alignment) {
+        if (this.isChecked(alignment))
+            return false;
+
+        let coordinates = this.#pieceCoordinates.getAllCoordinates(alignment);
+        for (let xy of coordinates)
+            if (this.searchMoves(xy[0], xy[1]).length)
+                return false;
+
+        return true;
     }
 }
