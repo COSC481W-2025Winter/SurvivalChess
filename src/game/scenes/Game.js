@@ -18,7 +18,7 @@ export class Game extends Scene {
         this.load.setPath("assets/drummyfish chess");
         for (let rank of [PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING])
             for (let alignment of [PLAYER, COMPUTER])
-                this.load.image(rank + alignment, rank + alignment + ".png");
+                this.load.image(rank + alignment, rank + alignment + "4.png");
     }
 
     create() {
