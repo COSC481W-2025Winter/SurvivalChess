@@ -1,6 +1,6 @@
 import { Scene } from "phaser";
 import { EventBus } from "../EventBus";
-import {QUEEN, BISHOP, ROOK, KNIGHT, X_ANCHOR, Y_ANCHOR, TILE_SIZE } from "../../game-objects/constants";
+import { QUEEN, BISHOP, ROOK, KNIGHT, X_ANCHOR, Y_ANCHOR, TILE_SIZE } from "../../game-objects/constants";
 
 export class Promotion extends Scene {
     constructor() {
@@ -44,9 +44,9 @@ export class Promotion extends Scene {
                 // sends event telling promotion is to queen
                 EventBus.emit("PawnPromoted", QUEEN);
                 this.scene.stop("Promotion");
-                },
-                this
-            );
+            },
+            this
+        );
         
         rook.setInteractive();
         rook.on(
@@ -55,8 +55,8 @@ export class Promotion extends Scene {
                 // sends event telling promotion is to rook
                 EventBus.emit("PawnPromoted", ROOK);
                 this.scene.stop("Promotion");
-                },
-                this
+            },
+            this
         );
 
         bishop.setInteractive();
@@ -66,8 +66,8 @@ export class Promotion extends Scene {
                 // sends event telling promotion is to bishop
                 EventBus.emit("PawnPromoted", BISHOP);
                 this.scene.stop("Promotion");
-                },
-                this
+            },
+            this
         );
 
         knight.setInteractive();
@@ -77,8 +77,8 @@ export class Promotion extends Scene {
                 // sends event telling promotion is to knight
                 EventBus.emit("PawnPromoted", KNIGHT);
                 this.scene.stop("Promotion");
-                },
-                this
+            },
+            this
         );
 
         // make pieces larger when moused over to indicate selection
