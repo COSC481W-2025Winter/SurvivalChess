@@ -12,6 +12,7 @@ export class ChessTiles {
 
     constructor(scene) {
         this.turnsUntilNextWave = 8;
+        this.waveSpawnBudget = 8;
         this.scene = scene;
         this.piecesTaken;
         this.chessTiles;        // 8x8 array of chess tiles
@@ -265,15 +266,110 @@ export class ChessTiles {
     // ================================================================
     // Wave Spawning
 
-    // Resets turn counter only for now
     spawnNextWave() {
-        this.turnsUntilNextWave = 8;
+        try {
+            // Reset turn counter
+            this.turnsUntilNextWave = 8;
+
+            // Randomly order what priority of pieces to go through to prevent a universal bias
+            let piecePriority = this.getPiecePriorityOrder();
+
+            // Get the ordering of tiles to traverse through for new spawns
+            let testSpawnLocations = this.getTilePriorityOrder();
+            let testSpawnIndex = 0;
+
+            let currentBudget = this.waveSpawnBudget;
+            for (let pieceType of piecePriority) {
+                let costOfType = this.getValueOfPiece(pieceType);
+
+                // Spawn a random amount of given pieces
+                let numberOfPieces = Math.floor(Math.random() * (currentBudget / costOfType));
+
+                // Debug message
+                if (numberOfPieces > 0)
+                    window.alert("spawning "+numberOfPieces+"x "+pieceType);
+
+                // Locate spawn point and instantiate if successful
+                for (let pieceCount = 0; pieceCount < numberOfPieces; pieceCount++) {
+                    while (testSpawnIndex < testSpawnLocations.length) {
+                        let testSpawnLoc = testSpawnLocations[testSpawnIndex];
+                        if (!this.boardState.isOccupied(testSpawnLoc[0], testSpawnLoc[1])) {
+                            currentBudget -= costOfType;
+                            this.boardState.addPiece(testSpawnLoc[0], testSpawnLoc[1], pieceType, COMPUTER);
+
+                            break;
+                        }
+
+                        testSpawnIndex++;
+                    }
+                }
+            }
+        } catch (ex) {
+            window.alert("Error with new wave: "+ex.message);
+        }
+
+        /*
+        // In each vacant tile, add a queen (simple functionality for just testing)
+        let vacantTiles = this.collectVacantTiles();
+        for (let tile of vacantTiles) {
+            this.boardState.addPiece(tile[0], tile[1], QUEEN, COMPUTER);
+        }
+        */
+
+        // Increase next wave's budget by +4 (+50% from base value of 8)
+        this.waveSpawnBudget += 4;
+    }
+
+    // Centering procedure
+    // 
+    // Left Bias            Right Bias
+    // ---4----     or      ----5---
+    // ----5---             ---4----
+    // -----6--             --3-----
+    // --3-----             -----6--
+    // -2------             ------7-
+    // ------7-             -2------
+    // -------8             -1------
+    // 1-------             -------8
+    getTilePriorityOrder() {
+        // ~50% between left or right bias
+        let colOrder = Math.random() < 0.5 ? [3, 4, 5, 2, 1, 6, 7, 0] : [4, 3, 2, 5, 6, 1, 0, 7];
+        let output = [];
+
+        // Row 0
+        for (let row = 0; row < 2; row++) {
+            for (let col in colOrder)
+                output.push([col, row]);
+        }
+
+        return output;
+    }
+
+    // Get a random order of pieces to process to prevent a universal bias
+    getPiecePriorityOrder() {
+        // This order doesn't matter
+        let piecePriority = [ QUEEN, PAWN, BISHOP, ROOK, KNIGHT ];
+
+        // Sort it randomly
+        let currentIndex = piecePriority.length;
+        while (currentIndex != 0) {
+            let randomIndex = Math.floor(Math.random() * currentIndex);
+            currentIndex--;
+            [piecePriority[currentIndex], piecePriority[randomIndex]] = [piecePriority[randomIndex], piecePriority[currentIndex]];
+        }
+
+        return piecePriority;
+    }
+
+    // Gather an array of vacant tiles for valid spawn points
+    collectVacantTiles() {
+        let vacantTiles = [];
 
         try {
             for (let col = 0; col < 8; col++) {
                 for (let row = 0; row < 2; row++) {
                     if (!this.boardState.isOccupied(col, row)) {
-                        this.boardState.addPiece(col, row, QUEEN, COMPUTER);
+                        vacantTiles.push([col, row]);
                     }
                 }
             }
@@ -281,8 +377,21 @@ export class ChessTiles {
             window.alert("Error: "+error.message);
         }
 
-        // Debug message box
-        window.alert("next wave spawn called");
+        return vacantTiles;
+    }
+
+    getValueOfPiece(pieceType) {
+        switch (pieceType) {
+            case QUEEN:
+                return 9;
+            case ROOK:
+                return 5;
+            case KNIGHT:
+            case BISHOP:
+                return 3;
+            default:
+                return 1;
+        }
     }
 
     clearAllComputerPieces() {
