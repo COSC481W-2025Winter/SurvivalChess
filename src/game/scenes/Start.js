@@ -138,6 +138,7 @@ export class Start extends Scene {
 
                     // Start the scene
                     this.scene.launch("Settings");
+                    this.scene.moveAbove("MainGame", "Settings");
                 });
         },
         this
