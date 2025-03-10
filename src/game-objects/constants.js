@@ -1,6 +1,6 @@
 const TILE_SIZE = 80;                       // width & height of each tile
-const X_ANCHOR = 512 - 3.5 * TILE_SIZE;     // x pixel of leftmost tile
-const Y_ANCHOR = 384 - 3.5 * TILE_SIZE;     // y pixel of topmost tile
+const X_ANCHOR = 500 - 3.5 * TILE_SIZE;     // x pixel of leftmost tile
+const Y_ANCHOR = 360 - 3.5 * TILE_SIZE;     // y pixel of topmost tile
 
 const GRAY = "7D7F7C";
 const FAWN = "E5AA70";
@@ -12,6 +12,8 @@ const DARK_GREY = "3B3B3B";
 const ONYX = "3B3B3B";
 const CREAM = "F4FFFD";
 const GREEN = "6E9075";
+const DARK_BROWN = "5C4033";
+const BLACK = "000000";
 
 const ZEROX = "0x";
 const HASH = "#";
@@ -22,7 +24,8 @@ const BLACK_TILE_COLOR = ZEROX + MAHOGANY;  // black tile color
 const NON_LETHAL_COLOR = ZEROX + VIOLET;    // non-lethal move color
 const LETHAL_COLOR = ZEROX + MAGNETA;       // lethal move color
 const THREAT_COLOR = ZEROX + AZURE;         // threat color
-const STAGE_COLOR = ZEROX + DARK_GREY;      // chessboard stage color
+const CHECKED_COLOR = ZEROX + BLACK;        // checked color
+const STAGE_COLOR = ZEROX + DARK_BROWN;     // chessboard stage color
 
 const BACKGROUND_COLOR = ZEROX + ONYX;
 
@@ -33,7 +36,7 @@ const START_TEXT_TWO = HASH + MAHOGANY;     // secondary text color / outline co
 const FAWNHEX = "E5AA70";
 const MAHOGANYHEX = "C04000";
 const ONYXHEX = HASH + "3B3B3B";
-const CREAMHEX = HASH+ "F4FFFD";
+const CREAMHEX = HASH + "F4FFFD";
 const GREENHEX = "6E9075";
 
 const PAWN = "pawn";                        // pawn rank
@@ -54,12 +57,16 @@ export function isSamePoint([col1, row1], [col2, row2]) {
     return col1 == col2 && row1 == row2;
 }
 
+export function dim2Array(dim1, dim2) {
+    return Array.from(Array(dim1), () => new Array(dim2));
+}
+
 export { TILE_SIZE, X_ANCHOR, Y_ANCHOR };
 
-export { HOVER_COLOR, WHITE_TILE_COLOR, BLACK_TILE_COLOR, NON_LETHAL_COLOR, LETHAL_COLOR, THREAT_COLOR, STAGE_COLOR };
+export { HOVER_COLOR, WHITE_TILE_COLOR, BLACK_TILE_COLOR, NON_LETHAL_COLOR, LETHAL_COLOR, THREAT_COLOR, CHECKED_COLOR, STAGE_COLOR };
 export { BACKGROUND_COLOR };
 export { ONYXHEX, CREAMHEX, FAWNHEX, MAHOGANYHEX, GREENHEX }
-export {START_BACKGROUND_COLOR, START_TEXT_ONE, START_TEXT_TWO};
+export { START_BACKGROUND_COLOR, START_TEXT_ONE, START_TEXT_TWO };
 
 export { PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING };
 export { PLAYER, COMPUTER };
