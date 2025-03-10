@@ -5,7 +5,6 @@ jest
   .mockImplementation(([col, row]) => {
     return false;
   });
-import { ChessPiece } from "../chess-piece.js";
 // Mock ChessPiece class
 class MockChessPiece {
     constructor(scene, x, y, rank, alignment) {
@@ -15,6 +14,7 @@ class MockChessPiece {
         this.rank = rank;
         this.alignment = alignment;
         this.moveCounter = 0;
+        this.coordinate = null;
 
         this.image = rank + alignment;
     }
@@ -40,6 +40,14 @@ class MockChessPiece {
         this.moveCounter++;
     }
 
+    setCoordinate(col, row) {
+        this.coordinate = [col, row];
+    }
+
+    getCoordinate() {
+        return this.coordinate;
+    }
+
     destroy() { }
 }
 jest.mock("../chess-piece", () => {
@@ -51,7 +59,7 @@ jest.mock("../chess-piece", () => {
 import { POINTER_OVER, POINTER_OUT, POINTER_DOWN, WHEEL } from "./test-constants.js";
 import { LEFT, RIGHT, UP, DOWN } from "./test-constants.js";
 
-import { HOVER_COLOR, WHITE_TILE_COLOR, BLACK_TILE_COLOR, NON_LETHAL_COLOR, LETHAL_COLOR, THREAT_COLOR, STAGE_COLOR } from "../constants.js";
+import { HOVER_COLOR, WHITE_TILE_COLOR, BLACK_TILE_COLOR, NON_LETHAL_COLOR, LETHAL_COLOR, THREAT_COLOR, CHECKED_COLOR, STAGE_COLOR } from "../constants.js";
 import { PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING } from "../constants.js";
 import { PLAYER, COMPUTER } from "../constants.js";
 
@@ -192,31 +200,9 @@ describe("", () => {
         mockTileEvent("pointerover");
     });
 
-    /*
-
-    TODO LIST
-
-    ::: MACRO :::
-    X. Do all of the following for when a piece is selected & not
-    1. Move pointer & check if colors highlight & un-highlight properly
-    2. Click tile where non-response is expected & check if nothing happened (as intended)
-    3. Click tile where response is expected & check if said response happened (as intended)
-        a. selection
-        b. re-selection
-        c. un-selection
-        d. non-lethal move
-        e. lethal move
-
-    ::: MICRO :::
-    1. Check Pointer Events methods
-    2. Check Tile Highlight & Restoration methods
-    3. Check Miscellaneous methods
-
-    */
 
 
-
-    // Test Template
+    // Tests
     test("Test Functions Functionality", () => {
         expect(scene).toBeDefined();
         expect(tiles).toBeDefined();
@@ -327,7 +313,7 @@ describe("", () => {
         click(4, 7);
         expect(tiles.chessTiles[2][7].fillColor).toBe(tiles.getTileColor([4, 7]));
         expect(tiles.chessTiles[6][7].fillColor).toBe(tiles.getTileColor([2, 7]));
-    })
+    });
 
     test("Threat Detection", () => {
         tiles.boardState.addPiece(6, 5, KING, COMPUTER);
@@ -358,6 +344,45 @@ describe("", () => {
         tiles.boardState.addPiece(2, 3, KING, COMPUTER);
         shift(3, 3);
         expect(tiles.chessTiles[2][3].fillColor).toBe(THREAT_COLOR);
-    })
+    });
+
+    test("King is Royal", () => {
+        click(4, 6);
+        click(4, 4);
+        click(4, 1);
+        click(4, 3);
+        click(5, 6);
+        click(5, 4);
+        click(5, 1);
+        click(5, 3);
+        click(3, 7);
+        click(7, 3);
+        expect(tiles.chessTiles[4][0].fillColor).toBe(CHECKED_COLOR);
+        click(4, 0);
+        expect(tiles.chessTiles[4][0].fillColor).toBe(HOVER_COLOR);
+        expect(tiles.chessTiles[5][1].fillColor).toBe(tiles.getTileColor([5, 1]));
+        expect(tiles.chessTiles[4][1].fillColor).toBe(NON_LETHAL_COLOR);
+        click(4, 1);
+        shift(0, 0);
+        expect(tiles.chessTiles[4][0].fillColor).toBe(tiles.getTileColor([4, 0]));
+        expect(tiles.chessTiles[4][1].fillColor).toBe(tiles.getTileColor([4, 1]));
+        click(7, 3);
+        click(5, 1);
+        expect(tiles.chessTiles[4][1].fillColor).toBe(THREAT_COLOR);
+        shift(0, 0);
+        expect(tiles.chessTiles[4][1].fillColor).toBe(CHECKED_COLOR);
+        click(4, 1);
+        shift(0, 0);
+        expect(tiles.chessTiles[4][0].fillColor).toBe(tiles.getTileColor([4, 0]));
+        expect(tiles.chessTiles[5][1].fillColor).toBe(LETHAL_COLOR);
+        expect(tiles.chessTiles[5][2].fillColor).toBe(tiles.getTileColor([5, 2]));
+        expect(tiles.chessTiles[4][2].fillColor).toBe(tiles.getTileColor([4, 2]));
+        expect(tiles.chessTiles[3][2].fillColor).toBe(NON_LETHAL_COLOR);
+    });
+
+    test("Miscellaneous", () => {
+        expect(tiles.pieceCoordinates.moveCoordinate([4, 4], [4, 4], PAWN, PLAYER)).toBe(false);
+        expect(tiles.pieceCoordinates.deleteCoordinate(4, 4, PAWN, PLAYER)).toBe(false);
+    });
 });
 
