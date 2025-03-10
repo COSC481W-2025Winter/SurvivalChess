@@ -11,6 +11,15 @@ import { ChessPiece } from './chess-piece';
 
 export class PiecesTaken {
 
+    preload() {
+        this.load.setPath("assets");
+        // Load Chess piece pngs
+        this.load.setPath("assets/ourChessPieces");
+        for (let rank of [PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING])
+            for (let alignment of [PLAYER, COMPUTER])
+                this.load.image(rank + alignment, rank + alignment + "4.png");
+    }
+
     scene;
     piecesTaken;
     x;
