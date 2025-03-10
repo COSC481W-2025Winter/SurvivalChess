@@ -503,8 +503,6 @@ export class BoardState {
 
     // Check whether king would be saved/un-threatened if move is made
     kingSaved(input, output, alignment) {
-        if (!this.#isChecked)
-            return true;
         let coordinate = this.#pieceCoordinates.getCoordinate(KING, alignment);
         let col = isSamePoint(input, coordinate) ? output[0] : coordinate[0];
         let row = isSamePoint(input, coordinate) ? output[1] : coordinate[1];
