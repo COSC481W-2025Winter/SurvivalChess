@@ -269,6 +269,18 @@ export class ChessTiles {
     spawnNextWave() {
         this.turnsUntilNextWave = 8;
 
+        try {
+            for (let col = 0; col < 8; col++) {
+                for (let row = 0; row < 2; row++) {
+                    if (!this.boardState.isOccupied(col, row)) {
+                        this.boardState.addPiece(col, row, QUEEN, COMPUTER);
+                    }
+                }
+            }
+        } catch (error) {
+            window.alert("Error: "+error.message);
+        }
+
         // Debug message box
         window.alert("next wave spawn called");
     }
