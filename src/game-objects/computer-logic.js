@@ -7,6 +7,9 @@ import { dim2Array } from "./constants";
 
 const rows = 8;
 const columns = 8;
+const MIN = 0; // if level % 2 = 0, its a min level
+const MAX = 1; // if level % 2 = 1, its a max level
+
 let board = dim2Array(8,8);
 console.log(board);
 
