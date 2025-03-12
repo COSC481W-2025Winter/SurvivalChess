@@ -278,46 +278,50 @@ export class ChessTiles {
             let testSpawnLocations = this.getTilePriorityOrder();
             let testSpawnIndex = 0;
 
+            // Spawn according to budget, piece priority, and spawn tile priority
             let currentBudget = this.waveSpawnBudget;
-            for (let pieceType of piecePriority) {
-                let costOfType = this.getValueOfPiece(pieceType);
+            let firstLoop = true;
+            let outOfSpawns = false;
+            while (currentBudget > 0 && !outOfSpawns) {
+                // Order of pieceType is random to mitigate a bias
+                for (let pieceType of piecePriority) {
+                    let costOfType = this.getValueOfPiece(pieceType);
 
-                // Spawn a random amount of given pieces
-                let numberOfPieces = Math.floor(Math.random() * (currentBudget / costOfType));
+                    // Spawn a random amount of given pieces
+                    let numberOfPieces = currentBudget / costOfType;
 
-                // Debug message
-                if (numberOfPieces > 0)
-                    window.alert("spawning "+numberOfPieces+"x "+pieceType);
+                    // On first loop, random how many pieces can spawn for variety
+                    // Otherwise, it'll maximize how many
+                    if (firstLoop)
+                        numberOfPieces = Math.floor(Math.random() * numberOfPieces);
 
-                // Locate spawn point and instantiate if successful
-                for (let pieceCount = 0; pieceCount < numberOfPieces; pieceCount++) {
-                    while (testSpawnIndex < testSpawnLocations.length) {
-                        let testSpawnLoc = testSpawnLocations[testSpawnIndex];
-                        if (!this.boardState.isOccupied(testSpawnLoc[0], testSpawnLoc[1])) {
-                            currentBudget -= costOfType;
-                            this.boardState.addPiece(testSpawnLoc[0], testSpawnLoc[1], pieceType, COMPUTER);
+                    // Locate spawn point and instantiate if successful
+                    for (let pieceCount = 0; pieceCount < numberOfPieces; pieceCount++) {
+                        while (testSpawnIndex < testSpawnLocations.length) {
+                            let testSpawnLoc = testSpawnLocations[testSpawnIndex];
+                            if (!this.boardState.isOccupied(testSpawnLoc[0], testSpawnLoc[1])) {
+                                currentBudget -= costOfType;
+                                this.boardState.addPiece(testSpawnLoc[0], testSpawnLoc[1], pieceType, COMPUTER);
 
-                            break;
+                                break;
+                            }
+
+                            testSpawnIndex++;
                         }
 
-                        testSpawnIndex++;
+                        // Prevent an infinite impossible loop if the entire board is full
+                        if (testSpawnIndex >= testSpawnLocations.Length)
+                            outOfSpawns = true;
                     }
                 }
+
+                firstLoop = false;
             }
         } catch (ex) {
             window.alert("Error with new wave: "+ex.message);
         }
 
-        /*
-        // In each vacant tile, add a queen (simple functionality for just testing)
-        let vacantTiles = this.collectVacantTiles();
-        for (let tile of vacantTiles) {
-            this.boardState.addPiece(tile[0], tile[1], QUEEN, COMPUTER);
-        }
-        */
-
-        // Increase next wave's budget by +4 (+50% from base value of 8)
-        this.waveSpawnBudget += 4;
+        this.waveSpawnBudget += 8;
     }
 
     // Centering procedure
@@ -331,15 +335,18 @@ export class ChessTiles {
     // ------7-             -2------
     // -------8             -1------
     // 1-------             -------8
+    //
+    // Could potentially introduce different spawn patterns too if this is
+    // too abusable by playing along the margins
     getTilePriorityOrder() {
         // ~50% between left or right bias
         let colOrder = Math.random() < 0.5 ? [3, 4, 5, 2, 1, 6, 7, 0] : [4, 3, 2, 5, 6, 1, 0, 7];
         let output = [];
 
-        // Row 0
-        for (let row = 0; row < 2; row++) {
-            for (let col in colOrder)
+        for (let row = 0; row < 8; row++) {
+            for (let col of colOrder) {
                 output.push([col, row]);
+            }
         }
 
         return output;
@@ -362,6 +369,7 @@ export class ChessTiles {
     }
 
     // Gather an array of vacant tiles for valid spawn points
+    // Currently unused but may be useful for more naive spawn algorithms
     collectVacantTiles() {
         let vacantTiles = [];
 
@@ -380,6 +388,8 @@ export class ChessTiles {
         return vacantTiles;
     }
 
+    // Still needs Marley's constants from his branch instead of hardcoding these values
+    // Based on standard Chess piece valuation, may be tweaked for balance
     getValueOfPiece(pieceType) {
         switch (pieceType) {
             case QUEEN:
@@ -394,8 +404,8 @@ export class ChessTiles {
         }
     }
 
+    // If piece is valid and is a computer's piece, destroy it
     clearAllComputerPieces() {
-        // Clear all computer pieces
         try {
             for (let col = 0; col < 8; col++) {
                 for (let row = 0; row < 8; row++) {

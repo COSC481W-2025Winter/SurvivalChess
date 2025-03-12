@@ -43,6 +43,7 @@ export class BoardState {
                             break;
                     }
             // Initialize Computer (black) pieces
+            /*
             for (let j = 0; j < 2; j++)
                 if (j == 1)
                     this.addPiece(i, j, PAWN, COMPUTER);
@@ -67,7 +68,14 @@ export class BoardState {
                             this.addPiece(i, j, KING, COMPUTER);
                             break;
                     }
+            */
         }
+
+        // Hard coded test simple enemy lineup for wave spawning
+        this.addPiece(2, 1, PAWN, COMPUTER);
+        this.addPiece(3, 1, PAWN, COMPUTER);
+        this.addPiece(4, 1, PAWN, COMPUTER);
+        this.addPiece(5, 1, PAWN, COMPUTER);
     }
 
     // ================================================================
