@@ -9,6 +9,7 @@ const rows = 8;
 const columns = 8;
 const MIN = 0; // if level % 2 = 0, its a min level
 const MAX = 1; // if level % 2 = 1, its a max level
+const LIMIT = 4; // depth of search
 
 let board = dim2Array(8,8);
 console.log(board);
@@ -20,5 +21,6 @@ class gameState {
         let board = dim2Array(8,8);
         // console.log(board);
         this.previous = previous; // previous move in the search chain
-    }
+        this.value;
+    };
 }
