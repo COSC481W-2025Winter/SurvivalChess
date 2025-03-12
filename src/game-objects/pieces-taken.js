@@ -106,7 +106,7 @@ export class PiecesTaken {
     }
 
     takePiece(rank, alignment) {
-        var inrow;
+        /*var inrow;
         var incol;
 
         //determine which rows to select from based on rank, alignment, and what pieces have been taken
@@ -192,7 +192,7 @@ export class PiecesTaken {
         this.piecesTaken[incol][inrow].setPosition(X_ANCHOR + this.y * TILE_SIZE, Y_ANCHOR + this.x * TILE_SIZE);
         this.piecesTaken[this.y][this.x] = this.piecesTaken[incol][inrow];
         this.piecesTaken[incol][inrow] = null;
-        this.updateXY();
+        this.updateXY();*/
     }
 
     //updates x and y to keep track of where to put the next captured piece
