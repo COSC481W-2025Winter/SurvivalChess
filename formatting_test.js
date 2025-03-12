@@ -47,3 +47,5 @@ const result = add(x, z); // Used 'let' instead of 'const'
 const resultSubtract = subtract(x, z); // Use 'subtract'
 fs.writeFileSync("example.txt", result);
 fs.writeFileSync("example.txt", resultSubtract);
+
+console.log("this is a commit test");
