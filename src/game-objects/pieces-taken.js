@@ -1,8 +1,7 @@
 //local constants for my "captured pieces" container
-const TILE_SIZE = 42;                       // width & height of each tile
-const X_ANCHOR = 1056 - 3.5 * TILE_SIZE;     // x pixel of leftmost tile
-const Y_ANCHOR = 194 - 3.5 * TILE_SIZE;     // y pixel of topmost tile for captured table
-const Z_ANCHOR = 500 - 3.5 * TILE_SIZE;     // y pixel of topmost tile for uncaptured table
+const TILE_SIZE = 52;                       // width & height of each tile
+const X_ANCHOR = 1100 - 3.5 * TILE_SIZE;     // x pixel of leftmost tile
+const Y_ANCHOR = 300 - 3.5 * TILE_SIZE;     // y pixel of topmost tile for captured table
 import { WHITE_TILE_COLOR, BLACK_TILE_COLOR, STAGE_COLOR, CREAMHEX, GREENHEX } from "./constants";
 import { PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING } from './constants';
 import { PLAYER, COMPUTER } from './constants';
@@ -50,17 +49,17 @@ export class PiecesTaken {
         this.nextPawnB = 0;
 
         this.scene.add.rectangle(
-            X_ANCHOR + 3.5 * TILE_SIZE,
-            Y_ANCHOR + 3.5 * TILE_SIZE,
-            9 * TILE_SIZE,
-            9 * TILE_SIZE,
+            1048,
+            144,
+            7 * TILE_SIZE,
+            3 * TILE_SIZE,
             WHITE_TILE_COLOR
         );
         
         // Set up captured pieces table
-        for (let i = 0; i < 8; i++) {
+        for (let i = 0; i < 6; i++) {
             this.piecesTaken.push([]);
-            for (let j = 0; j < 8; j++) {
+            for (let j = 0; j < 2; j++) {
                 // Initialize tiles
                 this.piecesTaken[i][j] = this.scene.add.rectangle(
                     X_ANCHOR + i * TILE_SIZE,
@@ -73,53 +72,23 @@ export class PiecesTaken {
             }
         }
 
-        this.scene.add.rectangle(
-            X_ANCHOR + 3.5 * TILE_SIZE,
-            Z_ANCHOR + 3.5 * TILE_SIZE,
-            9 * TILE_SIZE,
-            5 * TILE_SIZE,
-            WHITE_TILE_COLOR
-        );
-        
-        // Set up uncaptured pieces table
-        for (let i = 0; i < 8; i++) {
-            this.piecesTaken.push([]);
-            for (let j = 2; j < 6; j++) {
-                // Initialize tiles
-                this.piecesTaken[i][j] = this.scene.add.rectangle(
-                    X_ANCHOR + i * TILE_SIZE,
-                    Z_ANCHOR + j * TILE_SIZE,
-                    TILE_SIZE,
-                    TILE_SIZE,
-                    BLACK_TILE_COLOR
-                );
-        
-            }
-        }
 
-        for (let y = 0; y < 8; y++) {
-            this.addPiece(y, 3, PAWN, COMPUTER);
-            this.addPiece(y, 5, PAWN, PLAYER);
-        }
-        var j = 2;
-        this.addPiece(0, j, ROOK, COMPUTER);
+
+        var j = 0;
+        this.addPiece(0, j, PAWN, COMPUTER);
         this.addPiece(1, j, ROOK, COMPUTER);
         this.addPiece(2, j, KNIGHT, COMPUTER);
-        this.addPiece(3, j, KNIGHT, COMPUTER);
-        this.addPiece(4, j, BISHOP, COMPUTER);
-        this.addPiece(5, j, BISHOP, COMPUTER);
-        this.addPiece(6, j, QUEEN, COMPUTER);
-        this.addPiece(7, j, KING, COMPUTER);
+        this.addPiece(3, j, BISHOP, COMPUTER);
+        this.addPiece(4, j, QUEEN, COMPUTER);
+        this.addPiece(5, j, KING, COMPUTER);
 
-        var j = 4;
-        this.addPiece(0, j, ROOK, PLAYER);
+        var j = 1;
+        this.addPiece(0, j, PAWN, PLAYER);
         this.addPiece(1, j, ROOK, PLAYER);
         this.addPiece(2, j, KNIGHT, PLAYER);
-        this.addPiece(3, j, KNIGHT, PLAYER);
-        this.addPiece(4, j, BISHOP, PLAYER);
-        this.addPiece(5, j, BISHOP, PLAYER);
-        this.addPiece(6, j, QUEEN, PLAYER);
-        this.addPiece(7, j, KING, PLAYER);
+        this.addPiece(3, j, BISHOP, PLAYER);
+        this.addPiece(4, j, QUEEN, PLAYER);
+        this.addPiece(5, j, KING, PLAYER);
 
     }
 
@@ -128,7 +97,7 @@ export class PiecesTaken {
         this.piecesTaken[i][j] = new ChessPiece(
             this.scene,
             X_ANCHOR + i * TILE_SIZE,
-            Z_ANCHOR + j * TILE_SIZE,
+            Y_ANCHOR + j * TILE_SIZE,
             rank,
             alignment
         );

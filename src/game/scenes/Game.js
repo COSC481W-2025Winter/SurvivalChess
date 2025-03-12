@@ -84,7 +84,7 @@ export class Game extends Scene {
         });
 
 
-        settingsButton.setPosition(950, 60);
+        settingsButton.setPosition(1050, 600);
         settingsButton.setInteractive();
         settingsButton.setOrigin(0.5);
         settingsButton.on("pointerdown", new SettingsButton(this).click, this);
