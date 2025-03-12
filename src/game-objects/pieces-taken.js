@@ -3,7 +3,7 @@ const TILE_SIZE = 52;                       // width & height of each tile
 const X_ANCHOR = 1100 - 3.5 * TILE_SIZE;     // x pixel of leftmost tile
 const Y_ANCHOR = 300 - 3.5 * TILE_SIZE;     // y pixel of topmost tile for captured table
 import { WHITE_TILE_COLOR, BLACK_TILE_COLOR, STAGE_COLOR, CREAMHEX, GREENHEX } from "./constants";
-import { PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING } from './constants';
+import { PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING, START_TEXT_ONE, START_TEXT_TWO} from './constants';
 import { PLAYER, COMPUTER } from './constants';
 import { ChessPiece } from './chess-piece';
 
@@ -21,32 +21,21 @@ export class PiecesTaken {
 
     scene;
     piecesTaken;
-    x;
-    y;
-    wKnightTaken;
-    wRookTaken;
-    wBishopTaken;
-    bKnightTaken;
-    bRookTaken;
-    bBishopTaken;
-    nextPawnW;
-    nextPawnB;
 
     constructor (scene) {
 
         //set up variables to keep track of elements
         this.scene = scene;
         this.piecesTaken = [];
-        this.x = 0;
-        this.y = 0;
-        this.wKnightTaken = false;
-        this.wRookTaken = false;
-        this.wBishopTaken = false;
-        this.bKnightTaken = false;
-        this.bRookTaken = false;
-        this.bBishopTaken = false;
-        this.nextPawnW = 0;
-        this.nextPawnB = 0;
+
+        this.scene.add
+            .text(930, 18, "Captured Pieces:", {
+                fontFamily: "'Sans', sans-serif",
+                fontSize: 32,
+                color: START_TEXT_ONE
+            })
+            
+
 
         this.scene.add.rectangle(
             1048,
@@ -55,21 +44,16 @@ export class PiecesTaken {
             3 * TILE_SIZE,
             WHITE_TILE_COLOR
         );
-        
+        this.scene.add.rectangle(
+            1048,
+            144,
+            6 * TILE_SIZE,
+            2 * TILE_SIZE,
+            BLACK_TILE_COLOR
+        );
         // Set up captured pieces table
         for (let i = 0; i < 6; i++) {
             this.piecesTaken.push([]);
-            for (let j = 0; j < 2; j++) {
-                // Initialize tiles
-                this.piecesTaken[i][j] = this.scene.add.rectangle(
-                    X_ANCHOR + i * TILE_SIZE,
-                    Y_ANCHOR + j * TILE_SIZE,
-                    TILE_SIZE,
-                    TILE_SIZE,
-                    BLACK_TILE_COLOR
-                );
-        
-            }
         }
 
 
@@ -106,104 +90,56 @@ export class PiecesTaken {
     }
 
     takePiece(rank, alignment) {
-        /*var inrow;
-        var incol;
+        /*
 
-        //determine which rows to select from based on rank, alignment, and what pieces have been taken
+        //determine which count to update from based on rank and alignment
         if (alignment == PLAYER){
             if (rank == PAWN){
-                inrow = 5;
-                incol = this.nextPawnW;
-                this.nextPawnW += 1;
             } else {
-                inrow = 4;
                 if (rank == KNIGHT){
-                    if (this.wKnightTaken){
-                        incol = 3;
-                    } else {
-                        incol = 2;
-                        this.wKnightTaken = true;
-                    }
+
                 }
                 if (rank == ROOK){
-                    if (this.wRookTaken){
-                        incol = 1;
-                    } else {
-                        incol = 0;
-                        this.wRookTaken = true;
-                    }
+                    
                 }
                 if (rank == BISHOP){
-                    if (this.wBishopTaken){
-                        incol = 5;
-                    } else {
-                        incol = 4;
-                        this.wBishopTaken = true;
-                    }
+                    
                 }
                 if (rank == QUEEN){
-                    incol = 6;
+                    
                 }
                 if (rank == KING){
-                    incol = 7;
+                    
                 }
             }
         } else {
             if (rank == PAWN){
-                inrow = 3;
-                incol = this.nextPawnB;
-                this.nextPawnB += 1;
+                
             } else {
                 inrow = 2;
                 if (rank == KNIGHT){
-                    if (this.bKnightTaken){
-                        incol = 3;
-                    } else {
-                        incol = 2;
-                        this.bKnightTaken = true;
-                    }
+                    
                 }
                 if (rank == ROOK){
-                    if (this.bRookTaken){
-                        incol = 1;
-                    } else {
-                        incol = 0;
-                        this.bRookTaken = true;
-                    }
+                    
                 }
                 if (rank == BISHOP){
-                    if (this.bBishopTaken){
-                        incol = 5;
-                    } else {
-                        incol = 4;
-                        this.bBishopTaken = true;
-                    }
+                    
                 }
                 if (rank == QUEEN){
-                    incol = 6;
+                    
                 }
+                //this will be removed after the computer no longer has a
                 if (rank == KING){
-                    incol = 7;
+                    
                 }
             }
         }
 
 
-        this.piecesTaken[incol][inrow].setPosition(X_ANCHOR + this.y * TILE_SIZE, Y_ANCHOR + this.x * TILE_SIZE);
-        this.piecesTaken[this.y][this.x] = this.piecesTaken[incol][inrow];
-        this.piecesTaken[incol][inrow] = null;
-        this.updateXY();*/
+        */
     }
 
-    //updates x and y to keep track of where to put the next captured piece
-    updateXY() {
-        if (this.y == 7){
-            this.x += 1;
-            this.y = 0;
-        }else{
-            this.y += 1;
-        }
-    }
 
     
 }
