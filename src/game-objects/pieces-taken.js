@@ -9,7 +9,7 @@ import { PLAYER, COMPUTER } from './constants';
 import { ChessPiece } from './chess-piece';
 
 
-export class PiecesTaken{
+export class PiecesTaken {
 
     scene;
     piecesTaken;
@@ -24,7 +24,7 @@ export class PiecesTaken{
     nextPawnW;
     nextPawnB;
 
-    constructor (scene){
+    constructor (scene) {
 
         //set up variables to keep track of elements
         this.scene = scene;
@@ -218,7 +218,7 @@ export class PiecesTaken{
     }
 
     //updates x and y to keep track of where to put the next captured piece
-    updateXY(){
+    updateXY() {
         if (this.y == 7){
             this.x += 1;
             this.y = 0;
