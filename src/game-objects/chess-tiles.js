@@ -3,11 +3,14 @@ import { HOVER_COLOR, WHITE_TILE_COLOR, BLACK_TILE_COLOR, NON_LETHAL_COLOR, LETH
 import { PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING } from "./constants";
 import { PLAYER, COMPUTER } from "./constants";
 import { isSamePoint, dim2Array } from "./constants";
-import { DEV_MODE } from "./constants";
 import { BoardState } from "./board-state";
 import { EventBus } from "../game/EventBus";
 import { PieceCoordinates } from './piece-coordinates';
 import { PiecesTaken } from "./pieces-taken";
+
+import { dev_alignment, dev_rank, dev_bamzap, dev_stopOn } from "./dev-buttons";
+import { BAM, ZAP, STOP } from "./dev-buttons";
+import { DEV_BUTTONS } from "./dev-buttons";
 
 export class ChessTiles {
 
@@ -92,6 +95,7 @@ export class ChessTiles {
         this.pieceCoordinates = new PieceCoordinates();
         this.boardState = new BoardState(this.scene, this.pieceCoordinates);
         this.piecesTaken = new PiecesTaken(this.scene);
+        this.devButtons = new DEV_BUTTONS(this.scene, this);
     }
 
     // ================================================================
@@ -146,11 +150,23 @@ export class ChessTiles {
     }
 
     // Executes when tile is clicked
-    pointerSelect(i, j) {
+    pointerSelect(i, j, recursion=true) {
         let pointerOver = true;
     
+        // If in bam or zap mode (and is the first surface level invocation) create/destroy piece
+        if (dev_bamzap && recursion) {
+            this.unselect();
+            switch (dev_bamzap) {
+                case BAM:
+                    this.boardState.addPiece(i, j, dev_rank, dev_alignment, true);
+                    break;
+                case ZAP:
+                    this.boardState.destroyPiece(i, j);
+                    break;
+            }
+        }
         // If the tile is the same as the selected, unselect the piece
-        if (this.xy && isSamePoint(this.xy, [i, j])) {
+        else if (this.xy && isSamePoint(this.xy, [i, j])) {
             this.clearBoard();
         }
         // If the tile is occupied, check if the selected piece is the player's piece
@@ -158,6 +174,12 @@ export class ChessTiles {
             switch (this.boardState.getAlignment(i, j)) {
                 case this.currentPlayer: // If it's the current player's piece
                     this.clearBoard();
+
+                    // if checked & non-king is selected, revert king tile to checked color
+                    if (this.boardState.getRank(i, j) != KING && this.isChecked) {
+                        let coordinate = this.pieceCoordinates.getCoordinate(KING, this.currentPlayer);
+                        this.highlightColor(coordinate, CHECKED_COLOR);
+                    }
 
                     // Highlight tile and possible moves, and record the selected piece in xy
                     this.highlightColor([i, j], HOVER_COLOR);
@@ -198,7 +220,13 @@ export class ChessTiles {
             if (this.boardState.getRank(this.xy[0], this.xy[1]) == KING &&
                 Math.abs(this.xy[0] - i) == 2
             )
-                this.boardState.movePiece([i < this.xy[0] ? 0 : 7, j], [i < this.xy[0] ? 3 : 5, this.xy[1]])
+                this.boardState.movePiece([i < this.xy[0] ? 0 : 7, j], [i < this.xy[0] ? 3 : 5, this.xy[1]]);
+            
+            // if king-saving move not executed by king, restore king tile color
+            if (this.boardState.getRank(this.xy[0], this.xy[1]) != KING && this.isChecked) {
+                let coordinate = this.pieceCoordinates.getCoordinate(KING, this.currentPlayer);
+                this.restoreColor(coordinate);
+            }
 
             // move piece & clear board
             this.boardState.movePiece(this.xy, [i, j]);
@@ -225,15 +253,6 @@ export class ChessTiles {
                 let coordinate = this.pieceCoordinates.getCoordinate(KING, this.currentPlayer);
                 this.temp.push({ xy: coordinate, color: CHECKED_COLOR });
             }
-        }
-    }
-    
-    toggleTurn() {
-        this.currentPlayer = (this.currentPlayer === PLAYER) ? COMPUTER : PLAYER;
-        this.isChecked = this.boardState.isChecked(this.currentPlayer);
-        if (this.isChecked) {
-            let coordinate = this.pieceCoordinates.getCoordinate(KING, this.currentPlayer);
-            this.highlightColor(coordinate, CHECKED_COLOR);
         }
     }
     
@@ -268,6 +287,27 @@ export class ChessTiles {
 
     // ================================================================
     // Miscellaneous Methods
+
+    // Unselect the currently selected piece if any
+    unselect() {
+        if (this.xy) {
+            let col = this.xy[0];
+            let row = this.xy[1];
+            this.pointerSelect(col, row, false);
+            this.pointerOut(col, row);
+        }
+    }
+
+    // Toggle whose turn it is and perform board state condition checks
+    toggleTurn() {
+        if (!dev_stopOn)
+            this.currentPlayer = (this.currentPlayer === PLAYER) ? COMPUTER : PLAYER;
+        this.isChecked = this.boardState.isChecked(this.currentPlayer);
+        if (this.isChecked) {
+            let coordinate = this.pieceCoordinates.getCoordinate(KING, this.currentPlayer);
+            this.highlightColor(coordinate, CHECKED_COLOR);
+        }
+    }
 
     // Check whether the coordinate would be a valid move
     isValidMove([col, row]) {

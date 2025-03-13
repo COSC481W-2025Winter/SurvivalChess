@@ -35,8 +35,8 @@ const START_TEXT_TWO = HASH + MAHOGANY;     // secondary text color / outline co
 
 const FAWNHEX = "E5AA70";
 const MAHOGANYHEX = "C04000";
-const ONYXHEX = HASH + "3B3B3B";
-const CREAMHEX = HASH + "F4FFFD";
+const ONYXHEX = HASH + ONYX;
+const CREAMHEX = HASH + CREAM;
 const GREENHEX = "6E9075";
 
 const PAWN = "pawn";                        // pawn rank
@@ -51,8 +51,6 @@ const COMPUTER = "B";                       // computer alignment
 
 const EN_PASSANT_TOKEN = "en passant";      // en passant token
 
-const DEV_MODE = true; // enable development features; SET TO FALSE ON MAIN BRANCH
-
 export function isSamePoint([col1, row1], [col2, row2]) {
     return col1 == col2 && row1 == row2;
 }
@@ -61,16 +59,13 @@ export function dim2Array(dim1, dim2) {
     return Array.from(Array(dim1), () => new Array(dim2));
 }
 
-export { TILE_SIZE, X_ANCHOR, Y_ANCHOR };
+export { TILE_SIZE, X_ANCHOR, Y_ANCHOR }
 
-export { HOVER_COLOR, WHITE_TILE_COLOR, BLACK_TILE_COLOR, NON_LETHAL_COLOR, LETHAL_COLOR, THREAT_COLOR, CHECKED_COLOR, STAGE_COLOR };
-export { BACKGROUND_COLOR };
+export { HOVER_COLOR, WHITE_TILE_COLOR, BLACK_TILE_COLOR, NON_LETHAL_COLOR, LETHAL_COLOR, THREAT_COLOR, CHECKED_COLOR, STAGE_COLOR }
+export { BACKGROUND_COLOR }
 export { ONYXHEX, CREAMHEX, FAWNHEX, MAHOGANYHEX, GREENHEX }
-export { START_BACKGROUND_COLOR, START_TEXT_ONE, START_TEXT_TWO };
+export { START_BACKGROUND_COLOR, START_TEXT_ONE, START_TEXT_TWO }
 
-export { PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING };
-export { PLAYER, COMPUTER };
-export { EN_PASSANT_TOKEN };
-
-export { DEV_MODE };
-
+export { PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING }
+export { PLAYER, COMPUTER }
+export { EN_PASSANT_TOKEN }
