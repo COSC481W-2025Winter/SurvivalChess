@@ -1,0 +1,35 @@
+Setup Auto Linting on Save in VS Code
+Ensure that your code adheres to our projects formatting guidelines. Follow these steps to set it up:
+
+1. Install ESLint Extension in VS Code
+- Open VS Code.
+- Go to the Extensions view by clicking the Extensions icon in the Activity Bar on the side of the window
+- In the search bar, type ESLint and click Install on the extension by Microsoft.
+
+2. Install Project Dependencies
+- Open a terminal in the project folder.
+- Run the following command to install the new necessary dependenciess:
+npm install
+- This will install all the new dependencies listed in the package.json file, including ESLint and Prettier.
+
+3. Configure VS Code for Auto Linting on Save
+- Open the Command Palette by pressing Ctrl+Shift+P (Windows/Linux) or Cmd+Shift+P (Mac).
+- Type "Preferences: Open User Settings (JSON)" and press Enter to open your settings.json file.
+- Add or update the following settings to enable auto linting and auto fixing on save:
+,"editor.codeActionsOnSave": {
+    "source.fixAll": true,
+    "source.fixAll.eslint": true
+  },
+  "eslint.enable": true,
+  "eslint.alwaysShowStatus": true
+
+4. Verify It’s Working
+- Open a JavaScript file with some linting issues (e.g., missing semicolons, incorrect spacing, etc.).
+- Make a small change to the file or save the file.
+- ESLint will automatically fix any issues it can, and Prettier will format your code as per the configuration.
+
+Your code will now be auto-formatted on save. While ESLint is helpful, it cannot automatically do everything. 
+It is important to check for errors and fix anything left manually before commiting to GitHub
+- To see any issues that ESLint can not fix automatically, run the following in the terminal:
+npx eslint FILE_NAME.js
+- You may now manually fix any issues left
