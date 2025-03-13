@@ -3,14 +3,16 @@ import { HOVER_COLOR, WHITE_TILE_COLOR, BLACK_TILE_COLOR, NON_LETHAL_COLOR, LETH
 import { PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING } from "./constants";
 import { PLAYER, COMPUTER } from "./constants";
 import { isSamePoint, dim2Array } from "./constants";
+
 import { BoardState } from "./board-state";
-import { EventBus } from "../game/EventBus";
 import { PieceCoordinates } from './piece-coordinates';
 import { PiecesTaken } from "./pieces-taken";
 
 import { dev_alignment, dev_rank, dev_bamzap, dev_stopOn } from "./dev-buttons";
 import { BAM, ZAP, STOP } from "./dev-buttons";
 import { DEV_BUTTONS } from "./dev-buttons";
+
+import { EventBus } from "../game/EventBus";
 
 export class ChessTiles {
 
@@ -299,8 +301,8 @@ export class ChessTiles {
     }
 
     // Toggle whose turn it is and perform board state condition checks
-    toggleTurn() {
-        if (!dev_stopOn)
+    toggleTurn(override=false) {
+        if (override || !dev_stopOn)
             this.currentPlayer = (this.currentPlayer === PLAYER) ? COMPUTER : PLAYER;
         this.isChecked = this.boardState.isChecked(this.currentPlayer);
         if (this.isChecked) {

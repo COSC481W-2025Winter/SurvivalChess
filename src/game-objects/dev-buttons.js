@@ -132,7 +132,7 @@ export class DEV_BUTTONS {
 
         this.flipButton.on("pointerdown", () => {
             this.chessTiles.unselect();
-            this.chessTiles.toggleTurn();
+            this.chessTiles.toggleTurn(true);
         });
         this.stopButton.on("pointerdown", () => {
             dev_toggleFeature(STOP);
