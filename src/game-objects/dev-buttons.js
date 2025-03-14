@@ -39,7 +39,7 @@ function dev_toggleFeature(feature) {
     }
 }
 
-export class DEV_BUTTONS {
+export class DevButtons {
     
     constructor(scene, chessTiles) {
         this.scene = scene;

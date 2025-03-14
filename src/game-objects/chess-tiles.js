@@ -10,7 +10,7 @@ import { PiecesTaken } from "./pieces-taken";
 
 import { dev_alignment, dev_rank, dev_bamzap, dev_stopOn } from "./dev-buttons";
 import { BAM, ZAP, STOP } from "./dev-buttons";
-import { DEV_BUTTONS } from "./dev-buttons";
+import { DevButtons } from "./dev-buttons";
 
 import { EventBus } from "../game/EventBus";
 
@@ -97,7 +97,7 @@ export class ChessTiles {
         this.pieceCoordinates = new PieceCoordinates();
         this.boardState = new BoardState(this.scene, this.pieceCoordinates);
         this.piecesTaken = new PiecesTaken(this.scene);
-        this.devButtons = new DEV_BUTTONS(this.scene, this);
+        this.devButtons = new DevButtons(this.scene, this);
     }
 
     // ================================================================
@@ -212,20 +212,20 @@ export class ChessTiles {
         // If not occupied and move is valid, move the piece
         else if (this.xy && this.isValidMove([i, j])) {
             // if en passant move, destroy enemy pawn
-            if (this.boardState.getRank(this.xy[0], this.xy[1]) == PAWN &&
+            if (this.boardState.getRank(...this.xy) == PAWN &&
                 this.boardState.isEnPassant(i, j)
             ) {
                 this.capturePiece(this.boardState.getRank(i, this.xy[1]), this.boardState.getAlignment(i, this.xy[1]));
                 this.boardState.destroyPiece(i, this.xy[1]);
             }
             // if castling move, also move rook
-            if (this.boardState.getRank(this.xy[0], this.xy[1]) == KING &&
+            if (this.boardState.getRank(...this.xy) == KING &&
                 Math.abs(this.xy[0] - i) == 2
             )
                 this.boardState.movePiece([i < this.xy[0] ? 0 : 7, j], [i < this.xy[0] ? 3 : 5, this.xy[1]]);
             
             // if king-saving move not executed by king, restore king tile color
-            if (this.boardState.getRank(this.xy[0], this.xy[1]) != KING && this.isChecked) {
+            if (this.boardState.getRank(...this.xy) != KING && this.isChecked) {
                 let coordinate = this.pieceCoordinates.getCoordinate(KING, this.currentPlayer);
                 this.restoreColor(coordinate);
             }
