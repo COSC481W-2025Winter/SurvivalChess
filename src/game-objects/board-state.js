@@ -28,30 +28,30 @@ export class BoardState {
     }
 
     // initialize player pieces (and computer pieces for testing purposes)
-    initializePieces(alignment) {
+    initializePieces(alignment, replace=false) {
         for (let i = 0; i < 8; i++) {
             for (let j of alignment == PLAYER ? [6, 7] : [0, 1])
                 if (j == 6 || j==1)
-                    this.addPiece(i, j, PAWN, alignment);
+                    this.addPiece(i, j, PAWN, alignment, replace);
                 else
                     switch (i) {
                         case 0:
                         case 7:
-                            this.addPiece(i, j, ROOK, alignment);
+                            this.addPiece(i, j, ROOK, alignment, replace);
                             break;
                         case 1:
                         case 6:
-                            this.addPiece(i, j, KNIGHT, alignment);
+                            this.addPiece(i, j, KNIGHT, alignment, replace);
                             break;
                         case 2:
                         case 5:
-                            this.addPiece(i, j, BISHOP, alignment);
+                            this.addPiece(i, j, BISHOP, alignment, replace);
                             break;
                         case 3:
-                            this.addPiece(i, j, QUEEN, alignment);
+                            this.addPiece(i, j, QUEEN, alignment, replace);
                             break;
                         case 4:
-                            this.addPiece(i, j, KING, alignment);
+                            this.addPiece(i, j, KING, alignment, replace);
                             break;
                     }
         }
@@ -66,7 +66,7 @@ export class BoardState {
     }
 
     // Check whether coordinate has chess piece
-    isOccupied(col, row, ignoreTile = null) {
+    isOccupied(col, row, ignoreTile=null) {
         if (ignoreTile && isSamePoint([col, row], ignoreTile))
             return false;
         return this.#boardState[col][row] && this.#boardState[col][row] != EN_PASSANT_TOKEN;
@@ -100,7 +100,12 @@ export class BoardState {
     // Chess Piece Management (Adding & Moving & Destruction)
 
     // Add piece of chosen rank & alignment to coordinate
-    addPiece(col, row, rank, alignment) {
+    addPiece(col, row, rank, alignment, replace=false) {
+        if (!replace && this.isOccupied(col, row))
+            return false;
+        if (this.isOccupied(col, row))
+            this.destroyPiece(col, row);
+        
         this.#boardState[col][row] = new ChessPiece(
             this.#scene,
             X_ANCHOR + col * TILE_SIZE,
@@ -112,6 +117,8 @@ export class BoardState {
         this.#scene.add.existing(this.#boardState[col][row]);
 
         this.#pieceCoordinates.addCoordinate(col, row, rank, alignment);
+
+        return true;
     }
 
     // Move piece in input coordinate to output coordinate
@@ -120,6 +127,9 @@ export class BoardState {
         let inrow = input[1];
         let outcol = output[0];
         let outrow = output[1];
+
+        if (!this.isOccupied(incol, inrow) || this.isOccupied(outcol, outrow))
+            return false;
 
         this.destroyEnPassantToken();
         if (this.getRank(incol, inrow) == PAWN && Math.abs(inrow - outrow) == 2)
@@ -136,16 +146,32 @@ export class BoardState {
         let rank = this.#boardState[outcol][outrow].getRank();
         let alignment = this.#boardState[outcol][outrow].getAlignment();
         this.#pieceCoordinates.moveCoordinate(input, output, rank, alignment);
+
+        return true;
     }
 
     // Completely destroy the piece
     destroyPiece(col, row) {
+        if (!this.isOccupied(col, row))
+            return false;
+
         let rank = this.#boardState[col][row].getRank();
         let alignment = this.#boardState[col][row].getAlignment();
         this.#pieceCoordinates.deleteCoordinate(col, row, rank, alignment);
 
         this.#boardState[col][row].destroy();
         this.#boardState[col][row] = null;
+
+        return true;
+    }
+
+    // Destroy all pieces of given alignment
+    zapPieces(alignment) {
+        for (let i = 0; i < 8; i++) {
+            for (let j = 0; j < 8; j++)
+                if (this.isOccupied(i, j) && this.getAlignment(i, j) == alignment)
+                    this.destroyPiece(i, j);
+        }
     }
 
     // ================================================================
@@ -172,7 +198,7 @@ export class BoardState {
     }
 
     // Check whether coordinate has different alignment
-    isDiffAlignment(col, row, alignment, supposeTile = null) {
+    isDiffAlignment(col, row, alignment, supposeTile=null) {
         if (supposeTile && isSamePoint([col, row], supposeTile))
             return false;
         return alignment != this.getAlignment(col, row);
@@ -377,7 +403,7 @@ export class BoardState {
 
     // Seek for possible threats to a hypothetical chess piece at a coordinate & of an alignment
     // Whilst Optionally ignoring occupancy of a coordinate (mostly for when moving pieces)
-    seekThreats(col, row, alignment, ignoreTile = null, supposeTile = null) {
+    seekThreats(col, row, alignment, ignoreTile=null, supposeTile=null) {
         return []
             .concat(this.seekAdjacent(col, row, alignment, supposeTile))
             .concat(this.seekSkewed(col, row, alignment, supposeTile))
@@ -386,7 +412,7 @@ export class BoardState {
     }
 
     // Seek for possible adjacent threats (pawns & kings)
-    seekAdjacent(col, row, alignment, supposeTile = null) {
+    seekAdjacent(col, row, alignment, supposeTile=null) {
         let threats = [];
 
         for (let i = col - 1; i <= col + 1; i++)
@@ -408,7 +434,7 @@ export class BoardState {
     }
 
     // Seek for possible skewed threats (knights)
-    seekSkewed(col, row, alignment, supposeTile = null) {
+    seekSkewed(col, row, alignment, supposeTile=null) {
         let threats = [];
 
         let x_s = [1, 1, -1, -1, 2, 2, -2, -2];
@@ -426,7 +452,7 @@ export class BoardState {
     }
 
     // Seek for possible orthogonal threats (rooks & queens)
-    seekOrthogonal(col, row, alignment, ignoreTile = null, supposeTile = null) {
+    seekOrthogonal(col, row, alignment, ignoreTile=null, supposeTile=null) {
         let threats = [];
 
         let i, j;
@@ -455,7 +481,7 @@ export class BoardState {
     }
 
     // Seek for possible diagonal threats (bishops & queens)
-    seekDiagonal(col, row, alignment, ignoreTile = null, supposeTile = null) {
+    seekDiagonal(col, row, alignment, ignoreTile=null, supposeTile=null) {
         let threats = [];
 
         let i, j;
@@ -484,7 +510,7 @@ export class BoardState {
     }
 
     // Check whether a coordinate is a threat
-    seekTile(col, row, alignment, threats, compareRank, ignoreTile = null) {
+    seekTile(col, row, alignment, threats, compareRank, ignoreTile=null) {
         if (this.isOccupied(col, row, ignoreTile)) {
             let rank = this.getRank(col, row);
             let isThreat = rank == compareRank || ((compareRank == ROOK || compareRank == BISHOP) && rank == QUEEN);
@@ -497,7 +523,7 @@ export class BoardState {
     }
 
     // Check whether a coordinate is supposed by an ally piece
-    seekSupposed(col, row, supposeTile = null) {
+    seekSupposed(col, row, supposeTile=null) {
         return supposeTile && isSamePoint(supposeTile, [col, row]);
     }
 
