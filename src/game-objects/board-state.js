@@ -28,64 +28,33 @@ export class BoardState {
     }
 
     // initialize player pieces (and computer pieces for testing purposes)
-    initializePieces(alignment) {
+    initializePieces(alignment, replace=false) {
         for (let i = 0; i < 8; i++) {
             for (let j of alignment == PLAYER ? [6, 7] : [0, 1])
                 if (j == 6 || j==1)
-                    this.addPiece(i, j, PAWN, alignment);
+                    this.addPiece(i, j, PAWN, alignment, replace);
                 else
                     switch (i) {
                         case 0:
                         case 7:
-                            this.addPiece(i, j, ROOK, alignment);
+                            this.addPiece(i, j, ROOK, alignment, replace);
                             break;
                         case 1:
                         case 6:
-                            this.addPiece(i, j, KNIGHT, alignment);
+                            this.addPiece(i, j, KNIGHT, alignment, replace);
                             break;
                         case 2:
                         case 5:
-                            this.addPiece(i, j, BISHOP, alignment);
+                            this.addPiece(i, j, BISHOP, alignment, replace);
                             break;
                         case 3:
-                            this.addPiece(i, j, QUEEN, alignment);
+                            this.addPiece(i, j, QUEEN, alignment, replace);
                             break;
                         case 4:
-                            this.addPiece(i, j, KING, PLAYER);
-                            break;
-                    }
-            for (let j = 0; j < 2; j++)
-                if (j == 1)
-                    this.addPiece(i, j, PAWN, COMPUTER);
-                else
-                    switch (i) {
-                        case 0:
-                        case 7:
-                            this.addPiece(i, j, ROOK, COMPUTER);
-                            break;
-                        case 1:
-                        case 6:
-                            this.addPiece(i, j, KNIGHT, COMPUTER);
-                            break;
-                        case 2:
-                        case 5:
-                            this.addPiece(i, j, BISHOP, COMPUTER);
-                            break;
-                        case 3:
-                            this.addPiece(i, j, QUEEN, COMPUTER);
-                            break;
-                        case 4:
-                            this.addPiece(i, j, KING, COMPUTER);
-                            this.addPiece(i, j, KING, alignment);
+                            this.addPiece(i, j, KING, alignment, replace);
                             break;
                     }
         }
-
-        // Hard coded test simple enemy lineup for wave spawning
-        this.addPiece(2, 1, PAWN, COMPUTER);
-        this.addPiece(3, 1, PAWN, COMPUTER);
-        this.addPiece(4, 1, PAWN, COMPUTER);
-        this.addPiece(5, 1, PAWN, COMPUTER);
     }
 
     // ================================================================
