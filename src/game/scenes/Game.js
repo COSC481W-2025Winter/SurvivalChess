@@ -2,10 +2,9 @@ import { Scene } from "phaser";
 import { EventBus } from "../EventBus";
 
 import { SettingsButton } from "./SettingsButton";
-
 import { RulesButton } from "./RulesButton";
-import { ChessTiles } from '../../game-objects/chess-tiles';
 
+import { ChessTiles } from '../../game-objects/chess-tiles';
 
 import { PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING } from "../../game-objects/constants";
 import { CREAMHEX, ONYXHEX } from "../../game-objects/constants";
@@ -15,35 +14,24 @@ export class Game extends Scene {
     constructor() {
         super("MainGame");
     }
+
     preload() {
         this.load.setPath("assets");
         // Load Chess piece pngs
-        this.load.setPath("assets/drummyfish chess");
+        this.load.setPath("assets/ourChessPieces");
         for (let rank of [PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING])
             for (let alignment of [PLAYER, COMPUTER])
-                this.load.image(rank + alignment, rank + alignment + ".png");
+                this.load.image(rank + alignment, rank + alignment + "4.png");
     }
 
     create() {
 
         this.add.image(512, 384, "background");
-        //         this.add.image(512, 350, "star").setDepth(100);
-        //         this.add
-        //             .text(512, 490, "You are currently playing the game", {
-        //                 fontFamily: "Arial Black",
-        //                 fontSize: 38,
-        //                 color: "#ffffff",
-        //                 stroke: "#000000",
-        //                 strokeThickness: 8,
-        //                 align: "center",
-        //             })
-        //             .setOrigin(0.5)
-        //             .setDepth(100);
 
 
 
         // and a board, and an icon, and a black tile, and a white tile; Totaling to 40 images
-new ChessTiles(this);
+        new ChessTiles(this);
 
         const endButton = this.add.text(100, 100, "End Game!", {
             fill: CREAMHEX,
@@ -54,21 +42,16 @@ new ChessTiles(this);
         endButton.setInteractive();
         endButton.setOrigin(0.5);
 
-        // endButton.on("pointerdown", () => {
-        //     this.scene.start("GameOver"); // Reset to original size
-        // });
-
         endButton.on(
             "pointerdown",
             function () {
-                
                 import("./GameOver") // 
                     .then((module) => {
                         // Only add the scene if it's not already registered
                         if (!this.scene.get("GameOver")) {
                             this.scene.add("GameOver", module.GameOver); // Add the MainGame scene dynamically
                         }
- // Start the MainGame scene
+                        // Start the MainGame scene
                         this.scene.start("GameOver");
                     });
             },
@@ -101,7 +84,7 @@ new ChessTiles(this);
         });
 
 
-        settingsButton.setPosition(950, 60);
+        settingsButton.setPosition(1050, 600);
         settingsButton.setInteractive();
         settingsButton.setOrigin(0.5);
         settingsButton.on("pointerdown", new SettingsButton(this).click, this);
@@ -121,7 +104,7 @@ new ChessTiles(this);
         rulesButton.setPosition(1050, 650);
 
         rulesButton.setInteractive();
-   rulesButton.setOrigin(0.5);
+        rulesButton.setOrigin(0.5);
         rulesButton.on("pointerdown", new RulesButton(this).click, this);
 
         // When the pointer hovers over the button, scale it up

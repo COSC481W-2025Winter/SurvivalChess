@@ -13,6 +13,7 @@ const ONYX = "3B3B3B";
 const CREAM = "F4FFFD";
 const GREEN = "6E9075";
 const DARK_BROWN = "5C4033";
+const BLACK = "000000";
 
 const ZEROX = "0x";
 const HASH = "#";
@@ -23,6 +24,7 @@ const BLACK_TILE_COLOR = ZEROX + MAHOGANY;  // black tile color
 const NON_LETHAL_COLOR = ZEROX + VIOLET;    // non-lethal move color
 const LETHAL_COLOR = ZEROX + MAGNETA;       // lethal move color
 const THREAT_COLOR = ZEROX + AZURE;         // threat color
+const CHECKED_COLOR = ZEROX + BLACK;        // checked color
 const STAGE_COLOR = ZEROX + DARK_BROWN;     // chessboard stage color
 
 const BACKGROUND_COLOR = ZEROX + ONYX;
@@ -31,10 +33,16 @@ const START_BACKGROUND_COLOR = ZEROX + FAWN;
 const START_TEXT_ONE = HASH + CREAM;        // main text color
 const START_TEXT_TWO = HASH + MAHOGANY;     // secondary text color / outline color
 
+const RULES_BACKGROUND_COLOR = ZEROX + MAHOGANY;
+const RULES_BACKGROUND_COLOR_TWO = ZEROX + CREAM;
+const RULES_TEXT_ONE = HASH + MAHOGANY;        // main text color
+const RULES_TEXT_TWO = HASH + FAWN;     // secondary text color / outline color
+const RULES_TEXT_THREE = HASH + CREAM;
+
 const FAWNHEX = "E5AA70";
 const MAHOGANYHEX = "C04000";
 const ONYXHEX = HASH + "3B3B3B";
-const CREAMHEX = HASH+ "F4FFFD";
+const CREAMHEX = HASH + "F4FFFD";
 const GREENHEX = "6E9075";
 
 const PAWN = "pawn";                        // pawn rank
@@ -61,10 +69,11 @@ export function dim2Array(dim1, dim2) {
 
 export { TILE_SIZE, X_ANCHOR, Y_ANCHOR };
 
-export { HOVER_COLOR, WHITE_TILE_COLOR, BLACK_TILE_COLOR, NON_LETHAL_COLOR, LETHAL_COLOR, THREAT_COLOR, STAGE_COLOR };
+export { HOVER_COLOR, WHITE_TILE_COLOR, BLACK_TILE_COLOR, NON_LETHAL_COLOR, LETHAL_COLOR, THREAT_COLOR, CHECKED_COLOR, STAGE_COLOR };
 export { BACKGROUND_COLOR };
 export { ONYXHEX, CREAMHEX, FAWNHEX, MAHOGANYHEX, GREENHEX }
 export { START_BACKGROUND_COLOR, START_TEXT_ONE, START_TEXT_TWO };
+export { RULES_BACKGROUND_COLOR, RULES_BACKGROUND_COLOR_TWO, RULES_TEXT_ONE, RULES_TEXT_TWO, RULES_TEXT_THREE };
 
 export { PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING };
 export { PLAYER, COMPUTER };
