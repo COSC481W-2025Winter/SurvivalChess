@@ -107,6 +107,13 @@ export class ChessTiles {
         // highlight tile
         this.highlightColor([i, j], HOVER_COLOR);
 
+        // also highlight the corresponding numbers/letters for clarity
+        this.sideLights[0][i].setColor("#FFD700"); // Top letters (gold)
+        this.sideLights[1][i].setColor("#FFD700"); // Bottom letters
+        this.sideLights[2][j].setColor("#FFD700"); // Left numbers
+        this.sideLights[3][j].setColor("#FFD700"); // Right numbers
+
+
         // if hovering over a piece then highlight this.threats excluding the selected piece
         if (this.boardState.isOccupied(i, j)) {
             this.threats = this.boardState.seekThreats(i, j, this.boardState.getAlignment(i, j))
@@ -143,6 +150,12 @@ export class ChessTiles {
 
         this.temp = null;
         this.threats = null;
+
+        // remove sideLights on pointer out
+        this.sideLights[0][i].setColor("#FFFFFF"); // Top letters (white)
+        this.sideLights[1][i].setColor("#FFFFFF"); // Bottom letters
+        this.sideLights[2][j].setColor("#FFFFFF"); // Left numbers
+        this.sideLights[3][j].setColor("#FFFFFF"); // Right numbers
     }
 
     // Executes when tile is clicked
