@@ -1,5 +1,6 @@
 import { TILE_SIZE, X_ANCHOR, Y_ANCHOR } from "./constants";
 import { HOVER_COLOR, WHITE_TILE_COLOR, BLACK_TILE_COLOR, NON_LETHAL_COLOR, LETHAL_COLOR, THREAT_COLOR, CHECKED_COLOR, STAGE_COLOR } from "./constants";
+import { SIDE_BASE_COLOR, SIDE_HIGHLIGHT_COLOR } from "./constants";
 import { PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING } from "./constants";
 import { PLAYER, COMPUTER } from "./constants";
 import { isSamePoint, dim2Array } from "./constants";
@@ -113,6 +114,12 @@ export class ChessTiles {
         // highlight tile
         this.highlightColor([i, j], HOVER_COLOR);
 
+        // also highlight the corresponding numbers/letters for clarity
+        this.sideLights[0][i].setColor(SIDE_HIGHLIGHT_COLOR);   // Top letters (gold)
+        this.sideLights[1][i].setColor(SIDE_HIGHLIGHT_COLOR);   // Bottom letters
+        this.sideLights[2][j].setColor(SIDE_HIGHLIGHT_COLOR);   // Left numbers
+        this.sideLights[3][j].setColor(SIDE_HIGHLIGHT_COLOR);   // Right numbers
+
         // if hovering over a piece then highlight this.threats excluding the selected piece
         if (this.boardState.isOccupied(i, j)) {
             this.threats = this.boardState.seekThreats(i, j, this.boardState.getAlignment(i, j))
@@ -149,6 +156,12 @@ export class ChessTiles {
 
         this.temp = null;
         this.threats = null;
+
+        // remove sideLights on pointer out
+        this.sideLights[0][i].setColor(SIDE_BASE_COLOR);    // Top letters (white)
+        this.sideLights[1][i].setColor(SIDE_BASE_COLOR);    // Bottom letters
+        this.sideLights[2][j].setColor(SIDE_BASE_COLOR);    // Left numbers
+        this.sideLights[3][j].setColor(SIDE_BASE_COLOR);    // Right numbers
     }
 
     // Executes when tile is clicked

@@ -133,6 +133,11 @@ describe("", () => {
             this.style = style;
             return this;
         }
+        
+        setColor(color) {
+            this.style.fill = color;
+            return this;
+        }
     }
 
     // Mock Event Listener
