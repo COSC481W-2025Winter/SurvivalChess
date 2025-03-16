@@ -230,48 +230,50 @@ export class ChessTiles {
         }
     }
     
-    toggleTurn() {
-        if (this.currentPlayer == PLAYER) {
+    toggleTurn(override=false) {
+        if (override || !dev_stopOn) {
+            if (this.currentPlayer == PLAYER) {
 
-            // If we're about to switch to the computer, check if any piece has valid moves
-            // If they do not, all their pieces are purged and replaced, and player keeps playing
-            // This should also automatically handle being out of pieces
-            let computerHasValidMove = false;
+                // If we're about to switch to the computer, check if any piece has valid moves
+                // If they do not, all their pieces are purged and replaced, and player keeps playing
+                // This should also automatically handle being out of pieces
+                let computerHasValidMove = false;
 
-            try {
-                for (let x = 0; x < 8; x++) {
-                    for (let y = 0; y < 8; y++) {
-                        if (this.boardState.getAlignment(x, y) == COMPUTER) {
-                            // If we have any moves, set check variable to true
-                            let moves = this.boardState.searchMoves(x, y);
-                            if (moves.length > 0) {
-                                computerHasValidMove = true;
-                                break;
+                try {
+                    for (let x = 0; x < 8; x++) {
+                        for (let y = 0; y < 8; y++) {
+                            if (this.boardState.getAlignment(x, y) == COMPUTER) {
+                                // If we have any moves, set check variable to true
+                                let moves = this.boardState.searchMoves(x, y);
+                                if (moves.length > 0) {
+                                    computerHasValidMove = true;
+                                    break;
+                                }
                             }
                         }
+
+                        // For escaping out of x row as well
+                        if (computerHasValidMove)
+                            break;
                     }
-
-                    // For escaping out of x row as well
-                    if (computerHasValidMove)
-                        break;
+                } catch (error) {
+                    window.alert("Error while checking computer moves: "+error.message);
                 }
-            } catch (error) {
-                window.alert("Error while checking computer moves: "+error.message);
-            }
 
-            // If we do, permit the computer to make a move
-            if (computerHasValidMove) {
-                this.currentPlayer = COMPUTER;
-                this.turnsUntilNextWave--;
-                if (this.turnsUntilNextWave == 0) {
+                // If we do, permit the computer to make a move
+                if (computerHasValidMove) {
+                    this.currentPlayer = COMPUTER;
+                    this.turnsUntilNextWave--;
+                    if (this.turnsUntilNextWave == 0) {
+                        this.spawnNextWave();
+                    }
+                } else {
+                    // No moves means we clear all pieces and instantly start the next wave
+                    this.clearAllComputerPieces();
                     this.spawnNextWave();
                 }
-            } else {
-                // No moves means we clear all pieces and instantly start the next wave
-                this.clearAllComputerPieces();
-                this.spawnNextWave();
-            }
-        } else this.currentPlayer = PLAYER;
+            } else this.currentPlayer = PLAYER;
+        }
 
         this.isChecked = this.boardState.isChecked(this.currentPlayer);
         if (this.isChecked) {
