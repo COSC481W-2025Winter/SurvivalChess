@@ -1,4 +1,4 @@
-import { TILE_SIZE, X_ANCHOR, Y_ANCHOR } from "./constants";
+import { TILE_SIZE, X_CENTER, Y_CENTER, X_ANCHOR, Y_ANCHOR } from "./constants";
 import { HOVER_COLOR, WHITE_TILE_COLOR, BLACK_TILE_COLOR, NON_LETHAL_COLOR, LETHAL_COLOR, THREAT_COLOR, CHECKED_COLOR, STAGE_COLOR } from "./constants";
 import { SIDE_BASE_COLOR, SIDE_HIGHLIGHT_COLOR } from "./constants";
 import { PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING } from "./constants";
@@ -8,6 +8,10 @@ import { isSamePoint, dim2Array } from "./constants";
 import { BoardState } from "./board-state";
 import { PieceCoordinates } from './piece-coordinates';
 import { PiecesTaken } from "./pieces-taken";
+
+import { CHECKMATE, STALEMATE } from "./global-stats";
+import { setGlobalStatus, incrementGlobalMoves, incrementGlobalPieces, incrementGlobalWaves } from "./global-stats";
+import { resetGlobalStatus, resetGlobalMoves, resetGlobalPieces, resetGlobalWaves } from "./global-stats";
 
 import { dev_alignment, dev_rank, dev_bamzap, dev_stopOn } from "./dev-buttons";
 import { BAM, ZAP, STOP } from "./dev-buttons";
@@ -94,6 +98,12 @@ export class ChessTiles {
                 });
             }
         }
+
+        // Reset game stats
+        resetGlobalStatus();
+        resetGlobalMoves();
+        resetGlobalPieces();
+        resetGlobalWaves();
 
         this.pieceCoordinates = new PieceCoordinates();
         this.boardState = new BoardState(this.scene, this.pieceCoordinates);
@@ -213,9 +223,15 @@ export class ChessTiles {
                         this.capturePiece(this.boardState.getRank(i, j), this.boardState.getAlignment(i, j));
                         this.boardState.destroyPiece(i, j);
                         this.boardState.movePiece(this.xy, [i, j]);
+                        if (this.currentPlayer == PLAYER) {
+                            incrementGlobalPieces();
+                            incrementGlobalMoves();
+                        }
+
                         // check to see if move results in pawn promotion
                         this.checkPromotion([i, j]);
                         this.clearBoard();
+
                         // Toggle turn after the move
                         this.toggleTurn();
                     }
@@ -245,6 +261,9 @@ export class ChessTiles {
 
             // move piece & clear board
             this.boardState.movePiece(this.xy, [i, j]);
+            if (this.currentPlayer == PLAYER)
+                incrementGlobalMoves();
+
             // check to see if move results in pawn promotion
             this.checkPromotion([i, j]);
             this.clearBoard();
@@ -315,13 +334,34 @@ export class ChessTiles {
 
     // Toggle whose turn it is and perform board state condition checks
     toggleTurn(override=false) {
+        // if Flip! is clicked (override) or Stop! is enabled
         if (override || !dev_stopOn)
             this.currentPlayer = (this.currentPlayer === PLAYER) ? COMPUTER : PLAYER;
+
+        // if king is checked highlight their tile
         this.isChecked = this.boardState.isChecked(this.currentPlayer);
         if (this.isChecked) {
             let coordinate = this.pieceCoordinates.getCoordinate(KING, this.currentPlayer);
             this.highlightColor(coordinate, CHECKED_COLOR);
         }
+
+        // if checkmate or stalemate, set status & end game
+        let status = null;
+        if (this.boardState.isCheckmated(this.currentPlayer))
+            status = CHECKMATE;
+        if (this.boardState.isStalemated(this.currentPlayer))
+            status = STALEMATE;
+        setGlobalStatus(status);
+        if (status)
+            import("../game/scenes/GameOver")
+                .then((module) => {
+                    // Only add the scene if it's not already registered
+                    if (!this.scene.scene.get("GameOver")) {
+                        this.scene.scene.add("GameOver", module.GameOver); // Add the MainGame scene dynamically
+                    }
+                    // Start the MainGame scene
+                    this.scene.scene.start("GameOver");
+                });
     }
 
     // Check whether the coordinate would be a valid move
