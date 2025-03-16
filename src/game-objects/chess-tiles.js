@@ -284,7 +284,7 @@ export class ChessTiles {
                 try {
                     for (let x = 0; x < 8; x++) {
                         for (let y = 0; y < 8; y++) {
-                            if (this.boardState.getAlignment(x, y) == COMPUTER) {
+                            if (this.boardState.isOccupied(x, y) && this.boardState.getAlignment(x, y) == COMPUTER) {
                                 // If we have any moves, set check variable to true
                                 let moves = this.boardState.searchMoves(x, y);
                                 if (moves.length > 0) {
@@ -470,7 +470,7 @@ export class ChessTiles {
         try {
             for (let col = 0; col < 8; col++) {
                 for (let row = 0; row < 8; row++) {
-                    if (this.boardState.pieceIsValid(col, row) && this.boardState.getAlignment(col, row) === COMPUTER) {
+                    if (this.boardState.isOccupied(col, row) && this.boardState.getAlignment(col, row) === COMPUTER) {
                         this.boardState.destroyPiece(col, row);
                     }
                 }
@@ -520,17 +520,6 @@ export class ChessTiles {
             let row = this.xy[1];
             this.pointerSelect(col, row, false);
             this.pointerOut(col, row);
-        }
-    }
-
-    // Toggle whose turn it is and perform board state condition checks
-    toggleTurn(override=false) {
-        if (override || !dev_stopOn)
-            this.currentPlayer = (this.currentPlayer === PLAYER) ? COMPUTER : PLAYER;
-        this.isChecked = this.boardState.isChecked(this.currentPlayer);
-        if (this.isChecked) {
-            let coordinate = this.pieceCoordinates.getCoordinate(KING, this.currentPlayer);
-            this.highlightColor(coordinate, CHECKED_COLOR);
         }
     }
 

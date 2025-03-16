@@ -179,11 +179,7 @@ export class BoardState {
 
     // Get alignment info of piece
     getAlignment(col, row) {
-        if (this.pieceIsValid(col, row))
-            if (this.#boardState[col][row] instanceof ChessPiece)
-                return this.#boardState[col][row].getAlignment();
-        
-        return "x";
+        return this.#boardState[col][row].getAlignment();
     }
 
     // Get rank info of piece
