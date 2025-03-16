@@ -311,7 +311,7 @@ export class ChessTiles {
                     }
                 } else {
                     // No moves means we clear all pieces and instantly start the next wave
-                    this.clearAllComputerPieces();
+                    this.boardState.zapPieces(COMPUTER);
                     this.spawnNextWave();
                 }
             } else this.currentPlayer = PLAYER;

@@ -522,9 +522,6 @@ export class BoardState {
         return false;
     }
 
-    // ================================================================
-    // Helper methods
-    
     // Check whether a coordinate is supposed by an ally piece
     seekSupposed(col, row, supposeTile=null) {
         return supposeTile && isSamePoint(supposeTile, [col, row]);
