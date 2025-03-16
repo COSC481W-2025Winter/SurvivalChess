@@ -299,16 +299,22 @@ export class ChessTiles {
                             break;
                     }
                 } catch (error) {
+                    // Generic error message
+                    // If Phaser throws an error in a loop, it'll just abort without indicating
+                    // anything is wrong on its own
                     window.alert("Error while checking computer moves: "+error.message);
                 }
 
                 // If we do, permit the computer to make a move
                 if (computerHasValidMove) {
                     this.currentPlayer = COMPUTER;
+
                     this.turnsUntilNextWave--;
                     if (this.turnsUntilNextWave == 0) {
                         this.spawnNextWave();
                     }
+
+                    // AI logic would go here post-merge
                 } else {
                     // No moves means we clear all pieces and instantly start the next wave
                     this.boardState.zapPieces(COMPUTER);
@@ -404,6 +410,7 @@ export class ChessTiles {
         let colOrder = Math.random() < 0.5 ? [3, 4, 5, 2, 1, 6, 7, 0] : [4, 3, 2, 5, 6, 1, 0, 7];
         let output = [];
 
+        // Travels from first row downward for finding valid spawn points
         for (let row = 0; row < 8; row++) {
             for (let col of colOrder) {
                 output.push([col, row]);
