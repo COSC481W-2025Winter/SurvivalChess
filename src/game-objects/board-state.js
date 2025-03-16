@@ -524,16 +524,7 @@ export class BoardState {
 
     // ================================================================
     // Helper methods
-
-    pieceIsValid(col, row) {
-        if (this.#boardState[col][row] === undefined)
-            return false;
-        if (this.#boardState[col][row] === null)
-            return false;
     
-        return true;
-    }
-
     // Check whether a coordinate is supposed by an ally piece
     seekSupposed(col, row, supposeTile=null) {
         return supposeTile && isSamePoint(supposeTile, [col, row]);
