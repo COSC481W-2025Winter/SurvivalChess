@@ -292,6 +292,7 @@ export class ChessTiles {
         }
     }
     
+    // Toggle turn & check board state & spawn wave counter
     toggleTurn(override=false) {
         // if Flip! is clicked (override) or Stop! is enabled
         if (override || !dev_stopOn) {
