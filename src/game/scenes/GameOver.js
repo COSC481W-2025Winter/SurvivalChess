@@ -1,6 +1,8 @@
 import { Scene } from "phaser";
 import { EventBus } from "../EventBus";
+import { TILE_SIZE, X_CENTER, Y_CENTER, X_ANCHOR, Y_ANCHOR } from "../../game-objects/constants";
 import { CREAMHEX, ONYXHEX } from "../../game-objects/constants";
+import { globalStatus, globalMoves, globalPieces, globalWaves } from "../../game-objects/global-stats";
 
 
 export class GameOver extends Scene {
@@ -11,15 +13,13 @@ export class GameOver extends Scene {
     preload() {
         this.load.setPath("assets");  // set asset directory
         this.load.image("background", "bg.png"); // load background
-
     }
 
     create() {
-
-        this.add.image(512, 384, "background");  //console.log("GameOver scene initialized.");
+        this.add.image(X_CENTER, Y_CENTER, "background");  //console.log("GameOver scene initialized.");
        
 
-        this.add.text(512, 250, "Game Over", {
+        this.add.text(X_CENTER, Y_CENTER - 2 * TILE_SIZE, globalStatus ? globalStatus : "Game Over!", {
             fontFamily: "Arial Black",
             fontSize: 64,
             color: CREAMHEX,
@@ -28,15 +28,36 @@ export class GameOver extends Scene {
             align: "center",
         }).setOrigin(0.5); // Center the text
 
+        this.add.text(X_CENTER, Y_CENTER - 1 * TILE_SIZE, "Number of Moves Made: "+globalMoves, {
+            fontFamily: "Arial Black",
+            color: CREAMHEX,
+            stroke: ONYXHEX,
+            align: "center",
+        }).setOrigin(0.5); // Center the text
 
-        this.createButton(512, 400, "Restart Game", () => {
+        this.add.text(X_CENTER, Y_CENTER - 0.5 * TILE_SIZE, "Number of Captured Pieces: "+globalPieces, {
+            fontFamily: "Arial Black",
+            color: CREAMHEX,
+            stroke: ONYXHEX,
+            align: "center",
+        }).setOrigin(0.5); // Center the text
+
+        this.add.text(X_CENTER, Y_CENTER - 0 * TILE_SIZE, "Number of Waves Survived: "+globalWaves, {
+            fontFamily: "Arial Black",
+            color: CREAMHEX,
+            stroke: ONYXHEX,
+            align: "center",
+        }).setOrigin(0.5); // Center the text
+
+
+        this.createButton(X_CENTER, Y_CENTER + 1 * TILE_SIZE, "Restart Game", () => {
             console.log("Restarting game...");
             this.scene.stop("GameOver");
             this.scene.stop("MainGame"); // Reset game state
             this.scene.start("MainGame");
         });
 
-        this.createButton(512, 450, "Main Menu", () => {
+        this.createButton(X_CENTER, Y_CENTER + 1.5 * TILE_SIZE, "Main Menu", () => {
             console.log("Returning to main menu...");
             this.scene.stop("GameOver");
             this.scene.stop("MainGame"); // Reset main game before menu
@@ -45,8 +66,6 @@ export class GameOver extends Scene {
 
 
         EventBus.emit("current-scene-ready", this);  // notify event system
-
-
     }
 
     createButton(x, y, text, callback) {
@@ -64,7 +83,4 @@ export class GameOver extends Scene {
         button.on("pointerover", () => button.setScale(1.1)); // Slightly enlarge on hover
         button.on("pointerout", () => button.setScale(1)); // Reset scale when not hovered
     }
-
-
-
 }

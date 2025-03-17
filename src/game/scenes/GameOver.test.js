@@ -1,5 +1,7 @@
 import { GameOver } from "./GameOver"; // Import the Game Over scene
-import Phaser from "phaser"; // Import Phaser
+import { TILE_SIZE, X_CENTER, Y_CENTER, X_ANCHOR, Y_ANCHOR } from "../../game-objects/constants";
+import { setGlobalStatus, CHECKMATE } from "../../game-objects/global-stats";
+import { globalStatus, globalMoves, globalPieces, globalWaves } from "../../game-objects/global-stats";
 
 // We are mocking the Game Over Scene instead of running the whole game loop
 describe("GameOver Scene", () => {
@@ -20,7 +22,10 @@ describe("GameOver Scene", () => {
         // Mock the children array to simulate scene objects like buttons and text
         scene.children = {
             getChildren: jest.fn().mockReturnValue([
-                { text: "Game Over", x: 512, y: 250 }, // Mocked Game Over text
+                { text: globalStatus ? globalStatus : "Game Over!", x: X_CENTER, y: Y_CENTER - 2 * TILE_SIZE }, // Mocked Game Over text
+                { text: "Number of Moves Made: "+globalMoves, x: X_CENTER, y: Y_CENTER - 1 * TILE_SIZE }, // Mocked Game Over text
+                { text: "Number of Captured Pieces: "+globalPieces, x: X_CENTER, y: Y_CENTER - 0.5 * TILE_SIZE }, // Mocked Game Over text
+                { text: "Number of Waves Survived: "+globalWaves, x: X_CENTER, y: Y_CENTER - 0 * TILE_SIZE }, // Mocked Game Over text
                 { text: "Restart Game", input: { enabled: true } }, // Restart button
                 { text: "Main Menu", input: { enabled: true } }, // Main Menu button
             ]),
@@ -42,15 +47,48 @@ describe("GameOver Scene", () => {
         expect(scene.cameras.main.backgroundColor).toBe(0x000000); // Check if the background is black
     });
 
-    // Test to verify that the Game Over text is displayed correctly
-    test("should display 'Game Over' text in the center", () => {
-        const gameOverText = scene.children
+    // Test to verify that the End Condition text is displayed correctly
+    test("should display End Condition text in the center", () => {
+        const text = scene.children
             .getChildren()
-            .find((child) => child.text === "Game Over");
+            .find((child) => child.text === globalStatus ? globalStatus : "Game Over!");
 
-        expect(gameOverText).toBeDefined();
-        expect(gameOverText.x).toBe(512);
-        expect(gameOverText.y).toBe(250);
+        expect(text).toBeDefined();
+        expect(text.x).toBe(X_CENTER);
+        expect(text.y).toBe(Y_CENTER - 2 * TILE_SIZE);
+    });
+
+    // Test to verify that the Moves Made text is displayed correctly
+    test("should display 'Game Over' text in the center", () => {
+        const text = scene.children
+            .getChildren()
+            .find((child) => child.text === "Number of Moves Made: "+globalMoves);
+
+        expect(text).toBeDefined();
+        expect(text.x).toBe(X_CENTER);
+        expect(text.y).toBe(Y_CENTER - 1 * TILE_SIZE);
+    });
+
+    // Test to verify that the Captured Pieces text is displayed correctly
+    test("should display 'Game Over' text in the center", () => {
+        const text = scene.children
+            .getChildren()
+            .find((child) => child.text === "Number of Captured Pieces: "+globalPieces);
+
+        expect(text).toBeDefined();
+        expect(text.x).toBe(X_CENTER);
+        expect(text.y).toBe(Y_CENTER - 0.5 * TILE_SIZE);
+    });
+
+    // Test to verify that the Waves Survived text is displayed correctly
+    test("should display 'Game Over' text in the center", () => {
+        const text = scene.children
+            .getChildren()
+            .find((child) => child.text === "Number of Waves Survived: "+globalWaves);
+
+        expect(text).toBeDefined();
+        expect(text.x).toBe(X_CENTER);
+        expect(text.y).toBe(Y_CENTER - 0 * TILE_SIZE);
     });
 
     // Test to verify that the restart button is created and is interactive

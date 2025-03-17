@@ -1,4 +1,4 @@
-import { TILE_SIZE, X_ANCHOR, Y_ANCHOR } from "./constants";
+import { TILE_SIZE, X_CENTER, Y_CENTER, X_ANCHOR, Y_ANCHOR } from "./constants";
 import { HOVER_COLOR, WHITE_TILE_COLOR, BLACK_TILE_COLOR, NON_LETHAL_COLOR, LETHAL_COLOR, THREAT_COLOR, CHECKED_COLOR, STAGE_COLOR } from "./constants";
 import { SIDE_BASE_COLOR, SIDE_HIGHLIGHT_COLOR } from "./constants";
 import { PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING } from "./constants";
@@ -8,6 +8,10 @@ import { isSamePoint, dim2Array } from "./constants";
 import { BoardState } from "./board-state";
 import { PieceCoordinates } from './piece-coordinates';
 import { PiecesTaken } from "./pieces-taken";
+
+import { CHECKMATE, STALEMATE } from "./global-stats";
+import { setGlobalStatus, incrementGlobalMoves, incrementGlobalPieces, incrementGlobalWaves } from "./global-stats";
+import { resetGlobalStatus, resetGlobalMoves, resetGlobalPieces, resetGlobalWaves } from "./global-stats";
 
 import { dev_alignment, dev_rank, dev_bamzap, dev_stopOn } from "./dev-buttons";
 import { BAM, ZAP, STOP } from "./dev-buttons";
@@ -96,6 +100,12 @@ export class ChessTiles {
                 });
             }
         }
+
+        // Reset game stats
+        resetGlobalStatus();
+        resetGlobalMoves();
+        resetGlobalPieces();
+        resetGlobalWaves();
 
         this.pieceCoordinates = new PieceCoordinates();
         this.boardState = new BoardState(this.scene, this.pieceCoordinates);
@@ -215,9 +225,15 @@ export class ChessTiles {
                         this.capturePiece(this.boardState.getRank(i, j), this.boardState.getAlignment(i, j));
                         this.boardState.destroyPiece(i, j);
                         this.boardState.movePiece(this.xy, [i, j]);
+                        if (this.currentPlayer == PLAYER) {
+                            incrementGlobalPieces();
+                            incrementGlobalMoves();
+                        }
+
                         // check to see if move results in pawn promotion
                         this.checkPromotion([i, j]);
                         this.clearBoard();
+
                         // Toggle turn after the move
                         this.toggleTurn();
                     }
@@ -247,6 +263,9 @@ export class ChessTiles {
 
             // move piece & clear board
             this.boardState.movePiece(this.xy, [i, j]);
+            if (this.currentPlayer == PLAYER)
+                incrementGlobalMoves();
+
             // check to see if move results in pawn promotion
             this.checkPromotion([i, j]);
             this.clearBoard();
@@ -273,7 +292,9 @@ export class ChessTiles {
         }
     }
     
+    // Toggle turn & check board state & spawn wave counter
     toggleTurn(override=false) {
+        // if Flip! is clicked (override) or Stop! is enabled
         if (override || !dev_stopOn) {
             if (this.currentPlayer == PLAYER) {
                 // If we're about to switch to the computer, check if any piece has valid moves
@@ -281,38 +302,20 @@ export class ChessTiles {
                 // This should also automatically handle being out of pieces
                 let computerHasValidMove = false;
 
-                try {
-                    for (let x = 0; x < 8; x++) {
-                        for (let y = 0; y < 8; y++) {
-                            if (this.boardState.isOccupied(x, y) && this.boardState.getAlignment(x, y) == COMPUTER) {
-                                // If we have any moves, set check variable to true
-                                let moves = this.boardState.searchMoves(x, y);
-                                if (moves.length > 0) {
-                                    computerHasValidMove = true;
-                                    break;
-                                }
-                            }
-                        }
-
-                        // For escaping out of x row as well
-                        if (computerHasValidMove)
-                            break;
+                // If we have any moves, set check variable to true
+                let coordinates = this.pieceCoordinates.getAllCoordinates(COMPUTER);
+                for (let coordinate of coordinates)
+                    if (this.boardState.searchMoves(...coordinate).length) {
+                        computerHasValidMove = true;
+                        break;
                     }
-                } catch (error) {
-                    // Generic error message
-                    // If Phaser throws an error in a loop, it'll just abort without indicating
-                    // anything is wrong on its own
-                    window.alert("Error while checking computer moves: "+error.message);
-                }
 
                 // If we do, permit the computer to make a move
                 if (computerHasValidMove) {
                     this.currentPlayer = COMPUTER;
 
-                    this.turnsUntilNextWave--;
-                    if (this.turnsUntilNextWave == 0) {
+                    if (!--this.turnsUntilNextWave)
                         this.spawnNextWave();
-                    }
 
                     // AI logic would go here post-merge
                 } else {
@@ -323,11 +326,29 @@ export class ChessTiles {
             } else this.currentPlayer = PLAYER;
         }
 
+        // if king is checked highlight their tile
         this.isChecked = this.boardState.isChecked(this.currentPlayer);
         if (this.isChecked) {
             let coordinate = this.pieceCoordinates.getCoordinate(KING, this.currentPlayer);
             this.highlightColor(coordinate, CHECKED_COLOR);
         }
+
+        // if checkmate or stalemate, set status & end game
+        let status = null;
+        if (this.boardState.isCheckmated(this.currentPlayer))
+            status = CHECKMATE;
+        if (this.boardState.isStalemated(this.currentPlayer))
+            status = STALEMATE;
+        setGlobalStatus(status);
+        if (status)
+            import("../game/scenes/GameOver")
+                .then((module) => {
+                    // Only add the scene if it's not already registered
+                    if (!this.scene.scene.get("GameOver"))
+                        this.scene.scene.add("GameOver", module.GameOver);
+                    // Start the GameOver scene
+                    this.scene.scene.start("GameOver");
+                });
     }
 
     // ================================================================
@@ -389,6 +410,7 @@ export class ChessTiles {
         }
 
         this.waveSpawnBudget += 8;
+        incrementGlobalWaves();
     }
 
     // Centering procedure
@@ -427,7 +449,7 @@ export class ChessTiles {
 
         // Sort it randomly
         let currentIndex = piecePriority.length;
-        while (currentIndex != 0) {
+        while (currentIndex) {
             let randomIndex = Math.floor(Math.random() * currentIndex);
             currentIndex--;
             [piecePriority[currentIndex], piecePriority[randomIndex]] = [piecePriority[randomIndex], piecePriority[currentIndex]];
@@ -467,23 +489,10 @@ export class ChessTiles {
             case KNIGHT:
             case BISHOP:
                 return 3;
-            default:
+            case PAWN:
                 return 1;
-        }
-    }
-
-    // If piece is valid and is a computer's piece, destroy it
-    clearAllComputerPieces() {
-        try {
-            for (let col = 0; col < 8; col++) {
-                for (let row = 0; row < 8; row++) {
-                    if (this.boardState.isOccupied(col, row) && this.boardState.getAlignment(col, row) === COMPUTER) {
-                        this.boardState.destroyPiece(col, row);
-                    }
-                }
-            }
-        } catch (error) {
-            window.alert("Error: "+error.message);
+            default:
+                return null;
         }
     }
     

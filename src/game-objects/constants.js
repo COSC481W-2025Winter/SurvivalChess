@@ -1,6 +1,8 @@
 const TILE_SIZE = 80;                       // width & height of each tile
-const X_ANCHOR = 500 - 3.5 * TILE_SIZE;     // x pixel of leftmost tile
-const Y_ANCHOR = 360 - 3.5 * TILE_SIZE;     // y pixel of topmost tile
+const X_CENTER = 500;
+const Y_CENTER = 360;
+const X_ANCHOR = X_CENTER - 3.5 * TILE_SIZE;     // x pixel of leftmost tile
+const Y_ANCHOR = Y_CENTER - 3.5 * TILE_SIZE;     // y pixel of topmost tile
 
 const GRAY = "7D7F7C";
 const FAWN = "E5AA70";
@@ -70,7 +72,7 @@ export function dim2Array(dim1, dim2) {
     return Array.from(Array(dim1), () => new Array(dim2));
 }
 
-export { TILE_SIZE, X_ANCHOR, Y_ANCHOR }
+export { TILE_SIZE, X_CENTER, Y_CENTER, X_ANCHOR, Y_ANCHOR }
 
 export { HOVER_COLOR, WHITE_TILE_COLOR, BLACK_TILE_COLOR, NON_LETHAL_COLOR, LETHAL_COLOR, THREAT_COLOR, CHECKED_COLOR, STAGE_COLOR }
 export { BACKGROUND_COLOR }

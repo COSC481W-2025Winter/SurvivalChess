@@ -1,4 +1,4 @@
-import { TILE_SIZE, X_ANCHOR, Y_ANCHOR } from './constants';
+import { TILE_SIZE, X_CENTER, Y_CENTER, X_ANCHOR, Y_ANCHOR } from './constants';
 import { PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING } from './constants';
 import { PLAYER, COMPUTER } from './constants';
 import { EN_PASSANT_TOKEN } from './constants';
@@ -545,20 +545,17 @@ export class BoardState {
         return this.#isChecked;
     }
 
-    // Check whether king of alignment is threatened
+    // Check whether player of alignment is checkmated (checked & no legal move)
     isCheckmated(alignment) {
-        let coordinate = this.#pieceCoordinates.getCoordinate(KING, alignment);
-        let col = coordinate[0];
-        let row = coordinate[1];
-
-        if (!this.isChecked(alignment) && this.searchMoves(col, row).length)
+        if (!this.isChecked(alignment))
             return false;
 
-        for (let piece of this.#pieceCoordinates.getAllCoordinates(alignment))
-            if (!!this.searchMoves(piece[0], piece[1]).length)
-                return true;
-        
-        return false;
+        let coordinates = this.#pieceCoordinates.getAllCoordinates(alignment);
+        for (let xy of coordinates)
+            if (this.searchMoves(...xy).length)
+                return false;
+
+        return true;
     }
 
     // Check whether board is stalemated (not checked & no legal move)
@@ -568,7 +565,7 @@ export class BoardState {
 
         let coordinates = this.#pieceCoordinates.getAllCoordinates(alignment);
         for (let xy of coordinates)
-            if (this.searchMoves(xy[0], xy[1]).length)
+            if (this.searchMoves(...xy).length)
                 return false;
 
         return true;
