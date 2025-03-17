@@ -425,7 +425,6 @@ describe("", () => {
 
     test("Wave Spawn Tile Priority", () => {
         let tilePriority = tiles.getTilePriorityOrder();
-        console.log(tilePriority[0]);
         expect(tilePriority[0][1] === 0 || (tilePriority[0][0] == 4 || tilePriority[0][0] == 3)).toBe(true);
     })
 
