@@ -409,6 +409,7 @@ export class ChessTiles {
         }
 
         this.waveSpawnBudget += 8;
+        incrementGlobalWaves();
     }
 
     // Centering procedure
