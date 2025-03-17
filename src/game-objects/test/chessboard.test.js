@@ -59,7 +59,7 @@ jest.mock("../chess-piece", () => {
 import { POINTER_OVER, POINTER_OUT, POINTER_DOWN, WHEEL } from "./test-constants.js";
 import { LEFT, RIGHT, UP, DOWN } from "./test-constants.js";
 
-import { HOVER_COLOR, WHITE_TILE_COLOR, BLACK_TILE_COLOR, NON_LETHAL_COLOR, LETHAL_COLOR, THREAT_COLOR, CHECKED_COLOR, STAGE_COLOR } from "../constants.js";
+import { HOVER_COLOR, WHITE_TILE_COLOR, BLACK_TILE_COLOR, NON_LETHAL_COLOR, LETHAL_COLOR, THREAT_COLOR, CHECKED_COLOR, STAGE_COLOR, TILE_SIZE } from "../constants.js";
 import { PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING } from "../constants.js";
 import { PLAYER, COMPUTER } from "../constants.js";
 
@@ -402,6 +402,49 @@ describe("", () => {
     test("Miscellaneous", () => {
         expect(tiles.pieceCoordinates.moveCoordinate([4, 4], [4, 4], PAWN, PLAYER)).toBe(false);
         expect(tiles.pieceCoordinates.deleteCoordinate(4, 4, PAWN, PLAYER)).toBe(false);
+    });
+
+    // Wave Spawning Tests
+    test("Wave Spawns More Pieces", () => {
+        let countOfTilesBefore = 0;
+        for (let x = 0; x < 8; x++)
+            for (let y = 0; y < 8; y++)
+                if (tiles.boardState.isOccupied(x, y))
+                    countOfTilesBefore++;
+
+        tiles.spawnNextWave();
+
+        let countOfTilesAfter = 0;
+        for (let x = 0; x < 8; x++)
+            for (let y = 0; y < 8; y++)
+                if (tiles.boardState.isOccupied(x, y))
+                    countOfTilesAfter++;
+
+        expect(countOfTilesBefore == countOfTilesAfter).toBe(false);
+    });
+
+    test("Wave Spawn Tile Priority", () => {
+        let tilePriority = tiles.getTilePriorityOrder();
+        expect(tilePriority[0][1] === 0 || (tilePriority[0][0] == 4 || tilePriority[0][0] == 3)).toBe(true);
+    })
+
+    test("Wave Spawn Piece Priority", () => {
+        let piecePriority = tiles.getPiecePriorityOrder();
+        expect(piecePriority.length == 5).toBe(true);
+
+        let allPiecesUnique = true;
+        for (let i = 0; i < 5; i++) {
+            for (let j = 0; j < 5; j++) {
+                if (piecePriority[i] == piecePriority[j] && 
+                    (piecePriority[i] != PAWN && piecePriority[i] != ROOK
+                        && piecePriority[i] != KNIGHT && piecePriority[i] != BISHOP
+                        && piecePriority[i] != QUEEN))
+                    allPiecesUnique = false;
+                    break;
+                }
+            }
+
+        expect(allPiecesUnique).toBe(true);
     });
 });
 
