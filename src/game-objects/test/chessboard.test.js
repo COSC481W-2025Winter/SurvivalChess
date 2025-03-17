@@ -338,10 +338,12 @@ describe("", () => {
         tiles.boardState.addPiece(6, 5, KING, COMPUTER);
         click(6, 6);
         expect(tiles.chessTiles[6][5].fillColor).toBe(THREAT_COLOR);
+        click(6, 6);
         for (let i = 0; i < 8; i++)
             for (let j = 0; j < 8; j++)
                 if (tiles.boardState.isOccupied(i, j))
                     tiles.boardState.destroyPiece(i, j);
+        tiles.boardState.addPiece(7, 7, KING, PLAYER);
         tiles.boardState.addPiece(3, 3, QUEEN, PLAYER);
         click(3, 3);
         for (let i = 0; i < 8; i++)

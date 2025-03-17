@@ -24,7 +24,7 @@ export class PieceCoordinates {
         let outrow = output[1];
         
         let index = this.findIndex(incol, inrow, rank, alignment);
-        if(index == null)
+        if (index == null)
             return false;
         this.#coordinates[alignment][rank][index] = [outcol, outrow];
         return true;
@@ -46,7 +46,7 @@ export class PieceCoordinates {
         let index = this.findIndex(col, row, rank, alignment);
         if(index == null)
             return false;
-        this.#coordinates[alignment][rank].splice(index, index);
+        this.#coordinates[alignment][rank].splice(index, 1);
         return true;
     }
 
