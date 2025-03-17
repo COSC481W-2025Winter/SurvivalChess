@@ -1,21 +1,16 @@
-import { Scene} from "phaser";
-import { EventBus } from "../EventBus";
+import { SettingsScene } from "./SettingsScene.js"; // ✅ Corrected import
 
 export class SettingsButton {
-    constructor(s) {
-        this.scene = s;
+    constructor(scene) {
+        this.scene = scene;
     }
 
     click() {
-        import("./settings").then((module) => {
-            // Only add the scene if it's not already registered
-            if (!this.scene.get("Settings")) {
-                this.scene.add("Settings", module.Settings); // Add the scene dynamically
-            }
+        const sceneManager = this.scene.scene; // ✅ Correct way to reference Scene Manager
 
-            // Use launch to run scene in parallel to current
-            this.scene.launch("Settings");
-            this.scene.moveAbove("MainGame", "Settings");
-        });
+        if (!sceneManager.get("SettingsScene")) {
+            sceneManager.add("SettingsScene", SettingsScene); // ✅ Use correct method
+        }
+        sceneManager.launch("SettingsScene");
     }
 }

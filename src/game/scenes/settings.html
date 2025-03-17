@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings</title>
+    <link rel="stylesheet" href="styles.css"> <!-- ✅ Add a CSS file for styling -->
+</head>
+<body>
+
+    <div id="settingsContainer">
+        <div id="settingsMenu">
+            <fieldset>
+                <legend>Game Settings</legend>
+
+                <label for="colorPaletteSelect">Select Chess Piece Color:</label>
+                <select id="colorPaletteSelect">
+                    <option value="default">Black & White (Default)</option>
+                    <option value="dark">Eerie Black & Battleship Gray (Dark)</option>
+                    <option value="light">White & Silver (Light)</option>
+                </select>
+
+                <br>
+
+                <label for="devModeToggle">Enable Developer Mode:</label>
+                <input type="checkbox" id="devModeToggle">
+
+            </fieldset>
+
+            <button id="closeSettings">Close</button>
+        </div>
+    </div>
+
+    <script src="settingsButton.js"></script> <!-- ✅ Ensure correct path -->
+</body>
+</html>
