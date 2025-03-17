@@ -22,7 +22,7 @@ describe("GameOver Scene", () => {
         // Mock the children array to simulate scene objects like buttons and text
         scene.children = {
             getChildren: jest.fn().mockReturnValue([
-                { text: globalStatus, x: X_CENTER, y: Y_CENTER - 2 * TILE_SIZE }, // Mocked Game Over text
+                { text: globalStatus ? globalStatus : "Game Over!", x: X_CENTER, y: Y_CENTER - 2 * TILE_SIZE }, // Mocked Game Over text
                 { text: "Number of Moves Made: "+globalMoves, x: X_CENTER, y: Y_CENTER - 1 * TILE_SIZE }, // Mocked Game Over text
                 { text: "Number of Captured Pieces: "+globalPieces, x: X_CENTER, y: Y_CENTER - 0.5 * TILE_SIZE }, // Mocked Game Over text
                 { text: "Number of Waves Survived: "+globalWaves, x: X_CENTER, y: Y_CENTER - 0 * TILE_SIZE }, // Mocked Game Over text
@@ -51,7 +51,7 @@ describe("GameOver Scene", () => {
     test("should display End Condition text in the center", () => {
         const text = scene.children
             .getChildren()
-            .find((child) => child.text === globalStatus);
+            .find((child) => child.text === globalStatus ? globalStatus : "Game Over!");
 
         expect(text).toBeDefined();
         expect(text.x).toBe(X_CENTER);

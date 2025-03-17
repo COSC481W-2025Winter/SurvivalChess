@@ -22,6 +22,8 @@ import { EventBus } from "../game/EventBus";
 export class ChessTiles {
 
     constructor(scene) {
+        this.turnsUntilNextWave = 8;
+        this.waveSpawnBudget = 8;
         this.scene = scene;
         this.chessTiles;        // 8x8 array of chess tiles
         this.boardState;        // contains BoardState object that manages an 8x8 array of chess pieces
@@ -290,6 +292,209 @@ export class ChessTiles {
         }
     }
     
+    toggleTurn(override=false) {
+        // if Flip! is clicked (override) or Stop! is enabled
+        if (override || !dev_stopOn) {
+            if (this.currentPlayer == PLAYER) {
+                // If we're about to switch to the computer, check if any piece has valid moves
+                // If they do not, all their pieces are purged and replaced, and player keeps playing
+                // This should also automatically handle being out of pieces
+                let computerHasValidMove = false;
+
+                // If we have any moves, set check variable to true
+                let coordinates = this.pieceCoordinates.getAllCoordinates(COMPUTER);
+                for (let coordinate of coordinates)
+                    if (this.boardState.searchMoves(...coordinate).length) {
+                        computerHasValidMove = true;
+                        break;
+                    }
+
+                // If we do, permit the computer to make a move
+                if (computerHasValidMove) {
+                    this.currentPlayer = COMPUTER;
+
+                    if (!--this.turnsUntilNextWave)
+                        this.spawnNextWave();
+
+                    // AI logic would go here post-merge
+                } else {
+                    // No moves means we clear all pieces and instantly start the next wave
+                    this.boardState.zapPieces(COMPUTER);
+                    this.spawnNextWave();
+                }
+            } else this.currentPlayer = PLAYER;
+        }
+
+        // if king is checked highlight their tile
+        this.isChecked = this.boardState.isChecked(this.currentPlayer);
+        if (this.isChecked) {
+            let coordinate = this.pieceCoordinates.getCoordinate(KING, this.currentPlayer);
+            this.highlightColor(coordinate, CHECKED_COLOR);
+        }
+
+        // if checkmate or stalemate, set status & end game
+        let status = null;
+        if (this.boardState.isCheckmated(this.currentPlayer))
+            status = CHECKMATE;
+        if (this.boardState.isStalemated(this.currentPlayer))
+            status = STALEMATE;
+        setGlobalStatus(status);
+        if (status)
+            import("../game/scenes/GameOver")
+                .then((module) => {
+                    // Only add the scene if it's not already registered
+                    if (!this.scene.scene.get("GameOver"))
+                        this.scene.scene.add("GameOver", module.GameOver);
+                    // Start the GameOver scene
+                    this.scene.scene.start("GameOver");
+                });
+    }
+
+    // ================================================================
+    // Wave Spawning
+
+    spawnNextWave() {
+        try {
+            // Reset turn counter
+            this.turnsUntilNextWave = 8;
+
+            // Randomly order what priority of pieces to go through to prevent a universal bias
+            let piecePriority = this.getPiecePriorityOrder();
+
+            // Get the ordering of tiles to traverse through for new spawns
+            let testSpawnLocations = this.getTilePriorityOrder();
+            let testSpawnIndex = 0;
+
+            // Spawn according to budget, piece priority, and spawn tile priority
+            let currentBudget = this.waveSpawnBudget;
+            let firstLoop = true;
+            let outOfSpawns = false;
+            while (currentBudget > 0 && !outOfSpawns) {
+                // Order of pieceType is random to mitigate a bias
+                for (let pieceType of piecePriority) {
+                    let costOfType = this.getValueOfPiece(pieceType);
+
+                    // Spawn a random amount of given pieces
+                    let numberOfPieces = currentBudget / costOfType;
+
+                    // On first loop, random how many pieces can spawn for variety
+                    // Otherwise, it'll maximize how many
+                    if (firstLoop)
+                        numberOfPieces = Math.floor(Math.random() * numberOfPieces);
+
+                    // Locate spawn point and instantiate if successful
+                    for (let pieceCount = 0; pieceCount < numberOfPieces; pieceCount++) {
+                        while (testSpawnIndex < testSpawnLocations.length) {
+                            let testSpawnLoc = testSpawnLocations[testSpawnIndex];
+                            if (!this.boardState.isOccupied(testSpawnLoc[0], testSpawnLoc[1])) {
+                                currentBudget -= costOfType;
+                                this.boardState.addPiece(testSpawnLoc[0], testSpawnLoc[1], pieceType, COMPUTER);
+
+                                break;
+                            }
+
+                            testSpawnIndex++;
+                        }
+
+                        // Prevent an infinite impossible loop if the entire board is full
+                        if (testSpawnIndex >= testSpawnLocations.Length)
+                            outOfSpawns = true;
+                    }
+                }
+
+                firstLoop = false;
+            }
+        } catch (ex) {
+            window.alert("Error with new wave: "+ex.message);
+        }
+
+        this.waveSpawnBudget += 8;
+    }
+
+    // Centering procedure
+    // 
+    // Left Bias            Right Bias
+    // ---4----     or      ----5---
+    // ----5---             ---4----
+    // -----6--             --3-----
+    // --3-----             -----6--
+    // -2------             ------7-
+    // ------7-             -2------
+    // -------8             -1------
+    // 1-------             -------8
+    //
+    // Could potentially introduce different spawn patterns too if this is
+    // too abusable by playing along the margins
+    getTilePriorityOrder() {
+        // ~50% between left or right bias
+        let colOrder = Math.random() < 0.5 ? [3, 4, 5, 2, 1, 6, 7, 0] : [4, 3, 2, 5, 6, 1, 0, 7];
+        let output = [];
+
+        // Travels from first row downward for finding valid spawn points
+        for (let row = 0; row < 8; row++) {
+            for (let col of colOrder) {
+                output.push([col, row]);
+            }
+        }
+
+        return output;
+    }
+
+    // Get a random order of pieces to process to prevent a universal bias
+    getPiecePriorityOrder() {
+        // This order doesn't matter
+        let piecePriority = [ QUEEN, PAWN, BISHOP, ROOK, KNIGHT ];
+
+        // Sort it randomly
+        let currentIndex = piecePriority.length;
+        while (currentIndex) {
+            let randomIndex = Math.floor(Math.random() * currentIndex);
+            currentIndex--;
+            [piecePriority[currentIndex], piecePriority[randomIndex]] = [piecePriority[randomIndex], piecePriority[currentIndex]];
+        }
+
+        return piecePriority;
+    }
+
+    // Gather an array of vacant tiles for valid spawn points
+    // Currently unused but may be useful for more naive spawn algorithms
+    collectVacantTiles() {
+        let vacantTiles = [];
+
+        try {
+            for (let col = 0; col < 8; col++) {
+                for (let row = 0; row < 2; row++) {
+                    if (!this.boardState.isOccupied(col, row)) {
+                        vacantTiles.push([col, row]);
+                    }
+                }
+            }
+        } catch (error) {
+            window.alert("Error: "+error.message);
+        }
+
+        return vacantTiles;
+    }
+
+    // Still needs Marley's constants from his branch instead of hardcoding these values
+    // Based on standard Chess piece valuation, may be tweaked for balance
+    getValueOfPiece(pieceType) {
+        switch (pieceType) {
+            case QUEEN:
+                return 9;
+            case ROOK:
+                return 5;
+            case KNIGHT:
+            case BISHOP:
+                return 3;
+            case PAWN:
+                return 1;
+            default:
+                return null;
+        }
+    }
+    
+
     // ================================================================
     // Tile Highlight & Restoration
 
@@ -330,38 +535,6 @@ export class ChessTiles {
             this.pointerSelect(col, row, false);
             this.pointerOut(col, row);
         }
-    }
-
-    // Toggle whose turn it is and perform board state condition checks
-    toggleTurn(override=false) {
-        // if Flip! is clicked (override) or Stop! is enabled
-        if (override || !dev_stopOn)
-            this.currentPlayer = (this.currentPlayer === PLAYER) ? COMPUTER : PLAYER;
-
-        // if king is checked highlight their tile
-        this.isChecked = this.boardState.isChecked(this.currentPlayer);
-        if (this.isChecked) {
-            let coordinate = this.pieceCoordinates.getCoordinate(KING, this.currentPlayer);
-            this.highlightColor(coordinate, CHECKED_COLOR);
-        }
-
-        // if checkmate or stalemate, set status & end game
-        let status = null;
-        if (this.boardState.isCheckmated(this.currentPlayer))
-            status = CHECKMATE;
-        if (this.boardState.isStalemated(this.currentPlayer))
-            status = STALEMATE;
-        setGlobalStatus(status);
-        if (status)
-            import("../game/scenes/GameOver")
-                .then((module) => {
-                    // Only add the scene if it's not already registered
-                    if (!this.scene.scene.get("GameOver")) {
-                        this.scene.scene.add("GameOver", module.GameOver); // Add the MainGame scene dynamically
-                    }
-                    // Start the MainGame scene
-                    this.scene.scene.start("GameOver");
-                });
     }
 
     // Check whether the coordinate would be a valid move

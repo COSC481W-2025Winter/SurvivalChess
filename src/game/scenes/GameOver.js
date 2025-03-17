@@ -19,7 +19,7 @@ export class GameOver extends Scene {
         this.add.image(X_CENTER, Y_CENTER, "background");  //console.log("GameOver scene initialized.");
        
 
-        this.add.text(X_CENTER, Y_CENTER - 2 * TILE_SIZE, globalStatus, {
+        this.add.text(X_CENTER, Y_CENTER - 2 * TILE_SIZE, globalStatus ? globalStatus : "Game Over!", {
             fontFamily: "Arial Black",
             fontSize: 64,
             color: CREAMHEX,
