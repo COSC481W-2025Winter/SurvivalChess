@@ -530,18 +530,15 @@ export class BoardState {
     // Check whether king would be saved/un-threatened if move is made
     kingSaved(input, output, alignment) {
         let coordinate = this.#pieceCoordinates.getCoordinate(KING, alignment);
-        let col = isSamePoint(input, coordinate) ? output[0] : coordinate[0];
-        let row = isSamePoint(input, coordinate) ? output[1] : coordinate[1];
-        return !this.seekThreats(col, row, alignment, input, output).length;
+        coordinate = isSamePoint(input, coordinate) ? output : coordinate;
+        return !this.seekThreats(...coordinate, alignment, input, output).length;
     }
 
     // Check whether king of alignment is threatened
     isChecked(alignment) {
         let coordinate = this.#pieceCoordinates.getCoordinate(KING, alignment);
-        let col = coordinate[0];
-        let row = coordinate[1];
 
-        this.#isChecked = !!this.seekThreats(col, row, alignment).length;
+        this.#isChecked = !!this.seekThreats(...coordinate, alignment).length;
         return this.#isChecked;
     }
 
