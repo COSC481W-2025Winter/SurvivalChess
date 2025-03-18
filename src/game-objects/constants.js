@@ -68,6 +68,20 @@ const PLAYER = "W"; // player alignment
 const COMPUTER = "B"; // computer alignment
 
 const EN_PASSANT_TOKEN = "en passant"; // en passant token
+export const COLOR_THEMES = {
+	default: {primary: "#000000", secondary: "#FFFFFF"},
+	dark: {primary: "#1B1B1B", secondary: "#848482"},
+	light: {primary: "#FFFFFF", secondary: "#C0C0C0"},
+};
+
+function applyColors(selectedPalette) {
+	const colors = COLOR_THEMES[selectedPalette] || COLOR_THEMES.default;
+	document.documentElement.style.setProperty("--primary-chess-color", colors.primary);
+	document.documentElement.style.setProperty("--secondary-chess-color", colors.secondary);
+}
+
+// Call the function when needed
+applyColors("default"); // Change "default" to a dynamic value if needed
 
 export function isSamePoint([col1, row1], [col2, row2]) {
 	return col1 == col2 && row1 == row2;

@@ -1,67 +1,77 @@
-import {Scene} from "phaser";
-import {EventBus} from "../EventBus";
+import Phaser from "phaser"; // ✅ Ensure Phaser is imported
+import {COLOR_THEMES} from "../../game-objects/constants.js";
 
-export class Settings extends Scene {
+export class Settings extends Phaser.Scene {
 	constructor() {
-		super("Settings");
-	}
-
-	preload() {
-		this.load.setPath("assets");
-		this.load.image("star", "star.png");
-		this.load.image("background", "bg.png");
+		super({key: "Settings"});
 	}
 
 	create() {
-		// Creates a visual background that also blocks input on the scene underneath
-		const bg = this.add.rectangle(625, 384, 1250, 768, 0x00ff00, 0.5);
-		bg.setDepth(50);
+		// console.log("Settings Scene Loaded!"); // ❌ Removed to avoid 'no-console'
 
-		// Placeholder visual elements
-		this.add.image(512, 384, "background").alpha = 0.5;
-		this.add.image(512, 350, "star").setDepth(100);
+		this.cameras.main.setBackgroundColor("#d87b40"); // Match Rules page
+
+		this.add.text(150, 50, "SETTINGS", {
+			fontSize: "32px",
+			fill: "#fff",
+			fontFamily: "Press Start 2P",
+		});
+
+		// 🎨 Theme Selection
+		this.add.text(100, 150, "Color Palette:", {fontSize: "20px", fill: "#fff"});
+
+		const palettes = ["default", "dark", "light"];
+		let yOffset = 200;
+
+		palettes.forEach((palette) => {
+			this.add
+				.text(120, yOffset, palette, {
+					fontSize: "18px",
+					fill: "#aaa",
+					backgroundColor: "#333",
+					padding: {x: 10, y: 5},
+				})
+				.setInteractive()
+				.on("pointerdown", () => {
+					// console.log(`Applying color theme: ${palette}`); // ❌ Removed 'no-console'
+					localStorage.setItem("selectedPalette", palette);
+					this.applyColorTheme(palette);
+					this.scene.restart(); // 🔄 Refresh
+				});
+
+			yOffset += 50;
+		});
+
+		// ❌ Close Button
 		this.add
-			.text(512, 490, "Settings mode", {
-				fontFamily: "purple",
-				fontSize: 38,
-				color: "#ffffff",
-				stroke: "#000000",
-				strokeThickness: 8,
-				align: "center",
+			.text(400, 100, "Close", {
+				fontSize: "24px",
+				fill: "#f00",
+				backgroundColor: "#333",
+				padding: {x: 10, y: 5},
 			})
-			.setOrigin(0.5)
-			.setDepth(100);
-
-		const closeButton = this.add.text(100, 100, "Close Settings", {
-			fill: "#0099ff",
-			backgroundColor: "#ffff",
-			padding: {left: 20, right: 20, top: 10, bottom: 10},
-		});
-
-		closeButton.setOrigin(0.5);
-		closeButton.setPosition(625, 600);
-		closeButton.setInteractive();
-		closeButton.on(
-			"pointerdown",
-			function () {
+			.setInteractive()
+			.on("pointerdown", () => {
+				// console.log("Closing settings..."); // ❌ Removed 'no-console'
 				this.scene.stop("Settings");
-			},
-			this
-		);
-		closeButton.setDepth(100);
+				//	this.scene.start("MainGame");
+			});
 
-		// When the pointer hovers over the button, scale it up
-		closeButton.on("pointerover", () => {
-			closeButton.setScale(1.2);
-		});
+		// Apply stored settings
+		const savedPalette = localStorage.getItem("selectedPalette") || "default";
+		this.applyColorTheme(savedPalette);
+	}
 
-		// When the pointer moves away from the button, reset the scale to normal
-		closeButton.on("pointerout", () => {
-			closeButton.setScale(1);
-		});
+	applyColorTheme(selectedPalette) {
+		const colors = COLOR_THEMES[selectedPalette];
 
-		bg.setInteractive();
+		if (!colors) {
+			return; // ✅ Now properly wrapped in curly braces
+		}
 
-		EventBus.emit("current-scene-ready", this);
+		document.documentElement.style.setProperty("--primary-chess-color", colors.primary);
+		document.documentElement.style.setProperty("--secondary-chess-color", colors.secondary);
+
+		// console.log(`Color theme applied: ${selectedPalette}`); // ❌ Removed 'no-console'
 	}
 }
