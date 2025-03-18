@@ -294,7 +294,7 @@ export class ChessTiles {
     
     // Toggle turn & check board state & spawn wave counter
     toggleTurn(override=false) {
-        // if Flip! is clicked (override) or Stop! is enabled
+        // if Flip! is clicked (override) or Stop! is disabled
         if (override || !dev_stopOn) {
             if (this.currentPlayer == PLAYER) {
                 // If we're about to switch to the computer, check if any piece has valid moves
@@ -398,7 +398,7 @@ export class ChessTiles {
                         }
 
                         // Prevent an infinite impossible loop if the entire board is full
-                        if (testSpawnIndex >= testSpawnLocations.Length)
+                        if (testSpawnIndex >= testSpawnLocations.length)
                             outOfSpawns = true;
                     }
                 }

@@ -47,9 +47,9 @@ export default [
 			"no-unused-vars": ["error", {args: "none"}], // Ensures no unused variables
 			"prefer-const": "warn", // Ensures constants are used when they should be
 			"no-console": ["warn"], // Warns of console.log being left in final code
+			"no-undef": "warn", // This will set 'no-undef' to a warning
 			indent: ["error", "tab"], // 2 Spaces per tab
 			"prettier/prettier": "error", // Make Prettier rules part of the linting process
 		},
 	},
 ];
-

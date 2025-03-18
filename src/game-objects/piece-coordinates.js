@@ -18,15 +18,10 @@ export class PieceCoordinates {
     }
 
     moveCoordinate(input, output, rank, alignment) {
-        let incol = input[0];
-        let inrow = input[1];
-        let outcol = output[0];
-        let outrow = output[1];
-        
-        let index = this.findIndex(incol, inrow, rank, alignment);
-        if(index == null)
+        let index = this.findIndex(...input, rank, alignment);
+        if (index == null)
             return false;
-        this.#coordinates[alignment][rank][index] = [outcol, outrow];
+        this.#coordinates[alignment][rank][index] = output;
         return true;
     }
 
@@ -46,7 +41,7 @@ export class PieceCoordinates {
         let index = this.findIndex(col, row, rank, alignment);
         if(index == null)
             return false;
-        this.#coordinates[alignment][rank].splice(index, index);
+        this.#coordinates[alignment][rank].splice(index, 1);
         return true;
     }
 
