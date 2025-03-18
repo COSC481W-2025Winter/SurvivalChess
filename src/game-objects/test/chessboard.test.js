@@ -59,7 +59,7 @@ jest.mock("../chess-piece", () => {
 import { POINTER_OVER, POINTER_OUT, POINTER_DOWN, WHEEL } from "./test-constants.js";
 import { LEFT, RIGHT, UP, DOWN } from "./test-constants.js";
 
-import { HOVER_COLOR, WHITE_TILE_COLOR, BLACK_TILE_COLOR, NON_LETHAL_COLOR, LETHAL_COLOR, THREAT_COLOR, CHECKED_COLOR, STAGE_COLOR } from "../constants.js";
+import { HOVER_COLOR, WHITE_TILE_COLOR, BLACK_TILE_COLOR, NON_LETHAL_COLOR, LETHAL_COLOR, THREAT_COLOR, CHECKED_COLOR, STAGE_COLOR, TILE_SIZE } from "../constants.js";
 import { PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING } from "../constants.js";
 import { PLAYER, COMPUTER } from "../constants.js";
 
@@ -74,6 +74,12 @@ describe("", () => {
     // Mock Scene
     class MockScene {
         constructor() {}
+
+        scene = {
+            get: jest.fn((name) => {}),
+            add: jest.fn((name, scene) => {}),
+            start: jest.fn((name) => {}),
+        }
 
         // Mock the add.rectangle & add.text & add.existing methods
         add = {
@@ -97,11 +103,12 @@ describe("", () => {
             this.fillColor = color;
         }
 
-        setInteractive() { }
-        on() { }
+        setInteractive() { return this }
+        on() { return this }
 
         setFillStyle(color) {
             this.fillColor = color;
+            return this;
         }
     }
 
@@ -115,15 +122,27 @@ describe("", () => {
             this.origin = 0;
         }
 
-        setInteractive() { }
-        on() { }
+        setInteractive() { return this }
+        on() { return this }
 
         setFillStyle(color) {
             this.fillColor = color;
+            return this;
         }
 
         setOrigin(origin) {
             this.origin = origin;
+            return this;
+        }
+
+        setStyle(style) {
+            this.style = style;
+            return this;
+        }
+        
+        setColor(color) {
+            this.style.fill = color;
+            return this;
         }
     }
 
@@ -319,10 +338,12 @@ describe("", () => {
         tiles.boardState.addPiece(6, 5, KING, COMPUTER);
         click(6, 6);
         expect(tiles.chessTiles[6][5].fillColor).toBe(THREAT_COLOR);
+        click(6, 6);
         for (let i = 0; i < 8; i++)
             for (let j = 0; j < 8; j++)
                 if (tiles.boardState.isOccupied(i, j))
                     tiles.boardState.destroyPiece(i, j);
+        tiles.boardState.addPiece(7, 7, KING, PLAYER);
         tiles.boardState.addPiece(3, 3, QUEEN, PLAYER);
         click(3, 3);
         for (let i = 0; i < 8; i++)
@@ -383,6 +404,49 @@ describe("", () => {
     test("Miscellaneous", () => {
         expect(tiles.pieceCoordinates.moveCoordinate([4, 4], [4, 4], PAWN, PLAYER)).toBe(false);
         expect(tiles.pieceCoordinates.deleteCoordinate(4, 4, PAWN, PLAYER)).toBe(false);
+    });
+
+    // Wave Spawning Tests
+    test("Wave Spawns More Pieces", () => {
+        let countOfTilesBefore = 0;
+        for (let x = 0; x < 8; x++)
+            for (let y = 0; y < 8; y++)
+                if (tiles.boardState.isOccupied(x, y))
+                    countOfTilesBefore++;
+
+        tiles.spawnNextWave();
+
+        let countOfTilesAfter = 0;
+        for (let x = 0; x < 8; x++)
+            for (let y = 0; y < 8; y++)
+                if (tiles.boardState.isOccupied(x, y))
+                    countOfTilesAfter++;
+
+        expect(countOfTilesBefore == countOfTilesAfter).toBe(false);
+    });
+
+    test("Wave Spawn Tile Priority", () => {
+        let tilePriority = tiles.getTilePriorityOrder();
+        expect(tilePriority[0][1] === 0 || (tilePriority[0][0] == 4 || tilePriority[0][0] == 3)).toBe(true);
+    })
+
+    test("Wave Spawn Piece Priority", () => {
+        let piecePriority = tiles.getPiecePriorityOrder();
+        expect(piecePriority.length == 5).toBe(true);
+
+        let allPiecesUnique = true;
+        for (let i = 0; i < 5; i++) {
+            for (let j = 0; j < 5; j++) {
+                if (piecePriority[i] == piecePriority[j] && 
+                    (piecePriority[i] != PAWN && piecePriority[i] != ROOK
+                        && piecePriority[i] != KNIGHT && piecePriority[i] != BISHOP
+                        && piecePriority[i] != QUEEN))
+                    allPiecesUnique = false;
+                    break;
+                }
+            }
+
+        expect(allPiecesUnique).toBe(true);
     });
 });
 
