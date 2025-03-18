@@ -243,16 +243,12 @@ export class ChessTiles {
         // If not occupied and move is valid, move the piece
         else if (this.xy && this.isValidMove([i, j])) {
             // if en passant move, destroy enemy pawn
-            if (this.boardState.getRank(...this.xy) == PAWN &&
-                this.boardState.isEnPassant(i, j)
-            ) {
+            if (this.boardState.getRank(...this.xy) == PAWN && this.boardState.isEnPassant(i, j)) {
                 this.capturePiece(this.boardState.getRank(i, this.xy[1]), this.boardState.getAlignment(i, this.xy[1]));
                 this.boardState.destroyPiece(i, this.xy[1]);
             }
             // if castling move, also move rook
-            if (this.boardState.getRank(...this.xy) == KING &&
-                Math.abs(this.xy[0] - i) == 2
-            )
+            if (this.boardState.getRank(...this.xy) == KING && Math.abs(this.xy[0] - i) == 2)
                 this.boardState.movePiece([i < this.xy[0] ? 0 : 7, j], [i < this.xy[0] ? 3 : 5, this.xy[1]]);
             
             // if king-saving move not executed by king, restore king tile color
@@ -284,8 +280,7 @@ export class ChessTiles {
             this.pointerOut(i, j);
             this.pointerOver(i, j);
             // highlight checked king if checked
-            if (this.isChecked)
-            {
+            if (this.isChecked) {
                 let coordinate = this.pieceCoordinates.getCoordinate(KING, this.currentPlayer);
                 this.temp.push({ xy: coordinate, color: CHECKED_COLOR });
             }
@@ -294,6 +289,13 @@ export class ChessTiles {
     
     // Toggle turn & check board state & spawn wave counter
     toggleTurn(override=false) {
+        // un-highlight checked king (since making a move means that the king is saved)
+        if (this.isChecked) {
+            this.isChecked = false;
+            let coordinate = this.pieceCoordinates.getCoordinate(KING, this.currentPlayer);
+            this.restoreColor(coordinate);
+        }
+
         // if Flip! is clicked (override) or Stop! is disabled
         if (override || !dev_stopOn) {
             if (this.currentPlayer == PLAYER) {
