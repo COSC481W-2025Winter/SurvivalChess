@@ -52,7 +52,6 @@ export class PiecesTaken {
         //set up variables to keep track of elements
         this.scene = scene;
         this.piecesTaken = [];
-        this.scene.load.image("x", "x.png");
 
         this.wPawnScore = 0;
         this.bPawnScore = 0;
@@ -65,6 +64,7 @@ export class PiecesTaken {
         this.wQueenScore = 0;
         this.bQueenScore = 0;
 
+        //add the title and the two "boxes" for the pieces
         this.scene.add
             .text(930, 26, "Captured Pieces:", {
                 fontFamily: "'Sans', sans-serif",
@@ -105,9 +105,9 @@ export class PiecesTaken {
         this.addPiece(3, j, BISHOP, PLAYER);
         this.addPiece(4, j, QUEEN, PLAYER);
 
-        
+        //add in score keeping
         this.scene.bPawnScores = this.scene.add
-                    .text(X_ANCHOR + 26, Y_ANCHOR - 10, 0, {
+                    .text(X_ANCHOR + 26, Y_ANCHOR - 10, "0", {
                         fontFamily: "'Sans', sans-serif",
                         fontSize: 22,
                         color: START_TEXT_ONE
@@ -184,54 +184,7 @@ export class PiecesTaken {
                         fontFamily: "'Sans', sans-serif",
                         fontSize: 16,
                         color: START_TEXT_ONE
-                    });
-        //this.addScore(rank, alignment);
-        
-    }
-
-    addScore(rank, alignment){
-        
-        if (alignment == COMPUTER){
-            var j = 0;
-            if (rank == PAWN){
-                var i = 0;
-                
-            }
-            if (rank == KNIGHT){
-                var i = 2;
-
-            }
-            if (rank == ROOK){
-                var i = 1;
-                
-            }
-            if (rank == BISHOP){
-                var i = 3;
-                
-            }
-            if (rank == QUEEN){
-                var i = 4;
-                
-            }
-            
-        } else {
-            var j = 1;
-            if (rank == PAWN){
-                var i = 0;
-            }
-            if (rank == KNIGHT){
-                var i = 2;
-            }
-            if (rank == ROOK){
-                var i = 1;
-            }
-            if (rank == BISHOP){
-                var i = 3;
-            }
-            if (rank == QUEEN){
-                var i = 4;
-            }
-        }        
+                    });   
     }
 
     takePiece(rank, alignment) {
@@ -268,11 +221,11 @@ export class PiecesTaken {
                 this.scene.wQueenScores.setText(t);
                 this.wQueenScore = this.wQueenScore + 1;
             }
-        } else {
+        } else if (alignment == COMPUTER){
             if (rank == PAWN){
                 this.scene.bPawnScore = this.bPawnScore + 1;
                 var t = this.scene.bPawnScore.toString();
-                this.scene.bPawnScores.setText(t);
+                this.scene.bPawnScores.text = t;
                 this.bPawnScore = this.bPawnScore + 1;
             }
             if (rank == KNIGHT){

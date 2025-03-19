@@ -1,153 +1,104 @@
 import "phaser";
-import { PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING } from "../constants";
+import { PAWN, ROOK, KNIGHT, BISHOP, QUEEN} from "../constants";
 import { PLAYER, COMPUTER } from '../constants';
 jest.mock("../chess-piece");
 jest.mock("../pieces-taken");
 
 
-test("should return the correct position for this piece's rank and alignment", () => {
-    const result = testPosition(PAWN, PLAYER);
-    expect(result).toEqual([5, 0]);
+test("should return the correct piece count for this piece's rank and alignment", () => {
+    const result = testPieceCount(PAWN, PLAYER);
+    expect(result).toEqual(9);
 });
-test("should return the correct position for this piece's rank and alignment", () => {
-    const result = testPosition(ROOK, PLAYER);
-    expect(result).toEqual([4, 0]);
+test("should return the correct piece count for this piece's rank and alignment", () => {
+    const result = testPieceCount(PAWN, COMPUTER);
+    expect(result).toEqual(4);
 });
-test("should return the correct position for this piece's rank and alignment", () => {
-    const result = testPosition(KNIGHT, PLAYER);
-    expect(result).toEqual([4, 2]);
+test("should return the correct piece count for this piece's rank and alignment", () => {
+    const result = testPieceCount(ROOK, PLAYER);
+    expect(result).toEqual(3);
 });
-test("should return the correct position for this piece's rank and alignment", () => {
-    const result = testPosition(BISHOP, PLAYER);
-    expect(result).toEqual([4, 4]);
+test("should return the correct piece count for this piece's rank and alignment", () => {
+    const result = testPieceCount(ROOK, COMPUTER);
+    expect(result).toEqual(13);
 });
-test("should return the correct position for this piece's rank and alignment", () => {
-    const result = testPosition(QUEEN, PLAYER);
-    expect(result).toEqual([4, 6]);
+test("should return the correct piece count for this piece's rank and alignment", () => {
+    const result = testPieceCount(KNIGHT, PLAYER);
+    expect(result).toEqual(6);
 });
-test("should return the correct position for this piece's rank and alignment", () => {
-    const result = testPosition(KING, PLAYER);
-    expect(result).toEqual([4, 7]);
+test("should return the correct piece count for this piece's rank and alignment", () => {
+    const result = testPieceCount(KNIGHT, COMPUTER);
+    expect(result).toEqual(5);
 });
-
-
-test("should return the correct position for this piece's rank and alignment", () => {
-    const result = testPosition(PAWN, COMPUTER);
-    expect(result).toEqual([3, 0]);
+test("should return the correct piece count for this piece's rank and alignment", () => {
+    const result = testPieceCount(BISHOP, PLAYER);
+    expect(result).toEqual(10);
 });
-test("should return the correct position for this piece's rank and alignment", () => {
-    const result = testPosition(ROOK, COMPUTER);
-    expect(result).toEqual([2, 0]);
+test("should return the correct piece count for this piece's rank and alignment", () => {
+    const result = testPieceCount(BISHOP, COMPUTER);
+    expect(result).toEqual(2);
 });
-test("should return the correct position for this piece's rank and alignment", () => {
-    const result = testPosition(KNIGHT, COMPUTER);
-    expect(result).toEqual([2, 2]);
+test("should return the correct piece count for this piece's rank and alignment", () => {
+    const result = testPieceCount(QUEEN, PLAYER);
+    expect(result).toEqual(7);
 });
-test("should return the correct position for this piece's rank and alignment", () => {
-    const result = testPosition(BISHOP, COMPUTER);
-    expect(result).toEqual([2, 4]);
-});
-test("should return the correct position for this piece's rank and alignment", () => {
-    const result = testPosition(QUEEN, COMPUTER);
-    expect(result).toEqual([2, 6]);
-});
-test("should return the correct position for this piece's rank and alignment", () => {
-    const result = testPosition(KING, COMPUTER);
-    expect(result).toEqual([2, 7]);
+test("should return the correct piece count for this piece's rank and alignment", () => {
+    const result = testPieceCount(QUEEN, COMPUTER);
+    expect(result).toEqual(8);
 });
 
-const wknightTaken = false;
-const wRookTaken = false;
-const wBishopTaken = false;
-const bknightTaken = false;
-const bRookTaken = false;
-const bBishopTaken = false;
-const nextPawnW = 0;
-const nextPawnB = 0;
+
+const wPawnScore = 8;
+const bPawnScore = 3;
+const wRookScore = 2;
+const bRookScore = 12;
+const wKnightScore = 5;
+const bKnightScore = 4;
+const wBishopScore = 9;
+const bBishopScore = 1;
+const wQueenScore = 6;
+const bQueenScore = 7;
 
 
-function testPosition(rank, alignment){
-    var inrow;
-    var incol;
+function testPieceCount(rank, alignment){
+
+    var count = 1;
+
+    //determine which count to update from based on rank and alignment
     if (alignment == PLAYER){
         if (rank == PAWN){
-            inrow = 5;
-            incol = nextPawnW;
-            
-        } else {
-            inrow = 4;
-            if (rank == KNIGHT){
-                if (wknightTaken){
-                    incol = 3;
-                } else {
-                    incol = 2;
-                    
-                }
-            }
-            if (rank == ROOK){
-                if (wRookTaken){
-                    incol = 1;
-                } else {
-                    incol = 0;
-                    
-                }
-            }
-            if (rank == BISHOP){
-                if (wBishopTaken){
-                    incol = 5;
-                } else {
-                    incol = 4;
-                    
-                }
-            }
-            if (rank == QUEEN){
-                incol = 6;
-            }
-            if (rank == KING){
-                incol = 7;
-            }
+            count = count + wPawnScore;
         }
-    } else {
+        if (rank == KNIGHT){
+            count = count + wKnightScore;
+        }
+        if (rank == ROOK){
+            count = count + wRookScore;
+        }
+        if (rank == BISHOP){
+            count = count + wBishopScore;
+        }
+        if (rank == QUEEN){
+            count = count + wQueenScore;
+        }
+    } else if (alignment == COMPUTER){
         if (rank == PAWN){
-            inrow = 3;
-            incol = nextPawnB;
-            
-        } else {
-            inrow = 2;
-            if (rank == KNIGHT){
-                if (bknightTaken){
-                    incol = 3;
-                } else {
-                    incol = 2;
-                    
-                }
-            }
-            if (rank == ROOK){
-                if (bRookTaken){
-                    incol = 1;
-                } else {
-                    incol = 0;
-                    
-                }
-            }
-            if (rank == BISHOP){
-                if (bBishopTaken){
-                    incol = 5;
-                } else {
-                    incol = 4;
-                    
-                }
-            }
-            if (rank == QUEEN){
-                incol = 6;
-            }
-            if (rank == KING){
-                incol = 7;
-            }
+            count = count + bPawnScore;
+        }
+        if (rank == KNIGHT){
+            count = count + bKnightScore;
+        }
+        if (rank == ROOK){
+            count = count + bRookScore;
+        }
+        if (rank == BISHOP){
+            count = count + bBishopScore;
+        }
+        if (rank == QUEEN){
+            count = count + bQueenScore;
         }
     }
 
-    return ([inrow, incol]);
+    return count;
 }
 
 
