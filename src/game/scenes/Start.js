@@ -120,7 +120,7 @@ export class Start extends Scene {
 		settingsButton.on(
 			"pointerdown",
 			function () {
-				import("./settings") // Dynamically import the Settings scene
+				import("./Settings") // Dynamically import the Settings scene
 					.then((module) => {
 						// Only add the scene if it's not already registered
 						if (!this.scene.get("Settings")) {

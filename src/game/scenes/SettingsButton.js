@@ -4,7 +4,7 @@ export class SettingsButton {
 	}
 
 	click() {
-		import("./settings").then((module) => {
+		import("./Settings").then((module) => {
 			// Only add the scene if it's not already registered
 			if (!this.scene.get("Settings")) {
 				this.scene.add("Settings", module.Settings); // Add the scene dynamically
