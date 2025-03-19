@@ -1,4 +1,4 @@
-import { Settings } from "./Settings"; // Import the Settings scene
+import { Settings } from "./settings"; // Import the Settings scene
 
 describe("Settings Scene", () => {
     let scene;
@@ -32,7 +32,7 @@ describe("Settings Scene", () => {
     
     // developer mode?? sprint 3 
     //color code non implementation here?
-    
+
     test("should create the Color Palette label", () => {
         expect(scene.add.text).toHaveBeenCalledWith(
             200, 170, "Color Palette:", expect.any(Object)
