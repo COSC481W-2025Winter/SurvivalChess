@@ -1,4 +1,6 @@
 import "phaser";
+import { CHECKMATE, STALEMATE } from "../global-stats.js";
+import { globalStatus, globalMoves, globalPieces, globalWaves } from "../global-stats.js";
 import { ChessTiles } from "../chess-tiles.js";
 jest
   .spyOn(ChessTiles.prototype, 'checkPromotion')
@@ -399,6 +401,69 @@ describe("", () => {
         expect(tiles.chessTiles[5][2].fillColor).toBe(tiles.getTileColor([5, 2]));
         expect(tiles.chessTiles[4][2].fillColor).toBe(tiles.getTileColor([4, 2]));
         expect(tiles.chessTiles[3][2].fillColor).toBe(NON_LETHAL_COLOR);
+    });
+
+    test("Stat Tracking", () => {
+        expect(globalMoves).toBe(0);
+        expect(globalPieces).toBe(0);
+        click(0, 6);
+        click(0, 4);
+        expect(globalMoves).toBe(1);
+        expect(globalPieces).toBe(0);
+        click(1, 1);
+        click(1, 3);
+        expect(globalMoves).toBe(1);
+        expect(globalPieces).toBe(0);
+        click(0, 4);
+        click(1, 3);
+        expect(globalMoves).toBe(2);
+        expect(globalPieces).toBe(1);
+        click(1, 0);
+        click(2, 2);
+        expect(globalMoves).toBe(2);
+        expect(globalPieces).toBe(1);
+        click(1, 3);
+        click(2, 2);
+        expect(globalMoves).toBe(3);
+        expect(globalPieces).toBe(2);
+        click(3, 1);
+        click(2, 2);
+        expect(globalMoves).toBe(3);
+        expect(globalPieces).toBe(2);
+        for (let i = 1; i < 100; i++) {
+            tiles.toggleTurn();
+            if (i % 16 == 0)
+                expect(globalWaves).toBe(i / 16);
+        }
+    })
+
+    test("Checkmate", () => {
+        expect(globalStatus).toBe(null);
+        click(5, 6);
+        click(5, 4);
+        click(4, 1);
+        click(4, 3);
+        click(6, 6);
+        click(6, 4);
+        expect(globalStatus).toBe(null);
+        click(3, 0);
+        expect(globalStatus).toBe(null);
+        click(7, 4);
+        expect(globalStatus).toBe(CHECKMATE);
+    });
+
+    test("Stalemate", () => {
+        tiles.toggleTurn();
+        expect(globalStatus).toBe(null);
+        tiles.boardState.zapPieces(PLAYER);
+        tiles.boardState.addPiece(0, 7, KING, PLAYER);
+        tiles.boardState.addPiece(1, 6, ROOK, COMPUTER);
+        tiles.boardState.addPiece(7, 5, QUEEN, COMPUTER);
+        expect(globalStatus).toBe(null);
+        click(7, 5);
+        expect(globalStatus).toBe(null);
+        click(2, 5);
+        expect(globalStatus).toBe(STALEMATE);
     });
 
     test("Miscellaneous", () => {

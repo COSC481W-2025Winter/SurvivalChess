@@ -542,7 +542,6 @@ export class BoardState {
     // Check whether king of alignment is threatened
     isChecked(alignment) {
         let coordinate = this.#pieceCoordinates.getCoordinate(KING, alignment);
-
         this.#isChecked = !!this.seekThreats(...coordinate, alignment).length;
         return this.#isChecked;
     }

@@ -180,7 +180,7 @@ export class ChessGameState {
 		let pieceFound = false;
 
 		const coordinates = this.pieceCoordinates.getAllCoordinates(COMPUTER);
-		console.log(this.pieceCoordinates);
+		// console.log(this.pieceCoordinates);
 		let pieceToMove;
 		let moves;
 
