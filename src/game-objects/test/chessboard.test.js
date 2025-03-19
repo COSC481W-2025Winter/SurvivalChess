@@ -82,6 +82,7 @@ describe("", () => {
             get: jest.fn((name) => {}),
             add: jest.fn((name, scene) => {}),
             start: jest.fn((name) => {}),
+            launch: jest.fn((name) => {}),
         }
 
         // Mock the add.rectangle & add.text & add.existing methods
