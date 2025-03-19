@@ -194,31 +194,31 @@ export class PiecesTaken {
             if (rank == PAWN){
                 this.scene.wPawnScore = this.wPawnScore + 1;
                 var t = this.scene.wPawnScore.toString();
-                this.scene.wPawnScores.setText(t);
+                this.scene.wPawnScores.text = (t);
                 this.wPawnScore = this.wPawnScore + 1;
             }
             if (rank == KNIGHT){
                 this.scene.wKnightScore = this.wKnightScore + 1;
                 var t = this.scene.wKnightScore.toString();
-                this.scene.wKnightScores.setText(t);
+                this.scene.wKnightScores.text = (t);
                 this.wKnightScore = this.wKnightScore + 1;
             }
             if (rank == ROOK){
                 this.scene.wRookScore = this.wRookScore + 1;
                 var t = this.scene.wRookScore.toString();
-                this.scene.wRookScores.setText(t);
+                this.scene.wRookScores.text = (t);
                 this.wRookScore = this.wRookScore + 1;
             }
             if (rank == BISHOP){
                 this.scene.wBishopScore = this.wBishopScore + 1;
                 var t = this.scene.wBishopScore.toString();
-                this.scene.wBishopScores.setText(t);
+                this.scene.wBishopScores.text = (t);
                 this.wBishopScore = this.wBishopScore + 1;
             }
             if (rank == QUEEN){
                 this.scene.wQueenScore = this.wQueenScore + 1;
                 var t = this.scene.wQueenScore.toString();
-                this.scene.wQueenScores.setText(t);
+                this.scene.wQueenScores.text = (t);
                 this.wQueenScore = this.wQueenScore + 1;
             }
         } else if (alignment == COMPUTER){
@@ -231,25 +231,25 @@ export class PiecesTaken {
             if (rank == KNIGHT){
                 this.scene.bKnightScore = this.bKnightScore + 1;
                 var t = this.scene.bKnightScore.toString();
-                this.scene.bKnightScores.setText(t);
+                this.scene.bKnightScores.text = (t);
                 this.bKnightScore = this.bKnightScore + 1;
             }
             if (rank == ROOK){
                 this.scene.bRookScore = this.bRookScore + 1;
                 var t = this.scene.bRookScore.toString();
-                this.scene.bRookScores.setText(t);
+                this.scene.bRookScores.text = (t);
                 this.bRookScore = this.bRookScore + 1;
             }
             if (rank == BISHOP){
                 this.scene.bBishopScore = this.bBishopScore + 1;
                 var t = this.scene.bBishopScore.toString();
-                this.scene.bBishopScores.setText(t);
+                this.scene.bBishopScores.text = (t);
                 this.bBishopScore = this.bBishopScore + 1;
             }
             if (rank == QUEEN){
                 this.scene.bQueenScore = this.bQueenScore + 1;
                 var t = this.scene.bQueenScore.toString();
-                this.scene.bQueenScores.setText(t);
+                this.scene.bQueenScores.text = (t);
                 this.bQueenScore = this.bQueenScore + 1;
             }
         }
