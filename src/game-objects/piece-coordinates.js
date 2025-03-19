@@ -1,5 +1,5 @@
-import { PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING } from './constants';
-import { PLAYER, COMPUTER } from './constants';
+import { PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING, 
+    PLAYER, COMPUTER } from './constants';
 
 export class PieceCoordinates {
     #coordinates
@@ -8,8 +8,8 @@ export class PieceCoordinates {
         this.#coordinates = {};
         for (let alignment of [PLAYER, COMPUTER]) {
             this.#coordinates[alignment] = {};
-            for (let rank of [PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING])
-                this.#coordinates[alignment][rank] = [];
+            for (let rank of [PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING]) {
+                this.#coordinates[alignment][rank] = [];}
         }
     }
 
@@ -19,8 +19,8 @@ export class PieceCoordinates {
 
     moveCoordinate(input, output, rank, alignment) {
         let index = this.findIndex(...input, rank, alignment);
-        if (index == null)
-            return false;
+        if (index == null){
+            return false;}
         this.#coordinates[alignment][rank][index] = output;
         return true;
     }
@@ -31,25 +31,34 @@ export class PieceCoordinates {
 
     getAllCoordinates(alignment) {
         let coordinates = [];
-        for (let rank of [PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING])
-            for (let piece of this.#coordinates[alignment][rank])
+        for (let rank of [PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING]) {
+            for (let piece of this.#coordinates[alignment][rank]) {
                 coordinates.push(piece);
+            }
+        }
         return coordinates;
     }
 
     deleteCoordinate(col, row, rank, alignment) {
         let index = this.findIndex(col, row, rank, alignment);
-        if(index == null)
+        if(index == null) {
             return false;
+        }
         this.#coordinates[alignment][rank].splice(index, 1);
         return true;
     }
 
     findIndex(col, row, rank, alignment) {
         let index = 0;
-        for (; index < this.#coordinates[alignment][rank].length; index++)
-            if (col == this.#coordinates[alignment][rank][index][0] && row == this.#coordinates[alignment][rank][index][1])
+        for (; index < this.#coordinates[alignment][rank].length; index++) {
+            if (col == this.#coordinates[alignment][rank][index][0] && row == this.#coordinates[alignment][rank][index][1]) {
                 return index;
+            }
+        }
         return null;
+    }
+    // getter, returns #coordinates object
+    getCoordinates() {
+        return this.#coordinates;
     }
 }  

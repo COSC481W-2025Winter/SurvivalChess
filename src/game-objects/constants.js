@@ -69,6 +69,19 @@ const COMPUTER = "B"; // computer alignment
 
 const EN_PASSANT_TOKEN = "en passant"; // en passant token
 
+
+const PAWN_VALUE = 1;
+const KNIGHT_VALUE = 3;
+const BISHOP_VALUE = 3;
+const ROOK_VALUE = 5;
+const QUEEN_VALUE = 9;
+const KING_VALUE = 100;
+
+const CAPTURE_WEIGHT = 1;
+const LOSS_WEIGHT = 0.1;
+const THREATEN_WEIGHT = 0.01;
+
+
 export function isSamePoint([col1, row1], [col2, row2]) {
 	return col1 == col2 && row1 == row2;
 }
@@ -105,3 +118,7 @@ export {
 export {PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING};
 export {PLAYER, COMPUTER};
 export {EN_PASSANT_TOKEN};
+
+
+export { PAWN_VALUE, KNIGHT_VALUE, BISHOP_VALUE, ROOK_VALUE,QUEEN_VALUE, KING_VALUE};
+export { CAPTURE_WEIGHT, LOSS_WEIGHT, THREATEN_WEIGHT };
