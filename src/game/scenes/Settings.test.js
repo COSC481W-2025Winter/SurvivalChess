@@ -1,65 +1,63 @@
-import { Settings } from "./settings"; // Import the settings scene
+import { Settings } from "./settings"; // Import the Settings scene
 
-// We are mocking the Start Scene instead of running the whole game loop
-// Running the whole game loop takes too long and will result in the test timing out and failing
-describe("settings Scene", () => {
+describe("Settings Scene", () => {
     let scene;
 
     beforeEach(() => {
-        // Setup: Create a new instance of the Start scene for each test
         scene = new Settings();
 
-        // Mock the cameras object since it is normally initialized by Phaser
-        scene.cameras = {
-            main: {
-            },
-        };
+        // Mock Phaser dependencies
+        scene.cameras = { main: { setBackgroundColor: jest.fn() } };
+        scene.scene = { stop: jest.fn(), restart: jest.fn() };
 
-        // Mock the children array to simulate the scene objects like buttons and text.
-        scene.children = {
-            // Mock the getChildren method, which is responsible for fetching the scene's children objects (e.g., text, buttons)
-            getChildren: jest.fn().mockReturnValue([
-                // Mock the main title text object with expected properties
-                { text: "settings mode", x: 512, y: 490 },
-                // Mock the close rules button, ensuring it has a text and is interactable
-                { text: "Close settings", input: { enabled: true } },
-            ]),
-        };
-
-        // Mock the add.text method for creating text objects in the scene
+        // Properly mock `this.add.text()` for text objects (titles, buttons)
         scene.add = {
-            text: jest.fn().mockReturnValue({
-                // Mock the method chaining typically used when creating Phaser text objects
-                setOrigin: jest.fn(),
-                setDepth: jest.fn(),
-                setInteractive: jest.fn(),
-                on: jest.fn(), // Mock event listener attachment
-            }),
+            text: jest.fn((x, y, text, style) => ({
+                x, y, text, style,
+                setInteractive: jest.fn().mockReturnThis(),
+                on: jest.fn().mockReturnThis(),
+                setOrigin: jest.fn().mockReturnThis(),
+            })),
+            rectangle: jest.fn().mockReturnValue({ setOrigin: jest.fn() }),
         };
+
+        scene.create(); // Simulate scene creation
     });
 
-    // Test to verify that the main title text object is created properly
-    test("text objects should be created", () => {
-        // Find the text object with the correct text value from the mocked children array
-        const titleText = scene.children
-            .getChildren()
-            .find((child) => child.text === "settings mode");
+    test("should create the Settings title", () => {
+        expect(scene.add.text).toHaveBeenCalledWith(
+            expect.any(Number), 100, "SETTINGS", expect.any(Object)
+        );
+    });
+    
+    // developer mode?? sprint 3 
+    //color code non implementation here?
 
-        // Assertions to check if the title text is created and its properties are correct
-        expect(titleText).toBeDefined(); // Ensure the title text exists
-        expect(titleText.x).toBe(512); // Ensure its x-position is correct
-        expect(titleText.y).toBe(490); // Ensure its y-position is correct
+    test("should create the Color Palette label", () => {
+        expect(scene.add.text).toHaveBeenCalledWith(
+            200, 170, "Color Palette:", expect.any(Object)
+        );
     });
 
-    // Test to verify that the close rules button is created and is interactive
-    test("close settings button should be created and interactive", () => {
-        // Find the start button from the mocked children
-        const closeSettingsButton = scene.children
-            .getChildren()
-            .find((child) => child.text === "Close settings");
+    test("should create theme selection buttons", () => {
+        const palettes = ["default", "dark", "light"];
+        palettes.forEach((palette) => {
+            expect(scene.add.text).toHaveBeenCalledWith(
+                expect.any(Number), expect.any(Number), palette, expect.any(Object)
+            );
+        });
+    });
 
-        // Assertions to check if the start button exists and is interactive
-        expect(closeSettingsButton).toBeDefined(); // Ensure the button exists
-        expect(closeSettingsButton.input.enabled).toBe(true); // Ensure the button is interactive (enabled)
+    test("should create the Close button", () => {
+        expect(scene.add.text).toHaveBeenCalledWith(
+            expect.any(Number), expect.any(Number), "Close Settings", expect.any(Object)
+        );
+    });
+
+    test("should make the Close button interactive", () => {
+        const closeButton = scene.add.text.mock.results.find(result => result.value.text === "Close Settings")?.value;
+        expect(closeButton).toBeDefined();
+        expect(closeButton.setInteractive).toHaveBeenCalled();
+        expect(closeButton.on).toHaveBeenCalledWith("pointerdown", expect.any(Function));
     });
 });

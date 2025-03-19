@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chess Piece Mode Toggle</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin: 10px;
+    }
+    .chess-piece {
+      width: 50px;
+      height: 50px;
+      margin: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Chess Piece Mode Toggle</h1>
+
+  <!-- Mode buttons -->
+  <button id="defaultModeBtn">Default Mode</button>
+  <button id="lightModeBtn">Light Mode</button>
+  <button id="darkModeBtn">Dark Mode</button>
+
+  <!-- Chess pieces (images) -->
+  <div id="chessPieces">
+    <img id="pawn1" class="chess-piece" src="assets/default/pawn.png" alt="pawn1">
+    <img id="pawn2" class="chess-piece" src="assets/default/pawn.png" alt="pawn2">
+    <img id="rook1" class="chess-piece" src="assets/default/rook.png" alt="rook1">
+    <img id="rook2" class="chess-piece" src="assets/default/rook.png" alt="rook2">
+    <!-- Add other pieces here like knights, bishops, etc. -->
+  </div>
+
+  <script>
+    // Grab the buttons and pieces
+    const defaultModeBtn = document.getElementById("defaultModeBtn");
+    const lightModeBtn = document.getElementById("lightModeBtn");
+    const darkModeBtn = document.getElementById("darkModeBtn");
+    const chessPieces = document.querySelectorAll(".chess-piece");
+
+    // Function to switch to the default mode
+    function switchToDefault() {
+      console.log("Default Mode selected");
+      chessPieces.forEach(piece => {
+        piece.src = "assets/default/" + piece.alt.toLowerCase() + ".png"; // Update images
+      });
+      localStorage.setItem("mode", "default"); // Store mode in localStorage
+    }
+
+    // Function to switch to light mode
+    function switchToLight() {
+      console.log("Light Mode selected");
+      chessPieces.forEach(piece => {
+        piece.src = "assets/light/" + piece.alt.toLowerCase() + ".png"; // Update images
+      });
+      localStorage.setItem("mode", "light"); // Store mode in localStorage
+    }
+
+    // Function to switch to dark mode
+    function switchToDark() {
+      console.log("Dark Mode selected");
+      chessPieces.forEach(piece => {
+        piece.src = "assets/dark/" + piece.alt.toLowerCase() + ".png"; // Update images
+      });
+      localStorage.setItem("mode", "dark"); // Store mode in localStorage
+    }
+
+    // Add event listeners to the buttons
+    defaultModeBtn.addEventListener("click", switchToDefault);
+    lightModeBtn.addEventListener("click", switchToLight);
+    darkModeBtn.addEventListener("click", switchToDark);
+
+    // Load saved mode from localStorage when the page loads
+    const savedMode = localStorage.getItem("mode");
+    if (savedMode === "light") {
+      lightModeBtn.click(); // Simulate click for light mode
+    } else if (savedMode === "dark") {
+      darkModeBtn.click(); // Simulate click for dark mode
+    } else {
+      defaultModeBtn.click(); // Simulate click for default mode if no mode is saved
+    }
+  </script>
+</body>
+</html>

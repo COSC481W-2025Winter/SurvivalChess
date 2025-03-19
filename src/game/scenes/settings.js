@@ -1,67 +1,98 @@
-import { Scene } from "phaser";
-import { EventBus } from "../EventBus";
+import Phaser from "phaser";
+import {COLOR_THEMES} from "../../game-objects/constants.js";
 
-export class Settings extends Scene {
-    constructor() {
-        super("Settings");
-    }
+export class Settings extends Phaser.Scene {
+	constructor() {
+		super({key: "Settings"});
+	}
 
-    preload() {
-        this.load.setPath("assets");
-        this.load.image("star", "star.png");
-        this.load.image("background", "bg.png");
-    }
+	create() {
+		// Semi-transparent overlay background
+		const overlay = this.add.rectangle(
+			this.cameras.main.width / 2,
+			this.cameras.main.height / 2,
+			this.cameras.main.width * 0.8,
+			this.cameras.main.height * 0.7,
+			0x000000,
+			0.7 // Transparency level
+		);
+		overlay.setOrigin(0.5, 0.5);
 
-    create() {
-        // Creates a visual background that also blocks input on the scene underneath
-        const bg = this.add.rectangle(625, 384, 1250, 768, 0x00ff00, 0.5);
-        bg.setDepth(50);
+		// SETTINGS Title
+		this.add
+			.text(this.cameras.main.width / 2, 100, "SETTINGS", {
+				fontSize: "32px",
+				fill: "#f28d3e",
+				fontFamily: "Press Start 2P",
+			})
+			.setOrigin(0.5);
 
-        // Placeholder visual elements
-        this.add.image(512, 384, "background").alpha = 0.5;
-        this.add.image(512, 350, "star").setDepth(100);
-        this.add
-            .text(512, 490, "Settings mode", {
-                fontFamily: "Arial Black",
-                fontSize: 38,
-                color: "#ffffff",
-                stroke: "#000000",
-                strokeThickness: 8,
-                align: "center",
-            })
-            .setOrigin(0.5)
-            .setDepth(100);
+		// Color Palette Section
+		this.add.text(200, 170, "Color Palette:", {fontSize: "20px", fill: "#fff"});
 
-        const closeButton = this.add.text(100, 100, "Close Settings", {
-            fill: "#0099ff",
-            backgroundColor: "#ffff",
-            padding: { left: 20, right: 20, top: 10, bottom: 10 },
-        });
+		const palettes = ["default", "dark", "light"];
+		let yOffset = 220;
 
-        closeButton.setOrigin(0.5);
-        closeButton.setPosition(625, 600);
-        closeButton.setInteractive();
-        closeButton.on(
-            "pointerdown",
-            function () {
-                this.scene.stop("Settings");
-            },
-            this
-        );
-        closeButton.setDepth(100);
+		palettes.forEach((palette) => {
+			this.add
+				.text(220, yOffset, palette, {
+					fontSize: "18px",
+					fill: "#f28d3e",
+					backgroundColor: "#333",
+					padding: {x: 10, y: 5},
+				})
+				.setInteractive()
+				.on("pointerdown", () => {
+					localStorage.setItem("selectedPalette", palette);
+					this.applyColorTheme(palette);
+					this.scene.restart(); // Refresh scene
+				});
 
-        // When the pointer hovers over the button, scale it up
-        closeButton.on("pointerover", () => {
-            closeButton.setScale(1.2);
-        });
+			yOffset += 50;
+		});
 
-        // When the pointer moves away from the button, reset the scale to normal
-        closeButton.on("pointerout", () => {
-            closeButton.setScale(1);
-        });
+		// Dev Mode Toggle Button
+		// this.add
+		//   .text(200, yOffset, "Toggle Dev Mode", {
+		//     fontSize: "18px",
+		//     fill: "#f28d3e",
+		//     backgroundColor: "#333",
+		//     padding: { x: 10, y: 5 },
+		//   })
+		//   .setInteractive()
+		//   .on("pointerdown", () => {
+		//     toggleDev();
+		//   });
 
-        bg.setInteractive();
+		// yOffset += 50;
 
-        EventBus.emit("current-scene-ready", this);
-    }
+		// Close Button (Same Style as "Close Rules")
+		this.add
+			.text(this.cameras.main.width / 2, this.cameras.main.height - 100, "Close Settings", {
+				fontSize: "20px",
+				fill: "#fff",
+				backgroundColor: "#f28d3e",
+				padding: {x: 20, y: 10},
+			})
+			.setOrigin(0.5)
+			.setInteractive()
+			.on("pointerdown", () => {
+				this.scene.stop("Settings");
+			});
+
+		// Apply stored settings
+		const savedPalette = localStorage.getItem("selectedPalette") || "default";
+		this.applyColorTheme(savedPalette);
+	}
+
+	applyColorTheme(selectedPalette) {
+		const colors = COLOR_THEMES[selectedPalette];
+
+		if (!colors) {
+			return;
+		}
+
+		document.documentElement.style.setProperty("--primary-chess-color", colors.primary);
+		document.documentElement.style.setProperty("--secondary-chess-color", colors.secondary);
+	}
 }
