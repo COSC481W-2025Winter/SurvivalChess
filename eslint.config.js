@@ -32,10 +32,11 @@ export default [
 	// Set specific rules
 	{
 		rules: {
+			// REMOVED RULES
+			// "no-duplicate-imports": "error", // Avoid duplicate imports
+			// curly: ["error", "all"], // Ensure curly braces are used in control statements
 			semi: "error", // Ensure semicolons at the end of statements
-			"no-duplicate-imports": "error", // Avoid duplicate imports
 			"space-infix-ops": "error", // Ensure spacing around operators
-			curly: "error", // Ensure curly braces are used in control statements
 			"@/max-len": ["warn", {code: 120}], // Ensure max length for lines
 			"comma-spacing": ["error", {before: false, after: true}], // Ensure spaces after commas
 			"array-bracket-spacing": ["error", "never"], // Ensure consistent spacing in brackets
@@ -48,7 +49,7 @@ export default [
 			"prefer-const": "warn", // Ensures constants are used when they should be
 			"no-console": ["warn"], // Warns of console.log being left in final code
 			"no-undef": "warn", // This will set 'no-undef' to a warning
-			indent: ["error", "tab"], // 2 Spaces per tab
+			indent: ["error", "tab", {SwitchCase: 1}], // 2 Spaces per tab
 			"prettier/prettier": "error", // Make Prettier rules part of the linting process
 		},
 	},

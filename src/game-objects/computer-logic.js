@@ -89,36 +89,36 @@ export class ChessGameState {
 				for (const count of rank) {
 					// for each player piece of a given rank
 					switch (rank) {
-					    case PAWN:
-						    score += PAWN_VALUE;
-						    threatened = boardState.seekThreats(count[0], count[1], PLAYER);
-    						score -= PAWN_VALUE * THREATEN_WEIGHT * threatened.length; // each piece threatening it
-						    break;
-				    	case ROOK:
-					    	score += ROOK_VALUE;
-				    		threatened = boardState.seekThreats(count[0], count[1], PLAYER);
-			    			score -= ROOK_VALUE * THREATEN_WEIGHT * threatened.length; // each piece threatening it
-		    				break;
-	    				case BISHOP:
-    						score += BISHOP_VALUE;
-						    threatened = boardState.seekThreats(count[0], count[1], PLAYER);
-					    	score -= BISHOP_VALUE * THREATEN_WEIGHT * threatened.length; // each piece threatening it
-				    		break;
-			    		case KNIGHT:
-		    				score += KNIGHT_VALUE;
-	    					threatened = boardState.seekThreats(count[0], count[1], PLAYER);
-    						score -= KNIGHT_VALUE * THREATEN_WEIGHT * threatened.length; // each piece threatening it
-						    break;
-					    case QUEEN:
-						    score += QUEEN_VALUE;
-					    	threatened = boardState.seekThreats(count[0], count[1], PLAYER);
-				    		score -= QUEEN_VALUE * THREATEN_WEIGHT * threatened.length; // each piece threatening it
-			    			break;
-		    			case KING:
-	    					score += KING_VALUE;
-    						threatened = boardState.seekThreats(count[0], count[1], PLAYER);
-						    score -= KING_VALUE * THREATEN_WEIGHT * threatened.length; // each piece threatening it
-					    	break;
+						case PAWN:
+							score += PAWN_VALUE;
+							threatened = boardState.seekThreats(count[0], count[1], PLAYER);
+							score -= PAWN_VALUE * THREATEN_WEIGHT * threatened.length; // each piece threatening it
+							break;
+						case ROOK:
+							score += ROOK_VALUE;
+							threatened = boardState.seekThreats(count[0], count[1], PLAYER);
+							score -= ROOK_VALUE * THREATEN_WEIGHT * threatened.length; // each piece threatening it
+							break;
+						case BISHOP:
+							score += BISHOP_VALUE;
+							threatened = boardState.seekThreats(count[0], count[1], PLAYER);
+							score -= BISHOP_VALUE * THREATEN_WEIGHT * threatened.length; // each piece threatening it
+							break;
+						case KNIGHT:
+							score += KNIGHT_VALUE;
+							threatened = boardState.seekThreats(count[0], count[1], PLAYER);
+							score -= KNIGHT_VALUE * THREATEN_WEIGHT * threatened.length; // each piece threatening it
+							break;
+						case QUEEN:
+							score += QUEEN_VALUE;
+							threatened = boardState.seekThreats(count[0], count[1], PLAYER);
+							score -= QUEEN_VALUE * THREATEN_WEIGHT * threatened.length; // each piece threatening it
+							break;
+						case KING:
+							score += KING_VALUE;
+							threatened = boardState.seekThreats(count[0], count[1], PLAYER);
+							score -= KING_VALUE * THREATEN_WEIGHT * threatened.length; // each piece threatening it
+							break;
 					}
 				}
 			}
