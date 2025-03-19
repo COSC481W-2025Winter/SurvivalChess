@@ -29,7 +29,10 @@ describe("Settings Scene", () => {
             expect.any(Number), 100, "SETTINGS", expect.any(Object)
         );
     });
-
+    
+    // developer mode?? sprint 3 
+    //color code non implementation here?
+    
     test("should create the Color Palette label", () => {
         expect(scene.add.text).toHaveBeenCalledWith(
             200, 170, "Color Palette:", expect.any(Object)
