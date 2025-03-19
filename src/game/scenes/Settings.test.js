@@ -10,43 +10,51 @@ describe("Settings Scene", () => {
         scene.cameras = { main: { setBackgroundColor: jest.fn() } };
         scene.scene = { stop: jest.fn(), restart: jest.fn() };
 
-        // Properly mock Phaser’s `this.add.text()` method, ensuring `.setInteractive()` and `.on()` are available
+        // Properly mock `this.add.text()` for text objects (titles, buttons)
         scene.add = {
-            text: jest.fn((x, y, text, style) => {
-                const mockTextObject = {
-                    x,
-                    y,
-                    text,
-                    style,
-                    setInteractive: jest.fn().mockReturnThis(), // Ensure method chaining works
-                    on: jest.fn().mockReturnThis(), // Ensure event listeners are tracked
-                    setOrigin: jest.fn().mockReturnThis(),
-                    setDepth: jest.fn().mockReturnThis(),
-                };
-                return mockTextObject;
-            }),
+            text: jest.fn((x, y, text, style) => ({
+                x, y, text, style,
+                setInteractive: jest.fn().mockReturnThis(),
+                on: jest.fn().mockReturnThis(),
+                setOrigin: jest.fn().mockReturnThis(),
+            })),
+            rectangle: jest.fn().mockReturnValue({ setOrigin: jest.fn() }),
         };
 
         scene.create(); // Simulate scene creation
     });
 
     test("should create the Settings title", () => {
-        expect(scene.add.text).toHaveBeenCalledWith(expect.any(Number), expect.any(Number), "SETTINGS", expect.any(Object));
+        expect(scene.add.text).toHaveBeenCalledWith(
+            expect.any(Number), 100, "SETTINGS", expect.any(Object)
+        );
     });
 
-    //developer mode to be added later in sprint 3
-    // color buttons??
+    test("should create the Color Palette label", () => {
+        expect(scene.add.text).toHaveBeenCalledWith(
+            200, 170, "Color Palette:", expect.any(Object)
+        );
+    });
+
+    test("should create theme selection buttons", () => {
+        const palettes = ["default", "dark", "light"];
+        palettes.forEach((palette) => {
+            expect(scene.add.text).toHaveBeenCalledWith(
+                expect.any(Number), expect.any(Number), palette, expect.any(Object)
+            );
+        });
+    });
 
     test("should create the Close button", () => {
-        expect(scene.add.text).toHaveBeenCalledWith(expect.any(Number), expect.any(Number), "Close", expect.any(Object));
+        expect(scene.add.text).toHaveBeenCalledWith(
+            expect.any(Number), expect.any(Number), "Close Settings", expect.any(Object)
+        );
     });
 
     test("should make the Close button interactive", () => {
-        // Find the Close button in the mock
-        const closeButton = scene.add.text.mock.results.find(result => result.value.text === "Close")?.value;
-
-        expect(closeButton).toBeDefined(); // Ensure the button exists
-        expect(closeButton.setInteractive).toHaveBeenCalled(); // Check if interactive
-        expect(closeButton.on).toHaveBeenCalledWith("pointerdown", expect.any(Function)); // Check click event
+        const closeButton = scene.add.text.mock.results.find(result => result.value.text === "Close Settings")?.value;
+        expect(closeButton).toBeDefined();
+        expect(closeButton.setInteractive).toHaveBeenCalled();
+        expect(closeButton.on).toHaveBeenCalledWith("pointerdown", expect.any(Function));
     });
 });
