@@ -1,4 +1,5 @@
 import "phaser";
+import { dev_deadAI, dev_toggleAI } from "../dev-buttons.js";
 import { CHECKMATE, STALEMATE } from "../global-stats.js";
 import { globalStatus, globalMoves, globalPieces, globalWaves } from "../global-stats.js";
 import { ChessTiles } from "../chess-tiles.js";
@@ -215,7 +216,8 @@ describe("", () => {
 
         // Create ChessTiles object
         tiles = new ChessTiles(scene);
-        tiles.setDeadAI(true); // kills AI
+        if (!dev_deadAI)
+            dev_toggleAI(); // kills AI
 
         // Trigger hover event where 'Start Game' button is
         x = y = 4;

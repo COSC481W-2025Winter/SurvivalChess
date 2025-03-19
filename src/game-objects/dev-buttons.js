@@ -39,7 +39,7 @@ function dev_toggleFeature(feature) {
             break;
     }
 }
-function dev_toggleAI() {
+export function dev_toggleAI() {
     dev_deadAI = !dev_deadAI;
 }
 
