@@ -51,7 +51,9 @@ export class BoardState {
                             this.addPiece(i, j, QUEEN, alignment, replace);
                             break;
                         case 4:
-                            this.addPiece(i, j, KING, alignment, replace);
+                            if (alignment==PLAYER){
+                                this.addPiece(i, j, KING, alignment, replace);
+                            }
                             break;
                     }
         }
@@ -529,6 +531,9 @@ export class BoardState {
 
     // Check whether king would be saved/un-threatened if move is made
     kingSaved(input, output, alignment) {
+        if (alignment==COMPUTER) { // computer doesn't have a king
+            return true;
+        }
         let coordinate = this.#pieceCoordinates.getCoordinate(KING, alignment);
         coordinate = isSamePoint(input, coordinate) ? output : coordinate;
         return !this.seekThreats(...coordinate, alignment, input, output).length;
@@ -566,5 +571,13 @@ export class BoardState {
                 return false;
 
         return true;
+    }
+
+    getBoardState() {
+        return this.#boardState;
+    }
+
+    getPieceCoordinates(){
+        return this.#pieceCoordinates;
     }
 }

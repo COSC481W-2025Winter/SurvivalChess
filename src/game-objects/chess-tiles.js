@@ -4,6 +4,7 @@ import { SIDE_BASE_COLOR, SIDE_HIGHLIGHT_COLOR } from "./constants";
 import { PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING } from "./constants";
 import { PLAYER, COMPUTER } from "./constants";
 import { isSamePoint, dim2Array } from "./constants";
+import { ChessGameState } from "./computer-logic"; 
 
 import { BoardState } from "./board-state";
 import { PieceCoordinates } from './piece-coordinates';
@@ -111,6 +112,9 @@ export class ChessTiles {
         this.boardState = new BoardState(this.scene, this.pieceCoordinates);
         this.piecesTaken = new PiecesTaken(this.scene);
         this.devButtons = new DevButtons(this.scene, this);
+
+        this.futureMoves;       // the ChessGameState object that plans future moves
+
     }
 
     // ================================================================
@@ -162,10 +166,11 @@ export class ChessTiles {
             }
 
         // restore highlighted lethal / non-lethal tile colors, if selected piece exists
-        if (this.temp)
-            for (let tile of this.temp)
-                this.highlightColor(tile.xy, tile.color);
-
+        if (this.temp){
+            for (let tile of this.temp){
+                this.highlightColor(tile.xy, tile.color)
+            };
+        };
         this.temp = null;
         this.threats = null;
 
@@ -313,7 +318,7 @@ export class ChessTiles {
                 // If we do, permit the computer to make a move
                 if (computerHasValidMove) {
                     this.currentPlayer = COMPUTER;
-
+                    this.makeComputerMove(); // do the computer move
                     if (!--this.turnsUntilNextWave)
                         this.spawnNextWave();
 
@@ -585,5 +590,20 @@ export class ChessTiles {
     setPromotion(rank, alignment) {
         this.boardState.destroyPiece(this.promotionCol, this.promotionRow); // might need update with capture
         this.boardState.addPiece(this.promotionCol, this.promotionRow, rank, alignment);
+    }
+
+    makeComputerMove() {
+        EventBus.once("ComputerMove", (detail) => {
+            // console.log("details: ", detail);
+            if (detail[2]) {
+                this.boardState.destroyPiece(detail[1]);
+            }
+            this.boardState.movePiece(detail[0], detail[1]); // make the move given
+            this.toggleTurn(); // end computer turn
+        });
+        this.futureMoves= new ChessGameState(this.boardState);
+        // this.futureMoves.getBestMove();
+        // this.futureMoves.sendMove([0,1],[0,3]);
+        this.futureMoves.getRandomMove();
     }
 }
