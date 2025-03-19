@@ -541,6 +541,10 @@ export class BoardState {
 
     // Check whether king of alignment is threatened
     isChecked(alignment) {
+        if (alignment==COMPUTER) { // can't be checked if you don't have a king
+            this.#isChecked=false;
+            return false;
+        }
         let coordinate = this.#pieceCoordinates.getCoordinate(KING, alignment);
         this.#isChecked = !!this.seekThreats(...coordinate, alignment).length;
         return this.#isChecked;

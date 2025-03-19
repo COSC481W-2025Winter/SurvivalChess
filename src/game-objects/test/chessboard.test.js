@@ -215,6 +215,7 @@ describe("", () => {
 
         // Create ChessTiles object
         tiles = new ChessTiles(scene);
+        tiles.setDeadAI(true); // kills AI
 
         // Trigger hover event where 'Start Game' button is
         x = y = 4;
@@ -321,15 +322,18 @@ describe("", () => {
         click(2, 7);
         expect(tiles.boardState.getRank(2, 7)).toBe(KING);
         expect(tiles.boardState.getRank(3, 7)).toBe(ROOK);
-        for (let i = 0; i<8; i++)
-            if (i != 0 && i != 4 && i != 7)
-                tiles.boardState.destroyPiece(i, 0);
-        click(4, 0);
-        expect(tiles.chessTiles[2][0].fillColor).toBe(NON_LETHAL_COLOR);
-        expect(tiles.chessTiles[6][0].fillColor).toBe(NON_LETHAL_COLOR);
-        click(6, 0);
-        expect(tiles.boardState.getRank(6, 0)).toBe(KING);
-        expect(tiles.boardState.getRank(5, 0)).toBe(ROOK);
+        // This part checks for the ability of the black king to castle
+        // because black no longer has a king its invalid
+
+        // for (let i = 0; i<8; i++)
+        //     if (i != 0 && i != 4 && i != 7)
+        //         tiles.boardState.destroyPiece(i, 0);
+        // click(4, 0);
+        // expect(tiles.chessTiles[2][0].fillColor).toBe(NON_LETHAL_COLOR);
+        // expect(tiles.chessTiles[6][0].fillColor).toBe(NON_LETHAL_COLOR);
+        // click(6, 0);
+        // expect(tiles.boardState.getRank(6, 0)).toBe(KING);
+        // expect(tiles.boardState.getRank(5, 0)).toBe(ROOK);
         tiles.boardState.movePiece([2, 7], [4, 7]);
         click(4, 7);
         expect(tiles.chessTiles[2][7].fillColor).toBe(tiles.getTileColor([4, 7]));
@@ -369,39 +373,41 @@ describe("", () => {
         expect(tiles.chessTiles[2][3].fillColor).toBe(THREAT_COLOR);
     });
 
-    test("King is Royal", () => {
-        click(4, 6);
-        click(4, 4);
-        click(4, 1);
-        click(4, 3);
-        click(5, 6);
-        click(5, 4);
-        click(5, 1);
-        click(5, 3);
-        click(3, 7);
-        click(7, 3);
-        expect(tiles.chessTiles[4][0].fillColor).toBe(CHECKED_COLOR);
-        click(4, 0);
-        expect(tiles.chessTiles[4][0].fillColor).toBe(HOVER_COLOR);
-        expect(tiles.chessTiles[5][1].fillColor).toBe(tiles.getTileColor([5, 1]));
-        expect(tiles.chessTiles[4][1].fillColor).toBe(NON_LETHAL_COLOR);
-        click(4, 1);
-        shift(0, 0);
-        expect(tiles.chessTiles[4][0].fillColor).toBe(tiles.getTileColor([4, 0]));
-        expect(tiles.chessTiles[4][1].fillColor).toBe(tiles.getTileColor([4, 1]));
-        click(7, 3);
-        click(5, 1);
-        expect(tiles.chessTiles[4][1].fillColor).toBe(THREAT_COLOR);
-        shift(0, 0);
-        expect(tiles.chessTiles[4][1].fillColor).toBe(CHECKED_COLOR);
-        click(4, 1);
-        shift(0, 0);
-        expect(tiles.chessTiles[4][0].fillColor).toBe(tiles.getTileColor([4, 0]));
-        expect(tiles.chessTiles[5][1].fillColor).toBe(LETHAL_COLOR);
-        expect(tiles.chessTiles[5][2].fillColor).toBe(tiles.getTileColor([5, 2]));
-        expect(tiles.chessTiles[4][2].fillColor).toBe(tiles.getTileColor([4, 2]));
-        expect(tiles.chessTiles[3][2].fillColor).toBe(NON_LETHAL_COLOR);
-    });
+    // Test currently tests black king, which no longer exists. 
+    // Invalid with current implementation
+    // test("King is Royal", () => {
+    //     click(4, 6);
+    //     click(4, 4);
+    //     click(4, 1);
+    //     click(4, 3);
+    //     click(5, 6);
+    //     click(5, 4);
+    //     click(5, 1);
+    //     click(5, 3);
+    //     click(3, 7);
+    //     click(7, 3);
+    //     expect(tiles.chessTiles[4][0].fillColor).toBe(CHECKED_COLOR); // Invalid test, black doesn't have a king to check
+    //     click(4, 0);
+    //     expect(tiles.chessTiles[4][0].fillColor).toBe(HOVER_COLOR);
+    //     expect(tiles.chessTiles[5][1].fillColor).toBe(tiles.getTileColor([5, 1]));
+    //     expect(tiles.chessTiles[4][1].fillColor).toBe(NON_LETHAL_COLOR);
+    //     click(4, 1);
+    //     shift(0, 0);
+    //     expect(tiles.chessTiles[4][0].fillColor).toBe(tiles.getTileColor([4, 0]));
+    //     expect(tiles.chessTiles[4][1].fillColor).toBe(tiles.getTileColor([4, 1]));
+    //     click(7, 3);
+    //     click(5, 1);
+    //     expect(tiles.chessTiles[4][1].fillColor).toBe(THREAT_COLOR);
+    //     shift(0, 0);
+    //     expect(tiles.chessTiles[4][1].fillColor).toBe(CHECKED_COLOR);
+    //     click(4, 1);
+    //     shift(0, 0);
+    //     expect(tiles.chessTiles[4][0].fillColor).toBe(tiles.getTileColor([4, 0]));
+    //     expect(tiles.chessTiles[5][1].fillColor).toBe(LETHAL_COLOR);
+    //     expect(tiles.chessTiles[5][2].fillColor).toBe(tiles.getTileColor([5, 2]));
+    //     expect(tiles.chessTiles[4][2].fillColor).toBe(tiles.getTileColor([4, 2]));
+    //     expect(tiles.chessTiles[3][2].fillColor).toBe(NON_LETHAL_COLOR);
+    // });
 
     test("Stat Tracking", () => {
         expect(globalMoves).toBe(0);

@@ -43,6 +43,8 @@ export class ChessTiles {
 
         this.currentPlayer = PLAYER;    // denotes current player
         this.isChecked;         // is true if the current player's king is checked
+        
+        this.deadAI=false;      // flag, when true the computer doesn't make moves
 
         // Set up stage behind (surrounding) chessboard
         this.scene.add.rectangle(
@@ -320,7 +322,9 @@ export class ChessTiles {
                 // If we do, permit the computer to make a move
                 if (computerHasValidMove) {
                     this.currentPlayer = COMPUTER;
-                    this.makeComputerMove(); // do the computer move
+                    if (!this.deadAI) {
+                        this.makeComputerMove(); // do the computer move
+                    }
                     if (!--this.turnsUntilNextWave)
                         this.spawnNextWave();
 
@@ -363,7 +367,7 @@ export class ChessTiles {
 
     spawnNextWave() {
         try {
-            console.log("NEW WAVE SPAWNS!");
+            // console.log("NEW WAVE SPAWNS!");
             // Reset turn counter
             this.turnsUntilNextWave = 8;
 
@@ -597,7 +601,7 @@ export class ChessTiles {
 
     makeComputerMove() {
         EventBus.once("ComputerMove", (detail) => {
-            // console.log("details: ", detail);
+            console.log("move: " + detail[0] + " to " + detail[1], detail[2]);
             if (detail[2]==true) {
                 this.boardState.destroyPiece(detail[1][0], detail[1][1]);
             }
@@ -608,5 +612,9 @@ export class ChessTiles {
         // this.futureMoves.getBestMove();
         // this.futureMoves.sendMove([0,1],[0,3]);
         this.futureMoves.getRandomMove();
+    }
+
+    setDeadAI(value) {
+        this.deadAI=value;
     }
 }
