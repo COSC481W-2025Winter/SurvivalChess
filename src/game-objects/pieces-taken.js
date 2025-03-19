@@ -16,10 +16,7 @@ export class PiecesTaken {
         this.load.setPath("assets/ourChessPieces");
         for (let rank of [PAWN, ROOK, KNIGHT, BISHOP, QUEEN])
             for (let alignment of [PLAYER, COMPUTER])
-                this.load.image(rank + alignment, rank + alignment + "4.png");
-
-        
-                
+                this.load.image(rank + alignment, rank + alignment + "4.png");         
     }
 
     
@@ -38,11 +35,25 @@ export class PiecesTaken {
     wQueenScore;
     bQueenScore;
 
+    wPawnScores;
+    bPawnScores;
+    wRookScores;
+    bRookScores;
+    wKnightScores;
+    bKnightScores;
+    wBishopScores;
+    bBishopScores;
+    wQueenScores;
+    bQueenScores;
+
+
     constructor (scene) {
 
         //set up variables to keep track of elements
         this.scene = scene;
         this.piecesTaken = [];
+        this.scene.load.image("x", "x.png");
+
         this.wPawnScore = 0;
         this.bPawnScore = 0;
         this.wRookScore = 0;
@@ -61,16 +72,16 @@ export class PiecesTaken {
                 color: START_TEXT_ONE
             });
         this.scene.add.rectangle(
-            1056,
+            1050,
             144,
-            7.5 * TILE_SIZE,
+            7.25 * TILE_SIZE,
             2.5 * TILE_SIZE,
             WHITE_TILE_COLOR
         );
         this.scene.add.rectangle(
-            1056,
+            1050,
             144,
-            7.25 * TILE_SIZE,
+            7 * TILE_SIZE,
             2.25 * TILE_SIZE,
             BLACK_TILE_COLOR
         );
@@ -78,8 +89,6 @@ export class PiecesTaken {
         for (let i = 0; i < 5; i++) {
             this.piecesTaken.push([]);
         }
-
-        this.scene.add.image
 
         var j = 0;
         this.addPiece(0, j, PAWN, COMPUTER);
@@ -95,8 +104,69 @@ export class PiecesTaken {
         this.addPiece(2, j, KNIGHT, PLAYER);
         this.addPiece(3, j, BISHOP, PLAYER);
         this.addPiece(4, j, QUEEN, PLAYER);
-        
 
+        
+        this.scene.bPawnScores = this.scene.add
+                    .text(X_ANCHOR + 26, Y_ANCHOR - 10, 0, {
+                        fontFamily: "'Sans', sans-serif",
+                        fontSize: 22,
+                        color: START_TEXT_ONE
+                    });
+        this.scene.bRookScores = this.scene.add
+                    .text(X_ANCHOR + 26 + 72, Y_ANCHOR - 10, "0", {
+                        fontFamily: "'Sans', sans-serif",
+                        fontSize: 22,
+                        color: START_TEXT_ONE
+                    });
+        this.scene.bKnightScores = this.scene.add
+                    .text(X_ANCHOR + 26 + 2 * 72, Y_ANCHOR - 10, "0", {
+                        fontFamily: "'Sans', sans-serif",
+                        fontSize: 22,
+                        color: START_TEXT_ONE
+                    });
+        this.scene.bBishopScores = this.scene.add
+                    .text(X_ANCHOR + 26 + 3 * 72, Y_ANCHOR - 10, "0", {
+                        fontFamily: "'Sans', sans-serif",
+                        fontSize: 22,
+                        color: START_TEXT_ONE
+                    });
+        this.scene.bQueenScores = this.scene.add
+                    .text(X_ANCHOR + 26 + 4 * 72, Y_ANCHOR - 10, "0", {
+                        fontFamily: "'Sans', sans-serif",
+                        fontSize: 22,
+                        color: START_TEXT_ONE
+                    });
+
+        this.scene.wPawnScores = this.scene.add
+                    .text(X_ANCHOR + 26, Y_ANCHOR - 10 + TILE_SIZE, "0", {
+                        fontFamily: "'Sans', sans-serif",
+                        fontSize: 22,
+                        color: START_TEXT_ONE
+                    });
+        this.scene.wRookScores = this.scene.add
+                    .text(X_ANCHOR + 26 + 72, Y_ANCHOR - 10 + TILE_SIZE, "0", {
+                        fontFamily: "'Sans', sans-serif",
+                        fontSize: 22,
+                        color: START_TEXT_ONE
+                    });
+        this.scene.wKnightScores = this.scene.add
+                    .text(X_ANCHOR + 26 + 2 * 72, Y_ANCHOR - 10 + TILE_SIZE, "0", {
+                        fontFamily: "'Sans', sans-serif",
+                        fontSize: 22,
+                        color: START_TEXT_ONE
+                    });
+        this.scene.wBishopScores = this.scene.add
+                    .text(X_ANCHOR + 26 + 3 * 72, Y_ANCHOR - 10 + TILE_SIZE, "0", {
+                        fontFamily: "'Sans', sans-serif",
+                        fontSize: 22,
+                        color: START_TEXT_ONE
+                    });
+        this.scene.wQueenScores = this.scene.add
+                    .text(X_ANCHOR + 26 + 4 * 72, Y_ANCHOR - 10 + TILE_SIZE, "0", {
+                        fontFamily: "'Sans', sans-serif",
+                        fontSize: 22,
+                        color: START_TEXT_ONE
+                    });
     }
 
     addPiece(i, j, rank, alignment) {
@@ -109,60 +179,127 @@ export class PiecesTaken {
             alignment
         );
         this.scene.add.existing(this.piecesTaken[i][j]);
-        this.scene.load.image("x", "x.png");
-        this.scene.add.image(X_ANCHOR +20 + i * 72, Y_ANCHOR + j * TILE_SIZE,"x");
+        this.scene.add
+                    .text(X_ANCHOR + 15 + i * 72, Y_ANCHOR - 7 + j * TILE_SIZE, "x ", {
+                        fontFamily: "'Sans', sans-serif",
+                        fontSize: 16,
+                        color: START_TEXT_ONE
+                    });
+        //this.addScore(rank, alignment);
         
     }
 
+    addScore(rank, alignment){
+        
+        if (alignment == COMPUTER){
+            var j = 0;
+            if (rank == PAWN){
+                var i = 0;
+                
+            }
+            if (rank == KNIGHT){
+                var i = 2;
+
+            }
+            if (rank == ROOK){
+                var i = 1;
+                
+            }
+            if (rank == BISHOP){
+                var i = 3;
+                
+            }
+            if (rank == QUEEN){
+                var i = 4;
+                
+            }
+            
+        } else {
+            var j = 1;
+            if (rank == PAWN){
+                var i = 0;
+            }
+            if (rank == KNIGHT){
+                var i = 2;
+            }
+            if (rank == ROOK){
+                var i = 1;
+            }
+            if (rank == BISHOP){
+                var i = 3;
+            }
+            if (rank == QUEEN){
+                var i = 4;
+            }
+        }        
+    }
+
     takePiece(rank, alignment) {
-        /*
 
         //determine which count to update from based on rank and alignment
         if (alignment == PLAYER){
             if (rank == PAWN){
-            } else {
-                if (rank == KNIGHT){
-
-                }
-                if (rank == ROOK){
-                    
-                }
-                if (rank == BISHOP){
-                    
-                }
-                if (rank == QUEEN){
-                    
-                }
-                if (rank == KING){
-                    
-                }
+                this.scene.wPawnScore = this.wPawnScore + 1;
+                var t = this.scene.wPawnScore.toString();
+                this.scene.wPawnScores.setText(t);
+                this.wPawnScore = this.wPawnScore + 1;
+            }
+            if (rank == KNIGHT){
+                this.scene.wKnightScore = this.wKnightScore + 1;
+                var t = this.scene.wKnightScore.toString();
+                this.scene.wKnightScores.setText(t);
+                this.wKnightScore = this.wKnightScore + 1;
+            }
+            if (rank == ROOK){
+                this.scene.wRookScore = this.wRookScore + 1;
+                var t = this.scene.wRookScore.toString();
+                this.scene.wRookScores.setText(t);
+                this.wRookScore = this.wRookScore + 1;
+            }
+            if (rank == BISHOP){
+                this.scene.wBishopScore = this.wBishopScore + 1;
+                var t = this.scene.wBishopScore.toString();
+                this.scene.wBishopScores.setText(t);
+                this.wBishopScore = this.wBishopScore + 1;
+            }
+            if (rank == QUEEN){
+                this.scene.wQueenScore = this.wQueenScore + 1;
+                var t = this.scene.wQueenScore.toString();
+                this.scene.wQueenScores.setText(t);
+                this.wQueenScore = this.wQueenScore + 1;
             }
         } else {
             if (rank == PAWN){
-                
-            } else {
-                inrow = 2;
-                if (rank == KNIGHT){
-                    
-                }
-                if (rank == ROOK){
-                    
-                }
-                if (rank == BISHOP){
-                    
-                }
-                if (rank == QUEEN){
-                    
-                }
-                //this will be removed after the computer no longer has a
-                if (rank == KING){
-                    
-                }
+                this.scene.bPawnScore = this.bPawnScore + 1;
+                var t = this.scene.bPawnScore.toString();
+                this.scene.bPawnScores.setText(t);
+                this.bPawnScore = this.bPawnScore + 1;
+            }
+            if (rank == KNIGHT){
+                this.scene.bKnightScore = this.bKnightScore + 1;
+                var t = this.scene.bKnightScore.toString();
+                this.scene.bKnightScores.setText(t);
+                this.bKnightScore = this.bKnightScore + 1;
+            }
+            if (rank == ROOK){
+                this.scene.bRookScore = this.bRookScore + 1;
+                var t = this.scene.bRookScore.toString();
+                this.scene.bRookScores.setText(t);
+                this.bRookScore = this.bRookScore + 1;
+            }
+            if (rank == BISHOP){
+                this.scene.bBishopScore = this.bBishopScore + 1;
+                var t = this.scene.bBishopScore.toString();
+                this.scene.bBishopScores.setText(t);
+                this.bBishopScore = this.bBishopScore + 1;
+            }
+            if (rank == QUEEN){
+                this.scene.bQueenScore = this.bQueenScore + 1;
+                var t = this.scene.bQueenScore.toString();
+                this.scene.bQueenScores.setText(t);
+                this.bQueenScore = this.bQueenScore + 1;
             }
         }
-
-
-        */
     }
 
 
