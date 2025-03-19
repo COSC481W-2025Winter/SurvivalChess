@@ -356,7 +356,7 @@ export class ChessTiles {
                     if (!this.scene.scene.get("GameOver"))
                         this.scene.scene.add("GameOver", module.GameOver);
                     // Start the GameOver scene
-                    this.scene.scene.start("GameOver");
+                    this.scene.scene.launch("GameOver");
                 });
     }
 
