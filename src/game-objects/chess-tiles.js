@@ -603,6 +603,7 @@ export class ChessTiles {
         EventBus.once("ComputerMove", (detail) => {
             console.log("move: " + detail[0] + " to " + detail[1], detail[2]);
             if (detail[2]==true) {
+                this.capturePiece(this.boardState.getRank(detail[1][0], detail[1][1]), PLAYER);
                 this.boardState.destroyPiece(detail[1][0], detail[1][1]);
             }
             this.boardState.movePiece(detail[0], detail[1]); // make the move given
