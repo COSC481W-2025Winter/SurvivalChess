@@ -17,6 +17,7 @@ let DEV_MODE = false;
 let dev_alignment = PLAYER, dev_rank = PAWN;
 let dev_bamzap = null, prev_bamzap;
 let dev_stopOn = false, prev_stopOn;
+let dev_deadAI = false, prev_deadAI;
 
 function dev_setAlignment(alignment) {
     dev_alignment = (dev_alignment == alignment) ? null : alignment;
@@ -37,6 +38,9 @@ function dev_toggleFeature(feature) {
             dev_stopOn = !dev_stopOn;
             break;
     }
+}
+export function dev_toggleAI() {
+    dev_deadAI = !dev_deadAI;
 }
 
 export class DevButtons {
@@ -69,10 +73,12 @@ export class DevButtons {
             if (DEV_MODE == true) {
                 prev_bamzap = dev_bamzap;
                 prev_stopOn = dev_stopOn;
-                dev_bamzap = dev_stopOn = false;
+                prev_deadAI = dev_deadAI;
+                dev_bamzap = dev_stopOn = dev_deadAI = false;
             } else {
                 dev_bamzap = prev_bamzap;
                 dev_stopOn = prev_stopOn;
+                dev_deadAI = prev_deadAI;
             }
             toggleDev();
             for (let button of this.getNonDevButtons())
@@ -139,6 +145,16 @@ export class DevButtons {
             this.toggleButton(this.stopButton);
         });
 
+        this.aiButton = this.scene.add.text(1.0 * dev_x_anchor, 9.5 * dev_y_anchor, "Disable AI", STYLE_OFF)
+
+        this.aiButton.on("pointerdown", () => {
+            dev_toggleAI();
+            if (dev_deadAI)
+                this.aiButton.setText("Enable AI");
+            else
+                this.aiButton.setText("Disable AI");
+        });
+
         this.configureButton(this.devButton, ...this.getNonDevButtons());
 
         // Restore dev mode settings
@@ -156,6 +172,8 @@ export class DevButtons {
             toggled_buttons.push(this.bamButton);
         if (DEV_MODE ? dev_stopOn : prev_stopOn)
             toggled_buttons.push(this.stopButton);
+        if (DEV_MODE ? dev_deadAI : prev_deadAI)
+            this.aiButton.setText("Enable AI");
         this.toggleButton(...toggled_buttons);
     }
 
@@ -165,7 +183,8 @@ export class DevButtons {
                 ...Object.values(this.rankButtons), 
                 this.bamButton, this.boinkButton, 
                 this.zapButton, this.zoinkButton, 
-                this.flipButton, this.stopButton];
+                this.flipButton, this.stopButton, 
+                this.aiButton,];
     }
     
     // Configure default behaviors for all dev buttons
@@ -189,5 +208,5 @@ export class DevButtons {
     }
 }
 
-export { dev_alignment, dev_rank, dev_bamzap, dev_stopOn };
+export { dev_alignment, dev_rank, dev_bamzap, dev_stopOn, dev_deadAI };
 export { BAM, ZAP, STOP };

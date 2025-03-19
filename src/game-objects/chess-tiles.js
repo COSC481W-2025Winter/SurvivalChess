@@ -14,7 +14,7 @@ import { CHECKMATE, STALEMATE } from "./global-stats";
 import { setGlobalStatus, incrementGlobalMoves, incrementGlobalPieces, incrementGlobalWaves } from "./global-stats";
 import { resetGlobalStatus, resetGlobalMoves, resetGlobalPieces, resetGlobalWaves } from "./global-stats";
 
-import { dev_alignment, dev_rank, dev_bamzap, dev_stopOn } from "./dev-buttons";
+import { dev_alignment, dev_rank, dev_bamzap, dev_stopOn, dev_deadAI } from "./dev-buttons";
 import { BAM, ZAP, STOP } from "./dev-buttons";
 import { DevButtons } from "./dev-buttons";
 
@@ -43,8 +43,6 @@ export class ChessTiles {
 
         this.currentPlayer = PLAYER;    // denotes current player
         this.isChecked;         // is true if the current player's king is checked
-        
-        this.deadAI=false;      // flag, when true the computer doesn't make moves
 
         // Set up stage behind (surrounding) chessboard
         this.scene.add.rectangle(
@@ -322,7 +320,7 @@ export class ChessTiles {
                 // If we do, permit the computer to make a move
                 if (computerHasValidMove) {
                     this.currentPlayer = COMPUTER;
-                    if (!this.deadAI) {
+                    if (!dev_deadAI) {
                         this.makeComputerMove(); // do the computer move
                     }
                     if (!--this.turnsUntilNextWave)
@@ -613,9 +611,5 @@ export class ChessTiles {
         // this.futureMoves.getBestMove();
         // this.futureMoves.sendMove([0,1],[0,3]);
         this.futureMoves.getRandomMove();
-    }
-
-    setDeadAI(value) {
-        this.deadAI=value;
     }
 }
