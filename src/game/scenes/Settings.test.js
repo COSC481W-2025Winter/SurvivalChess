@@ -10,7 +10,7 @@ describe("Settings Scene", () => {
         scene.cameras = { main: { setBackgroundColor: jest.fn() } };
         scene.scene = { stop: jest.fn(), restart: jest.fn() };
 
-        // ✅ Properly mock Phaser’s `this.add.text()` method, ensuring `.setInteractive()` and `.on()` are available
+        // Properly mock Phaser’s `this.add.text()` method, ensuring `.setInteractive()` and `.on()` are available
         scene.add = {
             text: jest.fn((x, y, text, style) => {
                 const mockTextObject = {
@@ -34,12 +34,15 @@ describe("Settings Scene", () => {
         expect(scene.add.text).toHaveBeenCalledWith(expect.any(Number), expect.any(Number), "SETTINGS", expect.any(Object));
     });
 
+    //developer mode to be added later in sprint 3
+    // color buttons??
+
     test("should create the Close button", () => {
         expect(scene.add.text).toHaveBeenCalledWith(expect.any(Number), expect.any(Number), "Close", expect.any(Object));
     });
 
     test("should make the Close button interactive", () => {
-        // ✅ Find the Close button in the mock
+        // Find the Close button in the mock
         const closeButton = scene.add.text.mock.results.find(result => result.value.text === "Close")?.value;
 
         expect(closeButton).toBeDefined(); // Ensure the button exists
