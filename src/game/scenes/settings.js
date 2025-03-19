@@ -1,4 +1,4 @@
-import Phaser from "phaser"; // ✅ Ensure Phaser is imported
+import Phaser from "phaser";
 import {COLOR_THEMES} from "../../game-objects/constants.js";
 
 export class Settings extends Phaser.Scene {
@@ -7,54 +7,77 @@ export class Settings extends Phaser.Scene {
 	}
 
 	create() {
-		// console.log("Settings Scene Loaded!"); // ❌ Removed to avoid 'no-console'
+		// Semi-transparent overlay background
+		const overlay = this.add.rectangle(
+			this.cameras.main.width / 2,
+			this.cameras.main.height / 2,
+			this.cameras.main.width * 0.8,
+			this.cameras.main.height * 0.7,
+			0x000000,
+			0.7 // Transparency level
+		);
+		overlay.setOrigin(0.5, 0.5);
 
-		this.cameras.main.setBackgroundColor("#d87b40"); // Match Rules page
+		// SETTINGS Title
+		this.add
+			.text(this.cameras.main.width / 2, 100, "SETTINGS", {
+				fontSize: "32px",
+				fill: "#f28d3e",
+				fontFamily: "Press Start 2P",
+			})
+			.setOrigin(0.5);
 
-		this.add.text(150, 50, "SETTINGS", {
-			fontSize: "32px",
-			fill: "#fff",
-			fontFamily: "Press Start 2P",
-		});
-
-		// 🎨 Theme Selection
-		this.add.text(100, 150, "Color Palette:", {fontSize: "20px", fill: "#fff"});
+		// Color Palette Section
+		this.add.text(200, 170, "Color Palette:", {fontSize: "20px", fill: "#fff"});
 
 		const palettes = ["default", "dark", "light"];
-		let yOffset = 200;
+		let yOffset = 220;
 
 		palettes.forEach((palette) => {
 			this.add
-				.text(120, yOffset, palette, {
+				.text(220, yOffset, palette, {
 					fontSize: "18px",
-					fill: "#aaa",
+					fill: "#f28d3e",
 					backgroundColor: "#333",
 					padding: {x: 10, y: 5},
 				})
 				.setInteractive()
 				.on("pointerdown", () => {
-					// console.log(`Applying color theme: ${palette}`); // ❌ Removed 'no-console'
 					localStorage.setItem("selectedPalette", palette);
 					this.applyColorTheme(palette);
-					this.scene.restart(); // 🔄 Refresh
+					this.scene.restart(); // Refresh scene
 				});
 
 			yOffset += 50;
 		});
 
-		// ❌ Close Button
+		// Dev Mode Toggle Button
+		// this.add
+		//   .text(200, yOffset, "Toggle Dev Mode", {
+		//     fontSize: "18px",
+		//     fill: "#f28d3e",
+		//     backgroundColor: "#333",
+		//     padding: { x: 10, y: 5 },
+		//   })
+		//   .setInteractive()
+		//   .on("pointerdown", () => {
+		//     toggleDev();
+		//   });
+
+		// yOffset += 50;
+
+		// Close Button (Same Style as "Close Rules")
 		this.add
-			.text(400, 100, "Close", {
-				fontSize: "24px",
-				fill: "#f00",
-				backgroundColor: "#333",
-				padding: {x: 10, y: 5},
+			.text(this.cameras.main.width / 2, this.cameras.main.height - 100, "Close Settings", {
+				fontSize: "20px",
+				fill: "#fff",
+				backgroundColor: "#f28d3e",
+				padding: {x: 20, y: 10},
 			})
+			.setOrigin(0.5)
 			.setInteractive()
 			.on("pointerdown", () => {
-				// console.log("Closing settings..."); // ❌ Removed 'no-console'
 				this.scene.stop("Settings");
-				//	this.scene.start("MainGame");
 			});
 
 		// Apply stored settings
@@ -66,12 +89,10 @@ export class Settings extends Phaser.Scene {
 		const colors = COLOR_THEMES[selectedPalette];
 
 		if (!colors) {
-			return; // ✅ Now properly wrapped in curly braces
+			return;
 		}
 
 		document.documentElement.style.setProperty("--primary-chess-color", colors.primary);
 		document.documentElement.style.setProperty("--secondary-chess-color", colors.secondary);
-
-		// console.log(`Color theme applied: ${selectedPalette}`); // ❌ Removed 'no-console'
 	}
 }
