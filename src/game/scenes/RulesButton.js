@@ -4,10 +4,10 @@ export class RulesButton {
 	}
 
 	click() {
-		import("./RulesOverlay").then((module) => {
+		import("./Rules").then((module) => {
 			// Only add the scene if it's not already registered
 			if (!this.scene.get("Rules")) {
-				this.scene.add("Rules", module.RulesOverlay); // Add the scene dynamically
+				this.scene.add("Rules", module.Rules); // Add the scene dynamically
 			}
 
 			// Use launch to run scene in parallel to current

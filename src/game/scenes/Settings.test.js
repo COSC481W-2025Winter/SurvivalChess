@@ -1,4 +1,4 @@
-import {Settings} from "./settings"; // Import the Settings scene
+import {Settings} from "./Settings"; // Import the Settings scene
 
 describe("Settings Scene", () => {
 	let scene;

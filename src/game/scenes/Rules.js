@@ -8,7 +8,7 @@ import {
 	RULES_TEXT_THREE,
 } from "../../game-objects/constants";
 
-export class RulesOverlay extends Scene {
+export class Rules extends Scene {
 	constructor() {
 		super("Rules");
 	}

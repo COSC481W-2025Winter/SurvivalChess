@@ -1,13 +1,13 @@
-import {RulesOverlay} from "./RulesOverlay"; // Import the RulesOverlay scene
+import {Rules} from "./Rules"; // Import the RulesOverlay scene
 
 // We are mocking the Start Scene instead of running the whole game loop
 // Running the whole game loop takes too long and will result in the test timing out and failing
-describe("RulesOverlay Scene", () => {
+describe("Rules Scene", () => {
 	let scene;
 
 	beforeEach(() => {
 		// Setup: Create a new instance of the Start scene for each test
-		scene = new RulesOverlay();
+		scene = new Rules();
 
 		// Mock the cameras object since it is normally initialized by Phaser
 		scene.cameras = {
