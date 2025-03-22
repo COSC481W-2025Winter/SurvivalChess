@@ -23,23 +23,26 @@ import { EventBus } from "../game/EventBus";
 export class ChessTiles {
 
     constructor(scene) {
-        this.turnsUntilNextWave = 8;
-        this.waveSpawnBudget = 8;
         this.scene = scene;
         this.chessTiles;        // 8x8 array of chess tiles
         this.boardState;        // contains BoardState object that manages an 8x8 array of chess pieces
         this.pieceCoordinates;  // contains PieceCoordinates object that manages coordinate info sorted by rank & alignment
         this.piecesTaken;       // contains PiecesTaken object that logs captured pieces
+        this.devButtons;        // contains DevButtons object that configures development mode buttons
+        this.sideLights;        // numbers & letters on edge of chessboard that highlight in response to cursorZ
 
         this.xy;                // coordinate of selected chess piece; list of [i,j]
         this.moves;             // possible moves of selected chess piece; list of dictionaries of {'xy':[#,#],'isEnemy':boolean}
         this.temp;              // temporary storage of coordinate & color; list of dictionaries of {'xy':[#,#],'color':color}
         this.threats;           // temporary storage of threats to chess piece, list of lists of [#,#]
 
+        this.turnsUntilNextWave = 8;
+        this.waveSpawnBudget = 8;
+
         this.promotionCol;      // temporary storage of column of piece to promote
         this.promotionRow;      // temporary storage of row of piece to promote
 
-        this.sideLights;        // numbers & letters on edge of chessboard that highlight in response to cursor
+        this.futureMoves;       // the ChessGameState object that plans future moves
 
         this.currentPlayer = PLAYER;    // denotes current player
         this.isChecked;         // is true if the current player's king is checked
@@ -112,9 +115,6 @@ export class ChessTiles {
         this.boardState = new BoardState(this.scene, this.pieceCoordinates);
         this.piecesTaken = new PiecesTaken(this.scene);
         this.devButtons = new DevButtons(this.scene, this);
-
-        this.futureMoves;       // the ChessGameState object that plans future moves
-
     }
 
     // ================================================================
