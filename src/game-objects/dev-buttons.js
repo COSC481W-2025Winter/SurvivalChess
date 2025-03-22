@@ -44,10 +44,20 @@ export function dev_toggleAI() {
 }
 
 export class DevButtons {
+
+    #scene;
+    #chessTiles;
+    #devButton;
+    #alignmentButtons = {};
+    #rankButtons = {};
+    #bamButton; #boinkButton;
+    #zapButton; #zoinkButton;
+    #flipButton; #stopButton;
+    #aiButton;
     
     constructor(scene, chessTiles) {
-        this.scene = scene;
-        this.chessTiles = chessTiles;
+        this.#scene = scene;
+        this.#chessTiles = chessTiles;
 
         let dev_x_anchor = (X_ANCHOR - TILE_SIZE) / 2;
         let dev_y_anchor = (Y_ANCHOR - 0.5 * TILE_SIZE) / 2;
@@ -57,19 +67,12 @@ export class DevButtons {
         const ranks = [PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING];
         const rank_names = ["♙", "♖", "♘", "♗", "♕", "♔"];
 
-        this.devButton;
-        this.alignmentButtons = {};
-        this.rankButtons = {};
-        this.bamButton, this.boinkButton;
-        this.zapButton, this.zoinkButton;
-        this.flipButton, this.stopButton;
-
-        this.devButton = this.scene.add.text(dev_x_anchor, dev_y_anchor, "Dev Mode", {
+        this.#devButton = this.#scene.add.text(dev_x_anchor, dev_y_anchor, "Dev Mode", {
             fill: CREAMHEX,
             backgroundColor: ONYXHEX,
             padding: { left: 20, right: 20, top: 10, bottom: 10 },
         });
-        this.devButton.on("pointerdown", () => {
+        this.#devButton.on("pointerdown", () => {
             if (DEV_MODE == true) {
                 prev_bamzap = dev_bamzap;
                 prev_stopOn = dev_stopOn;
@@ -81,110 +84,110 @@ export class DevButtons {
                 dev_deadAI = prev_deadAI;
             }
             toggleDev();
-            for (let button of this.getNonDevButtons())
+            for (let button of this.getNondevButtons())
                 button.visible = !button.visible;
         });
 
         for (let i = 0; i < alignments.length; i++) {
-            this.alignmentButtons[alignments[i]] = this.scene.add.text((0.5 + i) * dev_x_anchor, 2.5 * dev_y_anchor, alignment_names[i], STYLE_OFF);
-            this.alignmentButtons[alignments[i]].on("pointerdown", () => {
+            this.#alignmentButtons[alignments[i]] = this.#scene.add.text((0.5 + i) * dev_x_anchor, 2.5 * dev_y_anchor, alignment_names[i], STYLE_OFF);
+            this.#alignmentButtons[alignments[i]].on("pointerdown", () => {
                 if (dev_alignment != alignments[i]) {
-                    this.toggleButton(this.alignmentButtons[dev_alignment]);
+                    this.toggleButton(this.#alignmentButtons[dev_alignment]);
                     dev_setAlignment(alignments[i]);
-                    this.toggleButton(this.alignmentButtons[alignments[i]]);
+                    this.toggleButton(this.#alignmentButtons[alignments[i]]);
                 }
             })
         };
 
         for (let i = 0; i < ranks.length; i++) {
-            this.rankButtons[ranks[i]] = this.scene.add.text(((1 + 2 * i) / 6) * dev_x_anchor, 3.5 * dev_y_anchor, rank_names[i], STYLE_OFF);
-            this.rankButtons[ranks[i]].on("pointerdown", () => {
+            this.#rankButtons[ranks[i]] = this.#scene.add.text(((1 + 2 * i) / 6) * dev_x_anchor, 3.5 * dev_y_anchor, rank_names[i], STYLE_OFF);
+            this.#rankButtons[ranks[i]].on("pointerdown", () => {
                 if (dev_rank != ranks[i]) {
-                    this.toggleButton(this.rankButtons[dev_rank]);
+                    this.toggleButton(this.#rankButtons[dev_rank]);
                     dev_setRank(ranks[i]);
-                    this.toggleButton(this.rankButtons[ranks[i]]);
+                    this.toggleButton(this.#rankButtons[ranks[i]]);
                 }
             })
         };
 
-        this.bamButton = this.scene.add.text(0.5 * dev_x_anchor, 4.5 * dev_y_anchor, "bam", STYLE_OFF);
-        this.zapButton = this.scene.add.text(1.5 * dev_x_anchor, 4.5 * dev_y_anchor, "zap", STYLE_OFF);
-        this.boinkButton = this.scene.add.text(0.5 * dev_x_anchor, 5.5 * dev_y_anchor, "boink", STYLE_OFF);
-        this.zoinkButton = this.scene.add.text(1.5 * dev_x_anchor, 5.5 * dev_y_anchor, "zoink", STYLE_OFF);
+        this.#bamButton = this.#scene.add.text(0.5 * dev_x_anchor, 4.5 * dev_y_anchor, "bam", STYLE_OFF);
+        this.#zapButton = this.#scene.add.text(1.5 * dev_x_anchor, 4.5 * dev_y_anchor, "zap", STYLE_OFF);
+        this.#boinkButton = this.#scene.add.text(0.5 * dev_x_anchor, 5.5 * dev_y_anchor, "boink", STYLE_OFF);
+        this.#zoinkButton = this.#scene.add.text(1.5 * dev_x_anchor, 5.5 * dev_y_anchor, "zoink", STYLE_OFF);
 
-        this.bamButton.on("pointerdown", () => {
+        this.#bamButton.on("pointerdown", () => {
             if (dev_bamzap == ZAP)
-                this.toggleButton(this.zapButton);
+                this.toggleButton(this.#zapButton);
             dev_toggleFeature(BAM);
-            this.toggleButton(this.bamButton);
+            this.toggleButton(this.#bamButton);
         });
-        this.zapButton.on("pointerdown", () => {
+        this.#zapButton.on("pointerdown", () => {
             if (dev_bamzap == BAM)
-                this.toggleButton(this.bamButton);
+                this.toggleButton(this.#bamButton);
             dev_toggleFeature(ZAP);
-            this.toggleButton(this.zapButton);
+            this.toggleButton(this.#zapButton);
         });
-        this.boinkButton.on("pointerdown", () => {
-            this.chessTiles.unselect();
-            this.chessTiles.boardState.initializePieces(dev_alignment, true);
+        this.#boinkButton.on("pointerdown", () => {
+            this.#chessTiles.unselect();
+            this.#chessTiles.boardState.initializePieces(dev_alignment, true);
         });
-        this.zoinkButton.on("pointerdown", () => {
-            this.chessTiles.unselect();
-            this.chessTiles.boardState.zapPieces(dev_alignment);
+        this.#zoinkButton.on("pointerdown", () => {
+            this.#chessTiles.unselect();
+            this.#chessTiles.boardState.zapPieces(dev_alignment);
         });
 
-        this.flipButton = this.scene.add.text(0.5 * dev_x_anchor, 7.5 * dev_y_anchor, "Flip!", STYLE_OFF);
-        this.stopButton = this.scene.add.text(1.5 * dev_x_anchor, 7.5 * dev_y_anchor, "Stop!", STYLE_OFF);
+        this.#flipButton = this.#scene.add.text(0.5 * dev_x_anchor, 7.5 * dev_y_anchor, "Flip!", STYLE_OFF);
+        this.#stopButton = this.#scene.add.text(1.5 * dev_x_anchor, 7.5 * dev_y_anchor, "Stop!", STYLE_OFF);
 
-        this.flipButton.on("pointerdown", () => {
-            this.chessTiles.unselect();
-            this.chessTiles.toggleTurn(true);
+        this.#flipButton.on("pointerdown", () => {
+            this.#chessTiles.unselect();
+            this.#chessTiles.toggleTurn(true);
         });
-        this.stopButton.on("pointerdown", () => {
+        this.#stopButton.on("pointerdown", () => {
             dev_toggleFeature(STOP);
-            this.toggleButton(this.stopButton);
+            this.toggleButton(this.#stopButton);
         });
 
-        this.aiButton = this.scene.add.text(1.0 * dev_x_anchor, 9.5 * dev_y_anchor, "Disable AI", STYLE_OFF)
+        this.#aiButton = this.#scene.add.text(1.0 * dev_x_anchor, 9.5 * dev_y_anchor, "Disable AI", STYLE_OFF)
 
-        this.aiButton.on("pointerdown", () => {
+        this.#aiButton.on("pointerdown", () => {
             dev_toggleAI();
             if (dev_deadAI)
-                this.aiButton.setText("Enable AI");
+                this.#aiButton.setText("Enable AI");
             else
-                this.aiButton.setText("Disable AI");
+                this.#aiButton.setText("Disable AI");
         });
 
-        this.configureButton(this.devButton, ...this.getNonDevButtons());
+        this.configureButton(this.#devButton, ...this.getNondevButtons());
 
         // Restore dev mode settings
         let toggled_buttons = [];
         if (!DEV_MODE)
-            for (let button of this.getNonDevButtons())
+            for (let button of this.getNondevButtons())
                 button.visible = !button.visible;
         if (dev_alignment)
-            toggled_buttons.push(this.alignmentButtons[dev_alignment]);
+            toggled_buttons.push(this.#alignmentButtons[dev_alignment]);
         if (dev_rank)
-            toggled_buttons.push(this.rankButtons[dev_rank]);
+            toggled_buttons.push(this.#rankButtons[dev_rank]);
         if (DEV_MODE ? dev_bamzap == ZAP : prev_bamzap == ZAP)
-            toggled_buttons.push(this.zapButton);
+            toggled_buttons.push(this.#zapButton);
         if (DEV_MODE ? dev_bamzap == BAM : prev_bamzap == BAM)
-            toggled_buttons.push(this.bamButton);
+            toggled_buttons.push(this.#bamButton);
         if (DEV_MODE ? dev_stopOn : prev_stopOn)
-            toggled_buttons.push(this.stopButton);
+            toggled_buttons.push(this.#stopButton);
         if (DEV_MODE ? dev_deadAI : prev_deadAI)
-            this.aiButton.setText("Enable AI");
+            this.#aiButton.setText("Enable AI");
         this.toggleButton(...toggled_buttons);
     }
 
     // Return list of all dev buttons excluding the dev mode button
-    getNonDevButtons() {
-        return [...Object.values(this.alignmentButtons), 
-                ...Object.values(this.rankButtons), 
-                this.bamButton, this.boinkButton, 
-                this.zapButton, this.zoinkButton, 
-                this.flipButton, this.stopButton, 
-                this.aiButton,];
+    getNondevButtons() {
+        return [...Object.values(this.#alignmentButtons), 
+                ...Object.values(this.#rankButtons), 
+                this.#bamButton, this.#boinkButton, 
+                this.#zapButton, this.#zoinkButton, 
+                this.#flipButton, this.#stopButton, 
+                this.#aiButton,];
     }
     
     // Configure default behaviors for all dev buttons

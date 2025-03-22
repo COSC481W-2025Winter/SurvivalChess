@@ -32,7 +32,7 @@ export class ChessPiece extends Phaser.GameObjects.Image {
         this.#coordinate = [col, row];
     }
 
-    getCoordinate(col, row) {
+    getCoordinate() {
         return this.#coordinate;
     }
 }  

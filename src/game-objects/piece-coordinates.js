@@ -57,6 +57,7 @@ export class PieceCoordinates {
         }
         return null;
     }
+    
     // getter, returns #coordinates object
     getCoordinates() {
         return this.#coordinates;
