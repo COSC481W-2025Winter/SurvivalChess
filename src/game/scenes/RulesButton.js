@@ -1,26 +1,23 @@
-import { Scene} from "phaser";
-import { EventBus } from "../EventBus";
-
 export class RulesButton {
-    constructor(s) {
-        this.scene = s;
-    }
+	constructor(s) {
+		this.scene = s;
+	}
 
-    click() {
-        import("./RulesOverlay").then((module) => {
-            // Only add the scene if it's not already registered
-            if (!this.scene.get("Rules")) {
-                this.scene.add("Rules", module.RulesOverlay); // Add the scene dynamically
-            }
+	click() {
+		import("./Rules").then((module) => {
+			// Only add the scene if it's not already registered
+			if (!this.scene.get("Rules")) {
+				this.scene.add("Rules", module.Rules); // Add the scene dynamically
+			}
 
-            // Use launch to run scene in parallel to current
-            this.scene.launch("Rules");
-        });
-    }
+			// Use launch to run scene in parallel to current
+			this.scene.launch("Rules");
+		});
+	}
 
-    // This was an attempt at DRY, but it seems to not work. Leaving in
-    // commented as a possible thread to look into later
-    /*
+	// This was an attempt at DRY, but it seems to not work. Leaving in
+	// commented as a possible thread to look into later
+	/*
     addButton(scene) {
         const rulesButton = scene.add.text(100, 100, "See Rules", {
             fill: CREAMHEX, // Using CREAMHEX here
@@ -40,4 +37,3 @@ export class RulesButton {
     }
     */
 }
-

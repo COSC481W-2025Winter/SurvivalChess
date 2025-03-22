@@ -1,36 +1,36 @@
 export class ChessPiece extends Phaser.GameObjects.Image {
-    #rank;
-    #alignment;
-    #moveCounter;
-    #coordinate;
+	#rank;
+	#alignment;
+	#moveCounter;
+	#coordinate;
 
-    constructor(scene, x, y, rank, alignment, coordinate) {
-        super(scene, x, y, rank + alignment);
-        this.#rank = rank;
-        this.#alignment = alignment;
-        this.#moveCounter = 0;
-        this.#coordinate = coordinate;
-    }
+	constructor(scene, x, y, rank, alignment, coordinate) {
+		super(scene, x, y, rank + alignment);
+		this.#rank = rank;
+		this.#alignment = alignment;
+		this.#moveCounter = 0;
+		this.#coordinate = coordinate;
+	}
 
-    getRank() {
-        return this.#rank;
-    }
+	getRank() {
+		return this.#rank;
+	}
 
-    getAlignment() {
-        return this.#alignment;
-    }
+	getAlignment() {
+		return this.#alignment;
+	}
 
-    getMoveCounter() {
-        return this.#moveCounter;
-    }
+	getMoveCounter() {
+		return this.#moveCounter;
+	}
 
-    incrementMoveCounter() {
-        this.#moveCounter++;
-    }
+	incrementMoveCounter() {
+		this.#moveCounter++;
+	}
 
-    setCoordinate(col, row) {
-        this.#coordinate = [col, row];
-    }
+	setCoordinate(col, row) {
+		this.#coordinate = [col, row];
+	}
 
     getCoordinate() {
         return this.#coordinate;

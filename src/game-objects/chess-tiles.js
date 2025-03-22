@@ -1,24 +1,33 @@
-import { TILE_SIZE, X_CENTER, Y_CENTER, X_ANCHOR, Y_ANCHOR } from "./constants";
-import { HOVER_COLOR, WHITE_TILE_COLOR, BLACK_TILE_COLOR, NON_LETHAL_COLOR, LETHAL_COLOR, THREAT_COLOR, CHECKED_COLOR, STAGE_COLOR } from "./constants";
-import { SIDE_BASE_COLOR, SIDE_HIGHLIGHT_COLOR } from "./constants";
-import { PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING } from "./constants";
-import { PLAYER, COMPUTER } from "./constants";
-import { isSamePoint, dim2Array } from "./constants";
-import { ChessGameState } from "./computer-logic"; 
+import {TILE_SIZE, X_ANCHOR, Y_ANCHOR} from "./constants";
+import {
+	HOVER_COLOR,
+	WHITE_TILE_COLOR,
+	BLACK_TILE_COLOR,
+	NON_LETHAL_COLOR,
+	LETHAL_COLOR,
+	THREAT_COLOR,
+	CHECKED_COLOR,
+	STAGE_COLOR,
+} from "./constants";
+import {SIDE_BASE_COLOR, SIDE_HIGHLIGHT_COLOR} from "./constants";
+import {PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING} from "./constants";
+import {PLAYER, COMPUTER} from "./constants";
+import {isSamePoint, dim2Array} from "./constants";
+import {ChessGameState} from "./computer-logic";
 
-import { BoardState } from "./board-state";
-import { PieceCoordinates } from './piece-coordinates';
-import { PiecesTaken } from "./pieces-taken";
+import {BoardState} from "./board-state";
+import {PieceCoordinates} from "./piece-coordinates";
+import {PiecesTaken} from "./pieces-taken";
 
-import { CHECKMATE, STALEMATE } from "./global-stats";
-import { setGlobalStatus, incrementGlobalMoves, incrementGlobalPieces, incrementGlobalWaves } from "./global-stats";
-import { resetGlobalStatus, resetGlobalMoves, resetGlobalPieces, resetGlobalWaves } from "./global-stats";
+import {CHECKMATE, STALEMATE} from "./global-stats";
+import {setGlobalStatus, incrementGlobalMoves, incrementGlobalPieces, incrementGlobalWaves} from "./global-stats";
+import {resetGlobalStatus, resetGlobalMoves, resetGlobalPieces, resetGlobalWaves} from "./global-stats";
 
-import { dev_alignment, dev_rank, dev_bamzap, dev_stopOn, dev_deadAI } from "./dev-buttons";
-import { BAM, ZAP, STOP } from "./dev-buttons";
-import { DevButtons } from "./dev-buttons";
+import {dev_alignment, dev_rank, dev_bamzap, dev_stopOn, dev_deadAI} from "./dev-buttons";
+import {BAM, ZAP} from "./dev-buttons";
+import {DevButtons} from "./dev-buttons";
 
-import { EventBus } from "../game/EventBus";
+import {EventBus} from "../game/EventBus";
 
 export class ChessTiles {
 

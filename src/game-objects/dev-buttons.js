@@ -1,46 +1,48 @@
-import { TILE_SIZE, X_ANCHOR, Y_ANCHOR } from "./constants";
-import { PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING } from "./constants";
-import { PLAYER, COMPUTER } from "./constants";
-import { CREAMHEX, ONYXHEX } from "./constants";
+import {TILE_SIZE, X_ANCHOR, Y_ANCHOR} from "./constants";
+import {PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING} from "./constants";
+import {PLAYER, COMPUTER} from "./constants";
+import {CREAMHEX, ONYXHEX} from "./constants";
 
 const BAM = "BAM";
 const ZAP = "ZAP";
 const STOP = "STOP";
 
-const STYLE_OFF = { fill: CREAMHEX, backgroundColor: ONYXHEX, 
-                    padding: { left: 2, right: 2, top: 2, bottom: 2 } };
-const STYLE_ON = { fill: ONYXHEX, backgroundColor: CREAMHEX, 
-                   padding: { left: 2, right: 2, top: 2, bottom: 2 } };
+const STYLE_OFF = {fill: CREAMHEX, backgroundColor: ONYXHEX, padding: {left: 2, right: 2, top: 2, bottom: 2}};
+const STYLE_ON = {fill: ONYXHEX, backgroundColor: CREAMHEX, padding: {left: 2, right: 2, top: 2, bottom: 2}};
 
 let DEV_MODE = false;
 
-let dev_alignment = PLAYER, dev_rank = PAWN;
-let dev_bamzap = null, prev_bamzap;
-let dev_stopOn = false, prev_stopOn;
-let dev_deadAI = false, prev_deadAI;
+let dev_alignment = PLAYER,
+	dev_rank = PAWN;
+let dev_bamzap = null,
+	prev_bamzap;
+let dev_stopOn = false,
+	prev_stopOn;
+let dev_deadAI = false,
+	prev_deadAI;
 
 function dev_setAlignment(alignment) {
-    dev_alignment = (dev_alignment == alignment) ? null : alignment;
+	dev_alignment = dev_alignment == alignment ? null : alignment;
 }
 function dev_setRank(rank) {
-    dev_rank = (dev_rank == rank) ? null : rank;
+	dev_rank = dev_rank == rank ? null : rank;
 }
 function toggleDev() {
-    DEV_MODE = !DEV_MODE;
+	DEV_MODE = !DEV_MODE;
 }
 function dev_toggleFeature(feature) {
-    switch (feature) {
-        case BAM:
-        case ZAP:
-            dev_bamzap = (dev_bamzap == feature) ? null : feature;
-            break;
-        case STOP:
-            dev_stopOn = !dev_stopOn;
-            break;
-    }
+	switch (feature) {
+		case BAM:
+		case ZAP:
+			dev_bamzap = dev_bamzap == feature ? null : feature;
+			break;
+		case STOP:
+			dev_stopOn = !dev_stopOn;
+			break;
+	}
 }
 export function dev_toggleAI() {
-    dev_deadAI = !dev_deadAI;
+	dev_deadAI = !dev_deadAI;
 }
 
 export class DevButtons {
@@ -211,5 +213,5 @@ export class DevButtons {
     }
 }
 
-export { dev_alignment, dev_rank, dev_bamzap, dev_stopOn, dev_deadAI };
-export { BAM, ZAP, STOP };
+export {dev_alignment, dev_rank, dev_bamzap, dev_stopOn, dev_deadAI};
+export {BAM, ZAP, STOP};

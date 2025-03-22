@@ -8,5 +8,5 @@ const RIGHT = "right";
 const UP = "up";
 const DOWN = "down";
 
-export { POINTER_OVER, POINTER_OUT, POINTER_DOWN, WHEEL };
-export { LEFT, RIGHT, UP, DOWN };
+export {POINTER_OVER, POINTER_OUT, POINTER_DOWN, WHEEL};
+export {LEFT, RIGHT, UP, DOWN};

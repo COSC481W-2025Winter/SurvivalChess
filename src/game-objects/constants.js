@@ -83,7 +83,6 @@ function applyColors(selectedPalette) {
 // Call the function when needed
 applyColors("default"); // Change "default" to a dynamic value if needed
 
-
 const PAWN_VALUE = 1;
 const KNIGHT_VALUE = 3;
 const BISHOP_VALUE = 3;
@@ -94,7 +93,6 @@ const KING_VALUE = 100;
 const CAPTURE_WEIGHT = 1;
 const LOSS_WEIGHT = 0.1;
 const THREATEN_WEIGHT = 0.01;
-
 
 export function isSamePoint([col1, row1], [col2, row2]) {
 	return col1 == col2 && row1 == row2;
@@ -133,6 +131,5 @@ export {PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING};
 export {PLAYER, COMPUTER};
 export {EN_PASSANT_TOKEN};
 
-
-export { PAWN_VALUE, KNIGHT_VALUE, BISHOP_VALUE, ROOK_VALUE,QUEEN_VALUE, KING_VALUE};
-export { CAPTURE_WEIGHT, LOSS_WEIGHT, THREATEN_WEIGHT };
+export {PAWN_VALUE, KNIGHT_VALUE, BISHOP_VALUE, ROOK_VALUE, QUEEN_VALUE, KING_VALUE};
+export {CAPTURE_WEIGHT, LOSS_WEIGHT, THREATEN_WEIGHT};
