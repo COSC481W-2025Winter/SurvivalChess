@@ -185,7 +185,7 @@ export class ChessGameState {
 		let moves;
 
 		while (!pieceFound) {
-			pieceToMove = this.getRandomInt(0, coordinates.length - 1); // get random piece
+			pieceToMove = this.getRandomInt(0, coordinates.length); // get random piece
 			// console.log(this.theBoardState.searchMoves(coordinates[pieceToMove][0], coordinates[pieceToMove][1]));
 			// let theMoves = this.theBoardState.searchMoves(coordinates[pieceToMove][0], coordinates[pieceToMove][1]);
 			// console.log(theMoves);
@@ -196,7 +196,7 @@ export class ChessGameState {
 			}
 		}
 		moves = this.theBoardState.searchMoves(coordinates[pieceToMove][0], coordinates[pieceToMove][1]);
-		const move = this.getRandomInt(0, moves.length - 1); // select random legal move that piece can make
+		const move = this.getRandomInt(0, moves.length); // select random legal move that piece can make
 		// console.log("Moves", moves[move]);
 
 		// console.log(coordinates[pieceToMove]);
