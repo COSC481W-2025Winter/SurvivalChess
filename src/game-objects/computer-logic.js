@@ -20,6 +20,7 @@ import {
 } from "./constants";
 // LOSS_WEIGHT,
 import {EventBus} from "../game/EventBus.js";
+import {BoardStateLite} from "./board-mockups";
 
 // const MIN = 0; // if level % 2 = 0, its a min level
 // const MAX = 1; // if level % 2 = 1, its a max level
@@ -35,7 +36,7 @@ export class ChessGameState {
 
 	constructor(boardState) {
 		if (boardState) {
-			this.theBoardState = boardState;
+			this.theBoardState = new BoardStateLite(boardState);
 			this.board = boardState.getBoardState();
 			this.pieceCoordinates = boardState.getPieceCoordinates();
 			this.bestValue = 10000; // want lowest possible value. Dummy initialization value

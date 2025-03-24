@@ -4,6 +4,7 @@ import {PLAYER, COMPUTER} from "./constants";
 import {EN_PASSANT_TOKEN} from "./constants";
 import {isSamePoint, dim2Array} from "./constants";
 import {ChessPiece} from "./chess-piece";
+import {BoardStateLite} from "./board-mockups";
 
 export class BoardState {
 	#scene;
@@ -555,5 +556,29 @@ export class BoardState {
 
 	getPieceCoordinates() {
 		return this.#pieceCoordinates;
+	}
+
+	// creates a deep copy of the board state without an associated scene
+	cloneBoardState() {
+		let cloned_boardstate = new BoardStateLite(this.#pieceCoordinates.piece_coordinates_clone_method());
+
+		let boardarray = dim2Array(8, 8);
+		for (let i = 0; i < 8; i++) for (let j = 0; j < 8; j++) boardarray[i][j] = this.#boardState[i][j];
+
+		cloned_boardstate.setBoardState_for_cloning(boardarray);
+		cloned_boardstate.setIsEnPassantCoordinate_for_cloning(this.#enPassantCoordinate);
+		cloned_boardstate.setIsChecked_for_cloning(this.#isChecked);
+
+		return cloned_boardstate;
+	}
+
+	setBoardState_for_cloning(x) {
+		this.#boardState = x;
+	}
+	setIsEnPassantCoordinate_for_cloning(x) {
+		this.#enPassantCoordinate = x;
+	}
+	setIsChecked_for_cloning(x) {
+		this.#isChecked = x;
 	}
 }
