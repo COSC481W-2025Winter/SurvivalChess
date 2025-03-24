@@ -45,7 +45,8 @@ export class ChessTiles {
         this.temp;              // temporary storage of coordinate & color; list of dictionaries of {'xy':[#,#],'color':color}
         this.threats;           // temporary storage of threats to chess piece, list of lists of [#,#]
 
-        this.turnsUntilNextWave = 13;
+        this.baseTurnsUntilNextWave = 13;
+        this.turnsUntilNextWave = this.baseTurnsUntilNextWave;
         this.waveSpawnBudget = 4;
 
         this.promotionCol;      // temporary storage of column of piece to promote
@@ -376,7 +377,7 @@ export class ChessTiles {
         try {
             // console.log("NEW WAVE SPAWNS!");
             // Reset turn counter
-            this.turnsUntilNextWave = 8;
+            this.turnsUntilNextWave = this.baseTurnsUntilNextWave;
 
             // Randomly order what priority of pieces to go through to prevent a universal bias
             let piecePriority = this.getPiecePriorityOrder();
