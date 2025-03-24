@@ -1,4 +1,4 @@
-// Scene-free version of board-state for AI use.
+// Scene-free version of board-state for AI logic to use.
 import {TILE_SIZE, X_ANCHOR, Y_ANCHOR} from "./constants";
 import {ChessPiece} from "./chess-piece";
 import {BoardState} from "./board-state";
