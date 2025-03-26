@@ -74,6 +74,14 @@ describe("", () => {
 	// ================================================================
 	// Mocked Classes & Methods
 
+	// Mock WebFont globally
+	jest.mock("webfontloader", () => ({
+		load: jest.fn().mockImplementation((options) => {
+			if (options && options.active) {
+				options.active();
+			}
+		}),
+	}));
 	// Mock Scene
 	class MockScene {
 		constructor() {}
@@ -223,7 +231,7 @@ describe("", () => {
 
 		// Create ChessTiles object
 		tiles = new ChessTiles(scene);
-		
+
 		// Zap and reinstantiate computer pieces for tests
 		tiles.boardState.zapPieces(COMPUTER);
 		tiles.boardState.initializePieces(COMPUTER);
