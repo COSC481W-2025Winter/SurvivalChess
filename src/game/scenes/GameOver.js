@@ -71,8 +71,31 @@ export class GameOver extends Scene {
 			.setOrigin(0.5)
 			.setDepth(100);
 
+		var textWidth = 185; // Variable to offset numbers
 		this.add
-			.text(625, 275, "Number of Moves Made: " + globalMoves, {
+			.text(625, 275, "Number of Moves Made: ", {
+				fontFamily: "'Pixelify Sans', sans-serif",
+				fontSize: 25,
+				color: GAMEOVER_TEXT_TWO,
+				stroke: GAMEOVER_TEXT_ONE,
+				strokeThickness: 4,
+				align: "center",
+			})
+			.setOrigin(0.5)
+			.setDepth(100);
+		this.add
+			.text(625 + textWidth, 275, globalMoves + "", {
+				fontSize: 25,
+				color: GAMEOVER_TEXT_TWO,
+				stroke: GAMEOVER_TEXT_ONE,
+				strokeThickness: 4,
+				align: "center",
+			})
+			.setOrigin(0.5)
+			.setDepth(100);
+
+		this.add
+			.text(625, 350, "Number of Captured Pieces: ", {
 				fontFamily: "'Pixelify Sans', sans-serif",
 				fontSize: 25,
 				color: GAMEOVER_TEXT_TWO,
@@ -84,7 +107,18 @@ export class GameOver extends Scene {
 			.setDepth(100);
 
 		this.add
-			.text(625, 350, "Number of Captured Pieces: " + globalPieces, {
+			.text(625 + textWidth, 350, globalPieces + "", {
+				fontSize: 25,
+				color: GAMEOVER_TEXT_TWO,
+				stroke: GAMEOVER_TEXT_ONE,
+				strokeThickness: 4,
+				align: "center",
+			})
+			.setOrigin(0.5)
+			.setDepth(100);
+
+		this.add
+			.text(625, 425, "Number of Waves Survived: ", {
 				fontFamily: "'Pixelify Sans', sans-serif",
 				fontSize: 25,
 				color: GAMEOVER_TEXT_TWO,
@@ -96,8 +130,7 @@ export class GameOver extends Scene {
 			.setDepth(100);
 
 		this.add
-			.text(625, 425, "Number of Waves Survived: " + globalWaves, {
-				fontFamily: "'Pixelify Sans', sans-serif",
+			.text(625 + textWidth, 425, globalWaves + "", {
 				fontSize: 25,
 				color: GAMEOVER_TEXT_TWO,
 				stroke: GAMEOVER_TEXT_ONE,

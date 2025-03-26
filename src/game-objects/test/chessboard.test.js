@@ -74,6 +74,9 @@ describe("", () => {
 	// ================================================================
 	// Mocked Classes & Methods
 
+	// Mock WebFont
+	jest.mock("webfontloader");
+
 	// Mock Scene
 	class MockScene {
 		constructor() {}
@@ -223,7 +226,7 @@ describe("", () => {
 
 		// Create ChessTiles object
 		tiles = new ChessTiles(scene);
-		
+
 		// Zap and reinstantiate computer pieces for tests
 		tiles.boardState.zapPieces(COMPUTER);
 		tiles.boardState.initializePieces(COMPUTER);

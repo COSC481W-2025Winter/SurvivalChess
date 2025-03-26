@@ -34,6 +34,17 @@ export class Game extends Scene {
 				this.load.image(rank + alignment, rank + alignment + "4.png");
 			}
 		}
+
+		// Load the pixel font
+		WebFont.load({
+			google: {
+				families: ["Pixelify Sans"],
+			},
+			active: () => {
+				// Once the font is loaded, we can start the scene
+				this.fontLoaded = true; // Flag to indicate that the font is loaded
+			},
+		});
 	}
 
 	create() {
@@ -45,6 +56,8 @@ export class Game extends Scene {
 		const endButton = this.add.text(100, 100, "End Game!", {
 			fill: CREAMHEX,
 			backgroundColor: ONYXHEX,
+			fontFamily: "'Pixelify Sans', sans-serif",
+			fontSize: 20,
 			padding: {left: 20, right: 20, top: 10, bottom: 10},
 		});
 		endButton.setPosition(1050, 700);
@@ -80,12 +93,16 @@ export class Game extends Scene {
 		const settingsButton = this.add.text(100, 100, "See Settings", {
 			fill: CREAMHEX,
 			backgroundColor: ONYXHEX,
+			fontFamily: "'Pixelify Sans', sans-serif",
+			fontSize: 20,
 			padding: {left: 20, right: 20, top: 10, bottom: 10},
 		});
 
 		const rulesButton = this.add.text(100, 100, "See Rules", {
 			fill: CREAMHEX,
 			backgroundColor: ONYXHEX,
+			fontFamily: "'Pixelify Sans', sans-serif",
+			fontSize: 20,
 			padding: {left: 20, right: 20, top: 10, bottom: 10},
 		});
 

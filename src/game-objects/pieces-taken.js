@@ -14,6 +14,17 @@ export class PiecesTaken {
 		this.load.setPath("assets/ourChessPieces");
 		for (const rank of [PAWN, ROOK, KNIGHT, BISHOP, QUEEN])
 			for (const alignment of [PLAYER, COMPUTER]) this.load.image(rank + alignment, rank + alignment + "4.png");
+
+		// Load the pixel font
+		WebFont.load({
+			google: {
+				families: ["Pixelify Sans"],
+			},
+			active: () => {
+				// Once the font is loaded, we can start the scene
+				this.fontLoaded = true; // Flag to indicate that the font is loaded
+			},
+		});
 	}
 
 	scene;
@@ -58,9 +69,9 @@ export class PiecesTaken {
 		this.bQueenScore = 0;
 
 		// add the title and the two "boxes" for the pieces
-		this.scene.add.text(930, 26, "Captured Pieces:", {
-			fontFamily: "'Sans', sans-serif",
-			fontSize: 32,
+		this.scene.add.text(910, 26, "Captured Pieces:", {
+			fontFamily: "'Pixelify Sans', sans-serif",
+			fontSize: 34,
 			color: START_TEXT_ONE,
 		});
 		this.scene.add.rectangle(1050, 144, 7.25 * TILE_SIZE, 2.5 * TILE_SIZE, WHITE_TILE_COLOR);
@@ -86,53 +97,42 @@ export class PiecesTaken {
 
 		// add in score keeping
 		this.scene.bPawnScores = this.scene.add.text(X_ANCHOR + 26, Y_ANCHOR - 10, "0", {
-			fontFamily: "'Sans', sans-serif",
 			fontSize: 22,
 			color: START_TEXT_ONE,
 		});
 		this.scene.bRookScores = this.scene.add.text(X_ANCHOR + 26 + 72, Y_ANCHOR - 10, "0", {
-			fontFamily: "'Sans', sans-serif",
 			fontSize: 22,
 			color: START_TEXT_ONE,
 		});
 		this.scene.bKnightScores = this.scene.add.text(X_ANCHOR + 26 + 2 * 72, Y_ANCHOR - 10, "0", {
-			fontFamily: "'Sans', sans-serif",
 			fontSize: 22,
 			color: START_TEXT_ONE,
 		});
 		this.scene.bBishopScores = this.scene.add.text(X_ANCHOR + 26 + 3 * 72, Y_ANCHOR - 10, "0", {
-			fontFamily: "'Sans', sans-serif",
 			fontSize: 22,
 			color: START_TEXT_ONE,
 		});
 		this.scene.bQueenScores = this.scene.add.text(X_ANCHOR + 26 + 4 * 72, Y_ANCHOR - 10, "0", {
-			fontFamily: "'Sans', sans-serif",
 			fontSize: 22,
 			color: START_TEXT_ONE,
 		});
-
 		this.scene.wPawnScores = this.scene.add.text(X_ANCHOR + 26, Y_ANCHOR - 10 + TILE_SIZE, "0", {
-			fontFamily: "'Sans', sans-serif",
 			fontSize: 22,
 			color: START_TEXT_ONE,
 		});
 		this.scene.wRookScores = this.scene.add.text(X_ANCHOR + 26 + 72, Y_ANCHOR - 10 + TILE_SIZE, "0", {
-			fontFamily: "'Sans', sans-serif",
 			fontSize: 22,
 			color: START_TEXT_ONE,
 		});
 		this.scene.wKnightScores = this.scene.add.text(X_ANCHOR + 26 + 2 * 72, Y_ANCHOR - 10 + TILE_SIZE, "0", {
-			fontFamily: "'Sans', sans-serif",
 			fontSize: 22,
 			color: START_TEXT_ONE,
 		});
 		this.scene.wBishopScores = this.scene.add.text(X_ANCHOR + 26 + 3 * 72, Y_ANCHOR - 10 + TILE_SIZE, "0", {
-			fontFamily: "'Sans', sans-serif",
 			fontSize: 22,
 			color: START_TEXT_ONE,
 		});
 		this.scene.wQueenScores = this.scene.add.text(X_ANCHOR + 26 + 4 * 72, Y_ANCHOR - 10 + TILE_SIZE, "0", {
-			fontFamily: "'Sans', sans-serif",
 			fontSize: 22,
 			color: START_TEXT_ONE,
 		});
@@ -142,7 +142,7 @@ export class PiecesTaken {
 		this.piecesTaken[i][j] = new ChessPiece(this.scene, X_ANCHOR + i * 72, Y_ANCHOR + j * TILE_SIZE, rank, alignment);
 		this.scene.add.existing(this.piecesTaken[i][j]);
 		this.scene.add.text(X_ANCHOR + 15 + i * 72, Y_ANCHOR - 7 + j * TILE_SIZE, "x ", {
-			fontFamily: "'Sans', sans-serif",
+			fontFamily: "'Pixelify Sans', sans-serif",
 			fontSize: 16,
 			color: START_TEXT_ONE,
 		});
