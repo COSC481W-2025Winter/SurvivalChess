@@ -74,14 +74,9 @@ describe("", () => {
 	// ================================================================
 	// Mocked Classes & Methods
 
-	// Mock WebFont globally
-	jest.mock("webfontloader", () => ({
-		load: jest.fn().mockImplementation((options) => {
-			if (options && options.active) {
-				options.active();
-			}
-		}),
-	}));
+	// Mock WebFont
+	jest.mock("webfontloader");
+
 	// Mock Scene
 	class MockScene {
 		constructor() {}
