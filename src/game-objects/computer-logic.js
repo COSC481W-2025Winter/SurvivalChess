@@ -34,11 +34,10 @@ export class ChessGameState {
 	bestMoveOutput;
 	theBoardState;
 
-	constructor(boardState) {
-		if (boardState) {
-			this.theBoardState = new BoardStateLite(boardState);
-			this.board = boardState.getBoardState();
-			this.pieceCoordinates = boardState.getPieceCoordinates();
+	constructor(PieceCoordinates) {
+		if (PieceCoordinates) {
+			this.boardState = new BoardStateLite(PieceCoordinates);
+			this.pieceCoordinates = PieceCoordinates;
 			this.bestValue = 10000; // want lowest possible value. Dummy initialization value
 		} else {
 			this.bestValue = 10000;
@@ -190,13 +189,13 @@ export class ChessGameState {
 			// console.log(this.theBoardState.searchMoves(coordinates[pieceToMove][0], coordinates[pieceToMove][1]));
 			// let theMoves = this.theBoardState.searchMoves(coordinates[pieceToMove][0], coordinates[pieceToMove][1]);
 			// console.log(theMoves);
-			if (this.theBoardState.searchMoves(coordinates[pieceToMove][0], coordinates[pieceToMove][1]).length) {
+			if (this.boardState.searchMoves(coordinates[pieceToMove][0], coordinates[pieceToMove][1]).length) {
 				// check if it has legal moves
 
 				pieceFound = true;
 			}
 		}
-		moves = this.theBoardState.searchMoves(coordinates[pieceToMove][0], coordinates[pieceToMove][1]);
+		moves = this.boardState.searchMoves(coordinates[pieceToMove][0], coordinates[pieceToMove][1]);
 		const move = this.getRandomInt(0, moves.length); // select random legal move that piece can make
 		// console.log("Moves", moves[move]);
 

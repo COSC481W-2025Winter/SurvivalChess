@@ -560,7 +560,7 @@ export class BoardState {
 
 	// creates a deep copy of the board state without an associated scene
 	cloneBoardState() {
-		let cloned_boardstate = new BoardStateLite(this.#pieceCoordinates.piece_coordinates_clone_method());
+		let cloned_boardstate = new BoardStateLite(this.#pieceCoordinates.clonePieceCoordinates());
 
 		let boardarray = dim2Array(8, 8);
 		for (let i = 0; i < 8; i++) for (let j = 0; j < 8; j++) boardarray[i][j] = this.#boardState[i][j];
