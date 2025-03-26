@@ -23,7 +23,11 @@ export class BoardState {
 
 		// Initialize Player/Computer (white/black) pieces
 		this.initializePieces(PLAYER);
-		this.initializePieces(COMPUTER);
+		// this.initializePieces(COMPUTER);
+
+		// Add 4 pawns as the first generic wave
+		for (let i = 2; i < 6; i++)
+			this.addPiece(i, 1, PAWN, COMPUTER);
 	}
 
 	// initialize player pieces (and computer pieces for testing purposes)

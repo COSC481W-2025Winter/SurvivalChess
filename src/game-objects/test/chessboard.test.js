@@ -223,6 +223,11 @@ describe("", () => {
 
 		// Create ChessTiles object
 		tiles = new ChessTiles(scene);
+		
+		// Zap and reinstantiate computer pieces for tests
+		tiles.boardState.zapPieces(COMPUTER);
+		tiles.boardState.initializePieces(COMPUTER);
+
 		if (!dev_deadAI) dev_toggleAI(); // kills AI
 
 		// Trigger hover event where 'Start Game' button is
@@ -437,9 +442,11 @@ describe("", () => {
 		click(2, 2);
 		expect(globalMoves).toBe(3);
 		expect(globalPieces).toBe(2);
+
+		let turnCountDoubled = tiles.baseTurnsUntilNextWave * 2;
 		for (let i = 1; i < 100; i++) {
 			tiles.toggleTurn();
-			if (i % 16 == 0) expect(globalWaves).toBe(i / 16);
+			if (i % turnCountDoubled == 0) expect(globalWaves).toBe(i / turnCountDoubled);
 		}
 	});
 
