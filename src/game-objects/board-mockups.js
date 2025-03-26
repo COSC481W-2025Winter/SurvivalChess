@@ -13,11 +13,15 @@ export class ChessPieceLite {
 	#moveCounter;
 	#coordinate;
 
-	constructor(rank, alignment, coordinate) {
+	constructor(rank, alignment, coordinate, movecounter = 0) {
 		this.#rank = rank;
 		this.#alignment = alignment;
-		this.#moveCounter = 0;
+		this.#moveCounter = movecounter;
 		this.#coordinate = coordinate;
+	}
+
+	cloneChessPieceLite() {
+		return new ChessPieceLite(this.#rank, this.#alignment, this.#coordinate, this.#moveCounter);
 	}
 
 	getRank() {
@@ -47,7 +51,12 @@ export class ChessPieceLite {
 
 export class BoardStateLite extends BoardState {
 	constructor(pieceCoordinates) {
-		super(null, pieceCoordinates);
+		super(null, pieceCoordinates, false);
+		// for (let i = 0; i<7; i++) {
+		// 	for (let j = 0; j<7; j++) {
+		// 		// pieceCoordinates.setCoordinate
+		// 	}
+		// }
 	}
 
 	addPiece(col, row, rank, alignment, replace = false) {

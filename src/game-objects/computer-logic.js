@@ -39,6 +39,7 @@ export class ChessGameState {
 			this.boardState = new BoardStateLite(PieceCoordinates);
 			this.pieceCoordinates = PieceCoordinates;
 			this.bestValue = 10000; // want lowest possible value. Dummy initialization value
+			console.log(this.boardState);
 		} else {
 			this.bestValue = 10000;
 			this.pieceCoordinates;
@@ -47,8 +48,9 @@ export class ChessGameState {
 
 	// THIS DOES NOT WORK, DO NOT USE IT UNTIL FIXED.
 	getBestMove() {
-		console.log(this.pieceCoordinates.getCoordinates()[COMPUTER]);
-		const pieceDict = this.pieceCoordinates.getCoordinates()[COMPUTER];
+		// console.log(this.pieceCoordinates);
+		console.log(this.boardState.getPieceCoordinates().getAllCoordinates(COMPUTER));
+		const pieceDict = this.pieceCoordinates.getAllCoordinates(COMPUTER);
 		for (const piece in pieceDict) {
 			for (const coordinates in pieceDict[piece]) {
 				console.log(pieceDict[piece][coordinates]);
@@ -56,7 +58,7 @@ export class ChessGameState {
 			for (const coordinates of pieceDict[piece]) {
 				// for each computer piece of a given rank
 				console.log(coordinates);
-				const moves = this.theBoardState.searchMoves(1, 1);
+				// const moves = this.theBoardState.searchMoves(1, 1);
 				// all possible moves for a piece
 				console.log("moves:");
 				for (const move in moves) {
@@ -66,7 +68,7 @@ export class ChessGameState {
 			}
 		}
 		// make chosen move
-		this.sendMove(this.bestMoveInput, this.bestMoveOutput);
+		// this.sendMove(this.bestMoveInput, this.bestMoveOutput);
 	}
 	// sends an event specifying the move as the computer's.
 	// Event handle in ChessTiles is created to listen for the event
@@ -189,6 +191,7 @@ export class ChessGameState {
 			// console.log(this.theBoardState.searchMoves(coordinates[pieceToMove][0], coordinates[pieceToMove][1]));
 			// let theMoves = this.theBoardState.searchMoves(coordinates[pieceToMove][0], coordinates[pieceToMove][1]);
 			// console.log(theMoves);
+			console.log(coordinates);
 			if (this.boardState.searchMoves(coordinates[pieceToMove][0], coordinates[pieceToMove][1]).length) {
 				// check if it has legal moves
 

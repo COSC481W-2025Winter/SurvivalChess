@@ -14,7 +14,7 @@ export class BoardState {
 
 	#isChecked;
 
-	constructor(scene, pieceCoordinates) {
+	constructor(scene, pieceCoordinates, initialize = true) {
 		this.#scene = scene;
 
 		// 8x8 array of chess pieces
@@ -23,8 +23,11 @@ export class BoardState {
 		this.#pieceCoordinates = pieceCoordinates;
 
 		// Initialize Player/Computer (white/black) pieces
-		this.initializePieces(PLAYER);
-		this.initializePieces(COMPUTER);
+		// if initialize flag is set
+		if (initialize) {
+			this.initializePieces(PLAYER);
+			this.initializePieces(COMPUTER);
+		}
 	}
 
 	// initialize player pieces (and computer pieces for testing purposes)
@@ -563,12 +566,15 @@ export class BoardState {
 		let cloned_boardstate = new BoardStateLite(this.#pieceCoordinates.clonePieceCoordinates());
 
 		let boardarray = dim2Array(8, 8);
-		for (let i = 0; i < 8; i++) for (let j = 0; j < 8; j++) boardarray[i][j] = this.#boardState[i][j];
+		for (let i = 0; i < 8; i++)
+			for (let j = 0; j < 8; j++) boardarray[i][j] = this.#boardState[i][j].cloneChessPieceLite();
 
-		cloned_boardstate.setBoardState_for_cloning(boardarray);
+		// cloned_boardstate.setBoardState_for_cloning(boardarray);
+		cloned_boardstate.#boardState = boardarray;
 		cloned_boardstate.setIsEnPassantCoordinate_for_cloning(this.#enPassantCoordinate);
 		cloned_boardstate.setIsChecked_for_cloning(this.#isChecked);
 
+		console.log("clone board state: ", cloned_boardstate);
 		return cloned_boardstate;
 	}
 

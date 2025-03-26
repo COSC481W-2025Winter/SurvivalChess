@@ -606,7 +606,8 @@ export class ChessTiles {
 			this.boardState.movePiece(detail[0], detail[1]); // make the move given
 			// this.toggleTurn(); // end computer turn
 		});
-		this.futureMoves = new ChessGameState(this.boardState.getPieceCoordinates().clonePieceCoordinates());
+		console.log(this.boardState.getPieceCoordinates().clonePieceCoordinates());
+		this.futureMoves = new ChessGameState(this.boardState.getPieceCoordinates());
 		// this.futureMoves.getBestMove();
 		// this.futureMoves.sendMove([0,1],[0,3]);
 		this.futureMoves.getRandomMove();
