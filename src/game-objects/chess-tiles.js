@@ -55,8 +55,9 @@ export class ChessTiles {
 		this.temp; // temporary storage of coordinate & color; list of dictionaries of {'xy':[#,#],'color':color}
 		this.threats; // temporary storage of threats to chess piece, list of lists of [#,#]
 
-		this.turnsUntilNextWave = 8;
-		this.waveSpawnBudget = 8;
+		this.baseTurnsUntilNextWave = 13;
+		this.turnsUntilNextWave = this.baseTurnsUntilNextWave;
+		this.waveSpawnBudget = 4;
 
 		this.promotionCol; // temporary storage of column of piece to promote
 		this.promotionRow; // temporary storage of row of piece to promote
@@ -381,7 +382,7 @@ export class ChessTiles {
 		try {
 			// console.log("NEW WAVE SPAWNS!");
 			// Reset turn counter
-			this.turnsUntilNextWave = 8;
+			this.turnsUntilNextWave = this.baseTurnsUntilNextWave;
 
 			// Randomly order what priority of pieces to go through to prevent a universal bias
 			let piecePriority = this.getPiecePriorityOrder();
@@ -431,7 +432,7 @@ export class ChessTiles {
 			window.alert("Error with new wave: " + ex.message);
 		}
 
-		this.waveSpawnBudget += 8;
+		this.waveSpawnBudget += 2;
 		incrementGlobalWaves();
 	}
 
@@ -467,7 +468,7 @@ export class ChessTiles {
 	// Get a random order of pieces to process to prevent a universal bias
 	getPiecePriorityOrder() {
 		// This order doesn't matter
-		let piecePriority = [QUEEN, PAWN, BISHOP, ROOK, KNIGHT];
+		let piecePriority = [QUEEN, BISHOP, ROOK, KNIGHT];
 
 		// Sort it randomly
 		let currentIndex = piecePriority.length;
@@ -479,6 +480,9 @@ export class ChessTiles {
 				piecePriority[currentIndex],
 			];
 		}
+
+		// Append Pawn to the end so it is always bottom priority
+		piecePriority.push(PAWN);
 
 		return piecePriority;
 	}
