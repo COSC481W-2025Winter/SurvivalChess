@@ -567,14 +567,21 @@ export class BoardState {
 
 		let boardarray = dim2Array(8, 8);
 		for (let i = 0; i < 8; i++)
-			for (let j = 0; j < 8; j++) boardarray[i][j] = this.#boardState[i][j].cloneChessPieceLite();
-
+			for (let j = 0; j < 8; j++) {
+				if (this.#boardState[i][j]) {
+					if (this.#boardState[i][j] == EN_PASSANT_TOKEN) {
+						boardarray[i][j] = EN_PASSANT_TOKEN;
+					} else {
+						boardarray[i][j] = this.#boardState[i][j].cloneChessPieceLite();
+					}
+				}
+			}
 		// cloned_boardstate.setBoardState_for_cloning(boardarray);
 		cloned_boardstate.#boardState = boardarray;
 		cloned_boardstate.setIsEnPassantCoordinate_for_cloning(this.#enPassantCoordinate);
 		cloned_boardstate.setIsChecked_for_cloning(this.#isChecked);
 
-		console.log("clone board state: ", cloned_boardstate);
+		// console.log("clone board state: ", cloned_boardstate);
 		return cloned_boardstate;
 	}
 

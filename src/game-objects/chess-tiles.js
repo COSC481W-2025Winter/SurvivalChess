@@ -607,9 +607,9 @@ export class ChessTiles {
 			// this.toggleTurn(); // end computer turn
 		});
 		console.log(this.boardState.getPieceCoordinates().clonePieceCoordinates());
-		this.futureMoves = new ChessGameState(this.boardState.getPieceCoordinates());
-		// this.futureMoves.getBestMove();
+		this.futureMoves = new ChessGameState(this.boardState.cloneBoardState());
+		this.futureMoves.getBestMove();
 		// this.futureMoves.sendMove([0,1],[0,3]);
-		this.futureMoves.getRandomMove();
+		// this.futureMoves.getRandomMove();
 	}
 }
