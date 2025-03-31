@@ -9,7 +9,7 @@ import {
 	CHECKED_COLOR,
 	STAGE_COLOR,
 } from "./constants";
-import WebFont from "webfontloader"; // Correctly import WebFont
+//import WebFont from "webfontloader"; // Correctly import WebFont
 import {SIDE_BASE_COLOR, SIDE_HIGHLIGHT_COLOR} from "./constants";
 import {PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING} from "./constants";
 import {PLAYER, COMPUTER} from "./constants";
