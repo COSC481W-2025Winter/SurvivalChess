@@ -59,7 +59,7 @@ export class GameOver extends Scene {
 		);
 		square2.setDepth(50);
 		// GAMEOVER text
-		this.add
+		const gameOverText = this.add
 			.text(625, 140, "Game Over!", {
 				fontFamily: "'Pixelify Sans', sans-serif",
 				fontSize: 75,
@@ -72,7 +72,7 @@ export class GameOver extends Scene {
 			.setDepth(100);
 
 		var textWidth = 185; // Variable to offset numbers
-		this.add
+		const numberOfMovesLabel = this.add
 			.text(610, 220, "Number of Moves Made: ", {
 				fontFamily: "'Pixelify Sans', sans-serif",
 				fontSize: 25,
@@ -83,7 +83,7 @@ export class GameOver extends Scene {
 			})
 			.setOrigin(0.5)
 			.setDepth(100);
-		this.add
+		const numberOfMovesCount = this.add
 			.text(625 + textWidth, 220, globalMoves + "", {
 				fontSize: 25,
 				color: GAMEOVER_TEXT_TWO,
@@ -94,7 +94,7 @@ export class GameOver extends Scene {
 			.setOrigin(0.5)
 			.setDepth(100);
 
-		this.add
+		const numberOfCapturedPiecesLabel = this.add
 			.text(610, 250, "Number of Captured Pieces: ", {
 				fontFamily: "'Pixelify Sans', sans-serif",
 				fontSize: 25,
@@ -106,7 +106,7 @@ export class GameOver extends Scene {
 			.setOrigin(0.5)
 			.setDepth(100);
 
-		this.add
+		const numberOfCapturedPiecesCount = this.add
 			.text(625 + textWidth, 250, globalPieces + "", {
 				fontSize: 25,
 				color: GAMEOVER_TEXT_TWO,
@@ -117,7 +117,7 @@ export class GameOver extends Scene {
 			.setOrigin(0.5)
 			.setDepth(100);
 
-		this.add
+		const numberOfWavesSurvivedLabel = this.add
 			.text(610, 280, "Number of Waves Survived: ", {
 				fontFamily: "'Pixelify Sans', sans-serif",
 				fontSize: 25,
@@ -129,7 +129,7 @@ export class GameOver extends Scene {
 			.setOrigin(0.5)
 			.setDepth(100);
 
-		this.add
+		const numberOfWavesSurvivedCount = this.add
 			.text(625 + textWidth, 280, globalWaves + "", {
 				fontSize: 25,
 				color: GAMEOVER_TEXT_TWO,
@@ -141,7 +141,7 @@ export class GameOver extends Scene {
 			.setDepth(100);
 
 		// Final score calculation
-		this.add
+		const finalScoreLabel = this.add
 			.text(625, 330, "Final Score:", {
 				fontFamily: "'Pixelify Sans', sans-serif",
 				fontSize: 50,
@@ -159,9 +159,8 @@ export class GameOver extends Scene {
 		let efficiency = globalMoves == 0 ? 0 : globalPieces / globalMoves;
 		let score = Math.ceil(efficiency * globalWaves * 1000);
 
-		this.add
+		const finalScoreCount = this.add
 			.text(625, 400, score + "", {
-				fontFamily: "'Pixelify Sans', sans-serif",
 				fontSize: 80,
 				color: GAMEOVER_TEXT_TWO,
 				stroke: GAMEOVER_TEXT_ONE,
@@ -171,18 +170,37 @@ export class GameOver extends Scene {
 			.setOrigin(0.5)
 			.setDepth(100);
 
-		this.createButton(625, 615, "Restart Game", () => {
+		const restartGameButton = this.createButton(625, 615, "Restart Game", () => {
 			console.log("Restarting game...");
 			this.scene.stop("GameOver");
 			this.scene.stop("MainGame"); // Reset game state
 			this.scene.start("MainGame");
 		});
 
-		this.createButton(625, 540, "Main Menu", () => {
+		const mainMenuButton = this.createButton(625, 540, "Main Menu", () => {
 			console.log("Returning to main menu...");
 			this.scene.stop("GameOver");
 			this.scene.stop("MainGame"); // Reset main game before menu
 			this.scene.start("Game"); // can change if needed
+		});
+
+		// Minimize button
+		const minimizeButton = this.createButton(825, 615, "▼", () => {
+			bg.setAlpha(0);
+			square.setAlpha(0);
+			square2.setAlpha(0);
+			gameOverText.setAlpha(0);
+			numberOfCapturedPiecesLabel.setAlpha(0);
+			numberOfCapturedPiecesCount.setAlpha(0);
+			numberOfMovesLabel.setAlpha(0);
+			numberOfMovesCount.setAlpha(0);
+			numberOfWavesSurvivedLabel.setAlpha(0);
+			numberOfWavesSurvivedCount.setAlpha(0);
+			finalScoreLabel.setAlpha(0);
+			finalScoreCount.setAlpha(0);
+			restartGameButton.setAlpha(0);
+			mainMenuButton.setAlpha(0);
+			minimizeButton.setAlpha(0);
 		});
 
 		bg.setInteractive();
