@@ -8,11 +8,11 @@ export class Promotion extends Scene {
     }
 
     preload() {
-        this.load.setPath("assets/drummyfish chess/");
-        this.load.image("queen", "queenW.png");
-        this.load.image("knight", "knightW.png");
-        this.load.image("rook", "rookW.png");
-        this.load.image("bishop", "bishopW.png");
+        this.load.setPath("assets/ourChessPieces/");
+        this.load.image("queen", "queenW4.png");
+        this.load.image("knight", "knightW4.png");
+        this.load.image("rook", "rookW4.png");
+        this.load.image("bishop", "bishopW4.png");
     }
 
     create() {
