@@ -26,6 +26,8 @@ export class Game extends Scene {
 	}
 
 	preload() {
+		this.load.audio("backgroundMusic", "../assets/music/file_example_MP3_700KB.mp3");
+
 		this.load.setPath("assets");
 		// Load Chess piece pngs
 		this.load.setPath("assets/ourChessPieces");
@@ -48,6 +50,16 @@ export class Game extends Scene {
 	}
 
 	create() {
+		// Play music
+		this.backgroundMusic = this.sound.add("backgroundMusic", {loop: true, volume: 1});
+		this.backgroundMusicPlaying = false;
+
+		// Try to play music without user click
+		this.backgroundMusic.play();
+		if (this.backgroundMusic.isPlaying) {
+			this.backgroundMusicPlaying = true;
+		}
+
 		this.cameras.main.setBackgroundColor(BACKGROUND_COLOR);
 
 		// and a board, and an icon, and a black tile, and a white tile; Totaling to 40 images
@@ -69,6 +81,10 @@ export class Game extends Scene {
 			function () {
 				import("./GameOver") //
 					.then((module) => {
+						// Stop background music
+						this.backgroundMusic.stop();
+						this.backgroundMusicPlaying = false;
+
 						// Only add the scene if it's not already registered
 						if (!this.scene.get("GameOver")) {
 							this.scene.add("GameOver", module.GameOver); // Add the MainGame scene dynamically
