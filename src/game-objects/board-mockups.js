@@ -46,6 +46,9 @@ export class ChessPieceLite {
 	getCoordinate() {
 		return this.#coordinate;
 	}
+
+	// dummy destroy method, setting reference to null will do it
+	destroy() {}
 }
 
 export class BoardStateLite extends BoardState {

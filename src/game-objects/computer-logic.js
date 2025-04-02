@@ -38,12 +38,14 @@ export class ChessGameState {
 		if (BoardState) {
 			this.boardState = BoardState;
 			this.pieceCoordinates = BoardState.getPieceCoordinates();
-			this.bestValue = 10000; // want lowest possible value. Dummy initialization value
+			this.bestValue = 1000000; // want lowest possible value. Dummy initialization value
 			console.log(this.boardState);
 		} else {
-			this.bestValue = 10000;
+			this.bestValue = 1000000;
 			this.pieceCoordinates;
 		}
+		// makes linter not complain about unused BoardStateLite import
+		// Workaround oriented programming at its finest
 		this.CreateAnotherBoardStateLite();
 	}
 
@@ -58,14 +60,16 @@ export class ChessGameState {
 			// find all moves
 			const moves = this.boardState.searchMoves(pieceDict[piece][0], pieceDict[piece][1]);
 			// all possible moves for a piece
-			console.log("moves:", moves);
+			// console.log("moves:", moves);
 			for (const move in moves) {
-				console.log(moves[move]);
+				// console.log(moves[move]);
 				this.evaluateBoard(this.boardState.cloneBoardState(), pieceDict[piece], moves[move]); // get score for board
 			}
 		}
 		// make chosen move
 		// this.sendMove(this.bestMoveInput, this.bestMoveOutput);
+		console.log("The Move: ", this.bestValue, this.bestMoveInput, this.bestMoveOutput, this.capture);
+		this.sendMove(this.bestMoveInput, this.bestMoveOutput, this.capture);
 	}
 	// sends an event specifying the move as the computer's.
 	// Event handle in ChessTiles is created to listen for the event
@@ -77,103 +81,105 @@ export class ChessGameState {
 
 	// determines score of a board, lower is better for computer
 	evaluateBoard(boardState, input, move) {
-		// console.log(input, move);
-		if (move["isEnemy"]) {
+		// console.log("Move: ", input, move);
+		if (move["isEnemy"] == true) {
+			console.log(move);
 			// if a capture, remove the piece that is captured
 			boardState.destroyPiece(move["xy"][0], move["xy"][1]);
 		}
 		boardState.movePiece(input, move["xy"]); // make the move
-		// console.log(boardState, input,output);
 		let score = 0; // initialize score
-		let threatened;
+		let threatenedPlayer;
+		let threatenedComputer;
+
 		// get total value of player material - 0.01*value of player material threatened
-		for (piece in this.pieceCoordinates[PLAYER]) {
-			console.log("piece:", piece);
-			for (const rank of [ROOK, KNIGHT, BISHOP, QUEEN, KING, PAWN]) {
-				// for all types of computer pieces
-				for (const count of rank) {
-					// for each player piece of a given rank
-					switch (rank) {
-						case PAWN:
-							score += PAWN_VALUE;
-							threatened = boardState.seekThreats(count[0], count[1], PLAYER);
-							score -= PAWN_VALUE * THREATEN_WEIGHT * threatened.length; // each piece threatening it
-							break;
-						case ROOK:
-							score += ROOK_VALUE;
-							threatened = boardState.seekThreats(count[0], count[1], PLAYER);
-							score -= ROOK_VALUE * THREATEN_WEIGHT * threatened.length; // each piece threatening it
-							break;
-						case BISHOP:
-							score += BISHOP_VALUE;
-							threatened = boardState.seekThreats(count[0], count[1], PLAYER);
-							score -= BISHOP_VALUE * THREATEN_WEIGHT * threatened.length; // each piece threatening it
-							break;
-						case KNIGHT:
-							score += KNIGHT_VALUE;
-							threatened = boardState.seekThreats(count[0], count[1], PLAYER);
-							score -= KNIGHT_VALUE * THREATEN_WEIGHT * threatened.length; // each piece threatening it
-							break;
-						case QUEEN:
-							score += QUEEN_VALUE;
-							threatened = boardState.seekThreats(count[0], count[1], PLAYER);
-							score -= QUEEN_VALUE * THREATEN_WEIGHT * threatened.length; // each piece threatening it
-							break;
-						case KING:
-							score += KING_VALUE;
-							threatened = boardState.seekThreats(count[0], count[1], PLAYER);
-							score -= KING_VALUE * THREATEN_WEIGHT * threatened.length; // each piece threatening it
-							break;
-					}
-				}
+		let coordinates = this.pieceCoordinates.getAllCoordinates(PLAYER);
+		coordinates.forEach((piece) => {
+			// console.log(piece, this.boardState.getRank(piece[0],piece[1]));
+			threatenedComputer = boardState.seekThreats(piece[0], piece[1], COMPUTER); // player pieces protecting the given piece
+			threatenedPlayer = boardState.seekThreats(piece[0], piece[1], PLAYER); // computer pieces threatening the chosen piece
+			switch (boardState.getRank(piece[0], piece[1])) {
+				case PAWN:
+					score += PAWN_VALUE * CAPTURE_WEIGHT;
+					score += PAWN_VALUE * THREATEN_WEIGHT * threatenedComputer.length;
+					score -= PAWN_VALUE * THREATEN_WEIGHT * threatenedPlayer.length; // enemy each threatening it
+					break;
+				case ROOK:
+					score += ROOK_VALUE * CAPTURE_WEIGHT;
+					score += ROOK_VALUE * THREATEN_WEIGHT * threatenedComputer.length;
+					score -= ROOK_VALUE * THREATEN_WEIGHT * threatenedPlayer.length; // each piece threatening it
+					break;
+				case BISHOP:
+					score += BISHOP_VALUE * CAPTURE_WEIGHT;
+					score += BISHOP_VALUE * THREATEN_WEIGHT * threatenedComputer.length;
+					score -= BISHOP_VALUE * THREATEN_WEIGHT * threatenedPlayer.length; // each piece threatening it
+					break;
+				case KNIGHT:
+					score += KNIGHT_VALUE * CAPTURE_WEIGHT;
+					score += KNIGHT_VALUE * THREATEN_WEIGHT * threatenedComputer.length;
+					score -= KNIGHT_VALUE * THREATEN_WEIGHT * threatenedPlayer.length; // each piece threatening it
+					break;
+				case QUEEN:
+					score += QUEEN_VALUE * CAPTURE_WEIGHT;
+					score += QUEEN_VALUE * THREATEN_WEIGHT * threatenedComputer.length;
+					score -= QUEEN_VALUE * THREATEN_WEIGHT * threatenedPlayer.length; // each piece threatening it
+					break;
+				case KING:
+					score += KING_VALUE * CAPTURE_WEIGHT;
+					// score += KING_VALUE * THREATEN_WEIGHT * threatenedComputer.length; // friendly pieces threatening the king don't matter
+					score -= KING_VALUE * THREATEN_WEIGHT * threatenedPlayer.length; // each piece threatening it
+					break;
 			}
-		}
-		console.log("score:", score);
+		});
+
+		// console.log("score:", score);
 		// subtract value of computer material * capture weight and add threatenweight*piece value for each
 		// threatened computer piece
-		for (piece in this.pieceCoordinates[COMPUTER]) {
-			for (const rank of [ROOK, KNIGHT, BISHOP, QUEEN, KING, PAWN]) {
-				// for all types of computer pieces
-				for (const count of rank) {
-					// for each player piece of a given rank
-					switch (rank) {
-						case PAWN:
-							score -= PAWN_VALUE * CAPTURE_WEIGHT;
-							threatened = boardState.seekThreats(count[0], count[1], COMPUTER);
-							score += PAWN_VALUE * THREATEN_WEIGHT * threatened.length; // enemy each threatening it
-							break;
-						case ROOK:
-							score -= ROOK_VALUE * CAPTURE_WEIGHT;
-							threatened = boardState.seekThreats(count[0], count[1], COMPUTER);
-							score += ROOK_VALUE * THREATEN_WEIGHT * threatened.length; // each piece threatening it
-							break;
-						case BISHOP:
-							score += BISHOP_VALUE * CAPTURE_WEIGHT;
-							threatened = boardState.seekThreats(count[0], count[1], COMPUTER);
-							score += BISHOP_VALUE * THREATEN_WEIGHT * threatened.length; // each piece threatening it
-							break;
-						case KNIGHT:
-							score -= KNIGHT_VALUE * CAPTURE_WEIGHT;
-							threatened = boardState.seekThreats(count[0], count[1], COMPUTER);
-							score += KNIGHT_VALUE * THREATEN_WEIGHT * threatened.length; // each piece threatening it
-							break;
-						case QUEEN:
-							score -= QUEEN_VALUE * CAPTURE_WEIGHT;
-							threatened = boardState.seekThreats(count[0], count[1], COMPUTER);
-							score += QUEEN_VALUE * THREATEN_WEIGHT * threatened.length; // each piece threatening it
-							break;
-						case KING:
-							score -= KING_VALUE * CAPTURE_WEIGHT;
-							threatened = boardState.seekThreats(count[0], count[1], COMPUTER);
-							score += KING_VALUE * THREATEN_WEIGHT * threatened.length; // each piece threatening it
-							break;
-					}
-				}
-			}
-		}
+
+		// for (piece in this.pieceCoordinates[COMPUTER]) {
+		// 	for (const rank of [ROOK, KNIGHT, BISHOP, QUEEN, KING, PAWN]) {
+		// 		// for all types of computer pieces
+		// 		for (const count of rank) {
+		// 			// for each player piece of a given rank
+		// 			switch (rank) {
+		// 				case PAWN:
+		// 					score -= PAWN_VALUE * CAPTURE_WEIGHT;
+		// 					threatenedPlayer = boardState.seekThreats(count[0], count[1], COMPUTER);
+		// 					score += PAWN_VALUE * THREATEN_WEIGHT * threatenedPlayer.length; // enemy each threatening it
+		// 					break;
+		// 				case ROOK:
+		// 					score -= ROOK_VALUE * CAPTURE_WEIGHT;
+		// 					threatenedPlayer = boardState.seekThreats(count[0], count[1], COMPUTER);
+		// 					score += ROOK_VALUE * THREATEN_WEIGHT * threatenedPlayer.length; // each piece threatening it
+		// 					break;
+		// 				case BISHOP:
+		// 					score += BISHOP_VALUE * CAPTURE_WEIGHT;
+		// 					threatenedPlayer = boardState.seekThreats(count[0], count[1], COMPUTER);
+		// 					score += BISHOP_VALUE * THREATEN_WEIGHT * threatenedPlayer.length; // each piece threatening it
+		// 					break;
+		// 				case KNIGHT:
+		// 					score -= KNIGHT_VALUE * CAPTURE_WEIGHT;
+		// 					threatenedPlayer = boardState.seekThreats(count[0], count[1], COMPUTER);
+		// 					score += KNIGHT_VALUE * THREATEN_WEIGHT * threatenedPlayer.length; // each piece threatening it
+		// 					break;
+		// 				case QUEEN:
+		// 					score -= QUEEN_VALUE * CAPTURE_WEIGHT;
+		// 					threatenedPlayer = boardState.seekThreats(count[0], count[1], COMPUTER);
+		// 					score += QUEEN_VALUE * THREATEN_WEIGHT * threatenedPlayer.length; // each piece threatening it
+		// 					break;
+		// 				case KING:
+		// 					score -= KING_VALUE * CAPTURE_WEIGHT;
+		// 					threatenedPlayer = boardState.seekThreats(count[0], count[1], COMPUTER);
+		// 					score += KING_VALUE * THREATEN_WEIGHT * threatenedPlayer.length; // each piece threatening it
+		// 					break;
+		// 			}
+		// 		}
+		// 	}
+		// }
 
 		if (score < this.bestValue) {
 			// if move is better than current best move
+			console.log("Move for finding best: ", move);
 			this.bestValue = score;
 			this.bestMoveInput = input;
 			this.bestMoveOutput = move["xy"];
@@ -212,8 +218,9 @@ export class ChessGameState {
 		return Math.floor(Math.random() * (maxFloored - minCeiled) + minCeiled);
 	}
 
-	// This is mainly to appease the linter, and isn't actually used.
+	// This is mainly to appease the linter, and doesn't do anything
 	CreateAnotherBoardStateLite() {
-		return new BoardStateLite(this.getPieceCoordinates);
+		new BoardStateLite(this.getPieceCoordinates);
+		return;
 	}
 }

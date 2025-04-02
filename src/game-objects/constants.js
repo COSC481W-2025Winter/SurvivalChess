@@ -90,9 +90,9 @@ const ROOK_VALUE = 5;
 const QUEEN_VALUE = 9;
 const KING_VALUE = 100;
 
-const CAPTURE_WEIGHT = 1;
+const CAPTURE_WEIGHT = 1000;
 const LOSS_WEIGHT = 0.1;
-const THREATEN_WEIGHT = 0.01;
+const THREATEN_WEIGHT = 0;
 
 export function isSamePoint([col1, row1], [col2, row2]) {
 	return col1 == col2 && row1 == row2;
