@@ -1,12 +1,6 @@
 // Scene-free version of board-state for AI logic to use.
 import {BoardState} from "./board-state";
 
-// export class ChessPieceLite extends ChessPiece {
-// 	constructor(x, y, rank, alignment, coordinate) {
-// 		super(null, x, y, rank, alignment, coordinate);
-// 	}
-// }
-
 export class ChessPieceLite {
 	#rank;
 	#alignment;

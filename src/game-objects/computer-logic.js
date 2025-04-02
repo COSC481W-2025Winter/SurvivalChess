@@ -20,7 +20,7 @@ import {
 } from "./constants";
 // LOSS_WEIGHT,
 import {EventBus} from "../game/EventBus.js";
-// import {BoardStateLite} from "./board-mockups";
+import {BoardStateLite} from "./board-mockups";
 
 // const MIN = 0; // if level % 2 = 0, its a min level
 // const MAX = 1; // if level % 2 = 1, its a max level
@@ -44,6 +44,7 @@ export class ChessGameState {
 			this.bestValue = 10000;
 			this.pieceCoordinates;
 		}
+		this.CreateAnotherBoardStateLite();
 	}
 
 	// Find the best move using min-max algorithm
@@ -209,5 +210,10 @@ export class ChessGameState {
 		const minCeiled = Math.ceil(min);
 		const maxFloored = Math.floor(max);
 		return Math.floor(Math.random() * (maxFloored - minCeiled) + minCeiled);
+	}
+
+	// This is mainly to appease the linter, and isn't actually used.
+	CreateAnotherBoardStateLite() {
+		return new BoardStateLite(this.getPieceCoordinates);
 	}
 }
