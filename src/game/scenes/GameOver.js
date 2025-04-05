@@ -14,6 +14,7 @@ export class GameOver extends Scene {
 	}
 
 	preload() {
+		this.load.audio("endMusic", "../assets/music/SurvivalChess-End.mp3");
 		this.load.setPath("assets");
 		this.load.image("star", "star.png");
 		this.load.image("background", "bg.png");
@@ -31,6 +32,16 @@ export class GameOver extends Scene {
 	}
 
 	create() {
+		// Play music
+		this.endMusic = this.sound.add("endMusic", {loop: false, volume: 0.5});
+		this.endMusicPlaying = false;
+
+		// Try to play music without user click
+		this.endMusic.play();
+		if (this.endMusic.isPlaying) {
+			this.endMusicPlaying = true;
+		}
+
 		// put GAMEOVER over game screen
 		this.scene.moveAbove("MainGame", "GameOver");
 		// Creates an invisible background that also blocks input on the scene underneath
@@ -142,6 +153,9 @@ export class GameOver extends Scene {
 
 		this.createButton(625, 600, "Restart Game", () => {
 			console.log("Restarting game...");
+			// Stop background music
+			this.endMusic.stop();
+			this.endMusicPlaying = false;
 			this.scene.stop("GameOver");
 			this.scene.stop("MainGame"); // Reset game state
 			this.scene.start("MainGame");
@@ -149,6 +163,9 @@ export class GameOver extends Scene {
 
 		this.createButton(625, 525, "Main Menu", () => {
 			console.log("Returning to main menu...");
+			// Stop background music
+			this.endMusic.stop();
+			this.endMusicPlaying = false;
 			this.scene.stop("GameOver");
 			this.scene.stop("MainGame"); // Reset main game before menu
 			this.scene.start("Game"); // can change if needed
