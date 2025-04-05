@@ -16,7 +16,7 @@ export class Start extends Scene {
 
 		this.load.image("logo", "logo.png");
 
-		this.load.audio("backgroundMusic", "../assets/music/file_example_MP3_700KB.mp3");
+		this.load.audio("backgroundMusic", "../assets/music/SurvivalChess-Menu.mp3");
 	}
 	async create() {
 		// Load the pixel font

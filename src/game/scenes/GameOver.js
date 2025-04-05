@@ -14,7 +14,7 @@ export class GameOver extends Scene {
 	}
 
 	preload() {
-		this.load.audio("backgroundMusic", "../assets/music/file_example_MP3_700KB.mp3");
+		this.load.audio("endMusic", "../assets/music/SurvivalChess-End.mp3");
 		this.load.setPath("assets");
 		this.load.image("star", "star.png");
 		this.load.image("background", "bg.png");
@@ -33,13 +33,13 @@ export class GameOver extends Scene {
 
 	create() {
 		// Play music
-		this.backgroundMusic = this.sound.add("backgroundMusic", {loop: true, volume: 0.5});
-		this.backgroundMusicPlaying = false;
+		this.endMusic = this.sound.add("endMusic", {loop: false, volume: 0.5});
+		this.endMusicPlaying = false;
 
 		// Try to play music without user click
-		this.backgroundMusic.play();
-		if (this.backgroundMusic.isPlaying) {
-			this.backgroundMusicPlaying = true;
+		this.endMusic.play();
+		if (this.endMusic.isPlaying) {
+			this.endMusicPlaying = true;
 		}
 
 		// put GAMEOVER over game screen
@@ -154,8 +154,8 @@ export class GameOver extends Scene {
 		this.createButton(625, 600, "Restart Game", () => {
 			console.log("Restarting game...");
 			// Stop background music
-			this.backgroundMusic.stop();
-			this.backgroundMusicPlaying = false;
+			this.endMusic.stop();
+			this.endMusicPlaying = false;
 			this.scene.stop("GameOver");
 			this.scene.stop("MainGame"); // Reset game state
 			this.scene.start("MainGame");
@@ -164,8 +164,8 @@ export class GameOver extends Scene {
 		this.createButton(625, 525, "Main Menu", () => {
 			console.log("Returning to main menu...");
 			// Stop background music
-			this.backgroundMusic.stop();
-			this.backgroundMusicPlaying = false;
+			this.endMusic.stop();
+			this.endMusicPlaying = false;
 			this.scene.stop("GameOver");
 			this.scene.stop("MainGame"); // Reset main game before menu
 			this.scene.start("Game"); // can change if needed
