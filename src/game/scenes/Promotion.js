@@ -1,30 +1,39 @@
 import {Scene} from "phaser";
 import {EventBus} from "../EventBus";
-import {QUEEN, BISHOP, ROOK, KNIGHT, X_ANCHOR, Y_ANCHOR, TILE_SIZE} from "../../game-objects/constants";
+import {QUEEN, BISHOP, ROOK, KNIGHT, X_ANCHOR, Y_ANCHOR, TILE_SIZE, START_TEXT_ONE} from "../../game-objects/constants";
 
 export class Promotion extends Scene {
 	constructor() {
 		super("Promotion");
 	}
 
-    preload() {
-        this.load.setPath("assets/ourChessPieces/");
-        this.load.image("queen", "queenW4.png");
-        this.load.image("knight", "knightW4.png");
-        this.load.image("rook", "rookW4.png");
-        this.load.image("bishop", "bishopW4.png");
-    }
+	preload() {
+		this.load.setPath("assets/ourChessPieces/");
+		this.load.image("queen", "queenW4.png");
+		this.load.image("knight", "knightW4.png");
+		this.load.image("rook", "rookW4.png");
+		this.load.image("bishop", "bishopW4.png");
+
+		// Load the pixel font
+		WebFont.load({
+			google: {
+				families: ["Pixelify Sans"],
+			},
+			active: () => {
+				// Once the font is loaded, we can start the scene
+				this.fontLoaded = true; // Flag to indicate that the font is loaded
+			},
+		});
+	}
 
 	create() {
 		const bgX = this.cameras.main.width;
 		const bgY = this.cameras.main.height;
 		this.add
 			.text(500, 490, "Select what piece to promote your pawn into", {
-				fontFamily: "Arial Black",
+				fontFamily: "'Pixelify Sans', sans-serif",
 				fontSize: 38,
-				color: "#ffffff",
-				stroke: "#000000",
-				strokeThickness: 8,
+				color: START_TEXT_ONE,
 				align: "center",
 			})
 			.setOrigin(0.5)
