@@ -30,6 +30,7 @@ export class BoardState {
 		// Add 4 pawns as the first generic wave
 		for (let i = 2; i < 6; i++) this.addPiece(i, 1, PAWN, COMPUTER);
 
+		// contains simple counter ui for all turns count till present
 		this.turnCounter = new TurnCounter(this.#scene);
 	}
 
