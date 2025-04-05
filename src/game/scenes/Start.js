@@ -14,13 +14,11 @@ export class Start extends Scene {
 	preload() {
 		this.load.setPath("assets");
 
-		// this.load.image("background", "bg.png");
-
 		this.load.image("logo", "logo.png");
+
+		this.load.audio("backgroundMusic", "../assets/music/SurvivalChess-Menu.mp3");
 	}
 	async create() {
-		// this.add.image(0, 0, "background");
-		// this.add.image(512, 200, "logo").setDepth(100);
 		// Load the pixel font
 		WebFont.load({
 			google: {
@@ -29,6 +27,26 @@ export class Start extends Scene {
 			active: () => {
 				// Once the font is loaded, we can start the scene
 				this.fontLoaded = true; // Flag to indicate that the font is loaded
+
+				// Play music
+				this.backgroundMusic = this.sound.add("backgroundMusic", {loop: true, volume: 0.5});
+				this.backgroundMusicPlaying = false;
+
+				// Try to play music without user click
+				this.backgroundMusic.play();
+				if (this.backgroundMusic.isPlaying) {
+					this.backgroundMusicPlaying = true;
+				}
+
+				// If it is not playing it will wait for user click
+				// This is necessary for most browsers settings
+				this.input.on("pointerdown", () => {
+					if (!this.backgroundMusicPlaying) {
+						// Play only if not already playing
+						this.backgroundMusic.play();
+						this.backgroundMusicPlaying = true;
+					}
+				});
 
 				this.cameras.main.setBackgroundColor(START_BACKGROUND_COLOR);
 
@@ -96,6 +114,10 @@ export class Start extends Scene {
 					function () {
 						import("./Game") // Dynamically import the Game scene
 							.then((module) => {
+								// Stop background music
+								this.backgroundMusic.stop();
+								this.backgroundMusicPlaying = false;
+
 								// Only add the scene if it's not already registered
 								if (!this.scene.get("MainGame")) {
 									this.scene.add("MainGame", module.Game); // Add the MainGame scene dynamically
