@@ -1,11 +1,7 @@
-export class pieceStyle {
-	styleNumber;
+let pieceStyleValue = 1;
 
-	constructor(number) {
-		this.styleNumber = number;
-	}
-
-	changeStyle(number) {
-		this.styleNumber = number;
-	}
+export function setPieceStyle(number) {
+	pieceStyleValue = number;
 }
+
+export {pieceStyleValue};

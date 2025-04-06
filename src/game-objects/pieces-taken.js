@@ -6,6 +6,7 @@ import {WHITE_TILE_COLOR, BLACK_TILE_COLOR} from "./constants";
 import {PAWN, ROOK, KNIGHT, BISHOP, QUEEN, START_TEXT_ONE} from "./constants";
 import {PLAYER, COMPUTER} from "./constants";
 import {ChessPiece} from "./chess-piece";
+import {pieceStyleValue} from "../game//scenes/PieceStyle";
 
 export class PiecesTaken {
 	preload() {
@@ -13,7 +14,8 @@ export class PiecesTaken {
 		// Load Chess piece pngs
 		this.load.setPath("assets/ourChessPieces");
 		for (const rank of [PAWN, ROOK, KNIGHT, BISHOP, QUEEN])
-			for (const alignment of [PLAYER, COMPUTER]) this.load.image(rank + alignment, rank + alignment + ".png");
+			for (const alignment of [PLAYER, COMPUTER])
+				this.load.image(rank + alignment, rank + alignment + pieceStyleValue + ".png");
 
 		// Load the pixel font
 		WebFont.load({

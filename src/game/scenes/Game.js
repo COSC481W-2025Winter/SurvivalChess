@@ -6,6 +6,8 @@ import {RulesButton} from "./RulesButton";
 
 import {ChessTiles} from "../../game-objects/chess-tiles";
 
+import {pieceStyleValue} from "./PieceStyle";
+
 import {
 	PAWN,
 	ROOK,
@@ -31,7 +33,7 @@ export class Game extends Scene {
 		this.load.setPath("assets/ourChessPieces");
 		for (const rank of [PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING]) {
 			for (const alignment of [PLAYER, COMPUTER]) {
-				this.load.image(rank + alignment, rank + alignment + ".png");
+				this.load.image(rank + alignment, rank + alignment + pieceStyleValue + ".png");
 			}
 		}
 
