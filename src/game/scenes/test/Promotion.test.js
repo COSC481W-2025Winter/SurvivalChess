@@ -1,5 +1,5 @@
-import {Promotion} from "./Promotion";
-import {COMPUTER, PAWN, ROOK, QUEEN, PLAYER} from "../../game-objects/constants";
+import {Promotion} from "../Promotion";
+import {COMPUTER, PAWN, ROOK, QUEEN, PLAYER} from "../../../game-objects/constants";
 
 describe("Promotion Scene Display Test", () => {
 	let scene;

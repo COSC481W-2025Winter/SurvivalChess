@@ -1,4 +1,4 @@
-import {Start} from "./Start"; // Import the Start scene
+import {Start} from "../Start"; // Import the Start scene
 
 // We are mocking the Start Scene instead of running the whole game loop
 // Running the whole game loop takes too long and will result in the test timing out and failing
