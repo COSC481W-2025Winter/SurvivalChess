@@ -31,7 +31,7 @@ export class Game extends Scene {
 		this.load.setPath("assets/ourChessPieces");
 		for (const rank of [PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING]) {
 			for (const alignment of [PLAYER, COMPUTER]) {
-				this.load.image(rank + alignment, rank + alignment + "4.png");
+				this.load.image(rank + alignment, rank + alignment + ".png");
 			}
 		}
 

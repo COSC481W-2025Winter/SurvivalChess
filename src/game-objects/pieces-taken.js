@@ -13,7 +13,7 @@ export class PiecesTaken {
 		// Load Chess piece pngs
 		this.load.setPath("assets/ourChessPieces");
 		for (const rank of [PAWN, ROOK, KNIGHT, BISHOP, QUEEN])
-			for (const alignment of [PLAYER, COMPUTER]) this.load.image(rank + alignment, rank + alignment + "4.png");
+			for (const alignment of [PLAYER, COMPUTER]) this.load.image(rank + alignment, rank + alignment + ".png");
 
 		// Load the pixel font
 		WebFont.load({
