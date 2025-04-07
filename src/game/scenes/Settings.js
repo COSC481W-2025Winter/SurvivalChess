@@ -10,7 +10,8 @@ import {
 	Y_ANCHOR,
 	TILE_SIZE,
 } from "../../game-objects/constants";
-import {setPieceStyle} from "./PieceStyle";
+import {PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING, PLAYER, COMPUTER} from "../../game-objects/constants";
+import {pieceStyleValue, setPieceStyle} from "./PieceStyle";
 
 export class Settings extends Scene {
 	constructor() {
@@ -19,8 +20,6 @@ export class Settings extends Scene {
 
 	preload() {
 		this.load.setPath("assets");
-		// this.load.image("star", "star.png");
-		// this.load.image("background", "bg.png");
 		this.load.image("pieceOption1", "pieceOption1.png");
 		this.load.image("pieceOption2", "pieceOption2.png");
 		this.load.image("tileOption1", "tileOption1.png");
@@ -92,6 +91,8 @@ export class Settings extends Scene {
 			"pointerdown",
 			function () {
 				setPieceStyle(1);
+				this.reload();
+				pieceOption1.setScale(1.5);
 			},
 			this
 		);
@@ -101,6 +102,8 @@ export class Settings extends Scene {
 			"pointerdown",
 			function () {
 				setPieceStyle(2);
+				this.reload();
+				pieceOption2.setScale(1.5);
 			},
 			this
 		);
@@ -160,5 +163,16 @@ export class Settings extends Scene {
 		square.setInteractive();
 
 		EventBus.emit("current-scene-ready", this);
+	}
+}
+
+export function reload() {
+	this.load.setPath("assets");
+	// Load Chess piece pngs
+	this.load.setPath("assets/ourChessPieces");
+	for (const rank of [PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING]) {
+		for (const alignment of [PLAYER, COMPUTER]) {
+			this.load.image(rank + alignment, rank + alignment + pieceStyleValue + ".png");
+		}
 	}
 }

@@ -6,9 +6,6 @@ import {RulesButton} from "./RulesButton";
 import {START_BACKGROUND_COLOR, START_TEXT_ONE, START_TEXT_TWO} from "../../game-objects/constants";
 import {SettingsButton} from "./SettingsButton";
 
-import {pieceStyleValue} from "./PieceStyle";
-import {setPieceStyle} from "./PieceStyle";
-
 export class Start extends Scene {
 	constructor() {
 		super("Game");
@@ -24,9 +21,6 @@ export class Start extends Scene {
 	}
 	async create() {
 		// Load the pixel font
-		if (pieceStyleValue == null) {
-			setPieceStyle(1);
-		}
 		WebFont.load({
 			google: {
 				families: ["Pixelify Sans"],
@@ -124,7 +118,6 @@ export class Start extends Scene {
 								// Stop background music
 								this.backgroundMusic.stop();
 								this.backgroundMusicPlaying = false;
-
 								// Only add the scene if it's not already registered
 								if (!this.scene.get("MainGame")) {
 									this.scene.add("MainGame", module.Game); // Add the MainGame scene dynamically

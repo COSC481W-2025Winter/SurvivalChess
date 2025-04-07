@@ -6,7 +6,7 @@ import {RulesButton} from "./RulesButton";
 
 import {ChessTiles} from "../../game-objects/chess-tiles";
 
-import {pieceStyleValue} from "./PieceStyle";
+import {getPieceStyle} from "./PieceStyle";
 
 import {
 	PAWN,
@@ -35,7 +35,7 @@ export class Game extends Scene {
 		this.load.setPath("assets/ourChessPieces");
 		for (const rank of [PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING]) {
 			for (const alignment of [PLAYER, COMPUTER]) {
-				this.load.image(rank + alignment, rank + alignment + pieceStyleValue + ".png");
+				this.load.image(rank + alignment, rank + alignment + getPieceStyle() + ".png");
 			}
 		}
 
@@ -55,7 +55,6 @@ export class Game extends Scene {
 		// Play music
 		this.gameMusic = this.sound.add("gameMusic", {loop: false, volume: 1});
 		this.gameMusicPlaying = false;
-
 		// Play the music
 		this.gameMusic.play();
 		if (this.gameMusic.isPlaying) {
@@ -170,6 +169,16 @@ export class Game extends Scene {
 		rulesButton.on("pointerout", () => {
 			rulesButton.setScale(1); // Reset to original size
 		});
+
+		/* const test = this.add.text(100, 100, "Test: "+getPieceStyle(), {
+			fill: CREAMHEX,
+			backgroundColor: ONYXHEX,
+			fontFamily: "'Pixelify Sans', sans-serif",
+			fontSize: 20,
+			padding: {left: 20, right: 20, top: 10, bottom: 10},
+		});
+		test.setPosition(1050, 500);
+		test.setOrigin(0.5); */
 
 		EventBus.emit("current-scene-ready", this);
 	}
