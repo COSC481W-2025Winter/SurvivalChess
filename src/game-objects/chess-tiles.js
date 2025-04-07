@@ -467,7 +467,7 @@ export class ChessTiles {
 
 	// Get a random order of pieces to process to prevent a universal bias
 	getPiecePriorityOrder() {
-		// This order doesn't matter
+		// This order doesn't matter (gets randomized)
 		let piecePriority = [QUEEN, BISHOP, ROOK, KNIGHT];
 
 		// Sort it randomly
@@ -482,6 +482,7 @@ export class ChessTiles {
 		}
 
 		// Append Pawn to the end so it is always bottom priority
+		// We wanted less pawns, so append it to the end to always be the lowest priority
 		piecePriority.push(PAWN);
 
 		return piecePriority;
@@ -625,6 +626,12 @@ export class ChessTiles {
 		this.futureMoves = new ChessGameState(this.boardState);
 		// this.futureMoves.getBestMove();
 		// this.futureMoves.sendMove([0,1],[0,3]);
-		this.futureMoves.getRandomMove();
+
+		try {
+			this.futureMoves.getRandomMove();
+		} catch (ex) {
+			window.alert("Error while getting random move: " + ex.message);
+		}
+		this.futureMoves = null;
 	}
 }
