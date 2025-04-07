@@ -18,6 +18,11 @@
       height: 50px;
       margin: 5px;
     }
+    /* Add CSS variables for theme colors */
+    :root {
+      --primary-chess-color: white;
+      --secondary-chess-color: black;
+    }
   </style>
 </head>
 <body>
@@ -50,6 +55,8 @@
       chessPieces.forEach(piece => {
         piece.src = "assets/default/" + piece.alt.toLowerCase() + ".png"; // Update images
       });
+      document.documentElement.style.setProperty("--primary-chess-color", "white");
+      document.documentElement.style.setProperty("--secondary-chess-color", "black");
       localStorage.setItem("mode", "default"); // Store mode in localStorage
     }
 
@@ -59,6 +66,8 @@
       chessPieces.forEach(piece => {
         piece.src = "assets/light/" + piece.alt.toLowerCase() + ".png"; // Update images
       });
+      document.documentElement.style.setProperty("--primary-chess-color", "lightgray");
+      document.documentElement.style.setProperty("--secondary-chess-color", "darkgray");
       localStorage.setItem("mode", "light"); // Store mode in localStorage
     }
 
@@ -68,6 +77,8 @@
       chessPieces.forEach(piece => {
         piece.src = "assets/dark/" + piece.alt.toLowerCase() + ".png"; // Update images
       });
+      document.documentElement.style.setProperty("--primary-chess-color", "black");
+      document.documentElement.style.setProperty("--secondary-chess-color", "white");
       localStorage.setItem("mode", "dark"); // Store mode in localStorage
     }
 

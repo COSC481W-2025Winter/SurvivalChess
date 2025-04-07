@@ -2,6 +2,11 @@ import Phaser from "phaser";
 import {COLOR_THEMES} from "../../game-objects/constants.js";
 import WebFont from "webfontloader";
 
+// Define the color constants (can be moved to a separate constants file if preferred)
+const TEXT_COLOR = "#f28d3e"; // Text color
+const BACKGROUND_COLOR = "#444"; // Background color
+const STROKE_COLOR = "#000000"; // Stroke color
+
 export class Settings extends Phaser.Scene {
 	constructor() {
 		super({key: "Settings"});
@@ -28,46 +33,56 @@ export class Settings extends Phaser.Scene {
 			return;
 		}
 
-		const overlay = this.add.rectangle(
-			this.cameras.main.width / 2,
-			this.cameras.main.height / 2,
-			this.cameras.main.width * 0.8,
-			this.cameras.main.height * 0.7,
-			0xffffff,
-			0.9
-		);
-		overlay.setOrigin(0.5, 0.5);
+		const centerX = this.cameras.main.width / 2;
+		const centerY = this.cameras.main.height / 2;
 
+		// Dimmed background overlay
+		const bg = this.add.rectangle(centerX, centerY, 1250, 768, 0x000000, 0.5);
+		bg.setDepth(50);
+
+		// Settings box
+		const square = this.add.rectangle(centerX, centerY, 800, 400, 0x333333, 0.9);
+		square.setDepth(51);
+
+		// Title text
 		this.add
-			.text(this.cameras.main.width / 2, 100, "SETTINGS", {
-				fontSize: "32px",
-				fill: "#f28d3e",
-				fontFamily: "Pixelify Sans",
+			.text(centerX, centerY - 140, "Settings", {
+				fontFamily: "'Pixelify Sans', sans-serif",
+				fontSize: "38px",
+				color: "#f28d3e",
 				stroke: "#000000",
-				strokeThickness: 6,
+				strokeThickness: 5,
+				align: "center",
 			})
-			.setOrigin(0.5);
+			.setOrigin(0.5)
+			.setDepth(100);
 
-		this.add.text(200, 170, "Color Palette:", {
-			fontSize: "20px",
-			fill: "#f28d3e",
-			fontFamily: "Pixelify Sans",
-		});
+		// Section label (further moved left)
+		this.add
+			.text(centerX - 350, centerY - 60, "Color Palette:", {
+				fontSize: "20px",
+				fill: TEXT_COLOR, // Use TEXT_COLOR constant
+				fontFamily: "Pixelify Sans",
+			})
+			.setDepth(100);
 
+		// Palette options (further moved left)
 		const palettes = ["default", "dark", "light"];
-		let yOffset = 220;
+		let yOffset = centerY - 10;
 
 		palettes.forEach((palette) => {
 			this.add
-				.text(220, yOffset, palette, {
+				.text(centerX - 350, yOffset, palette, {
+					fontFamily: "'Pixelify Sans', sans-serif",
 					fontSize: "18px",
-					fill: "#fff",
-					backgroundColor: "#333",
-					padding: {x: 15, y: 10},
-					fontFamily: "Pixelify Sans",
-					stroke: "#f28d3e",
-					strokeThickness: 2,
+					color: "#f28d3e", // White text color
+					backgroundColor: BACKGROUND_COLOR, // Use BACKGROUND_COLOR constant
+
+					stroke: STROKE_COLOR, // Use STROKE_COLOR constant
+
+					align: "center",
 				})
+				.setDepth(100)
 				.setInteractive()
 				.on("pointerdown", () => {
 					localStorage.setItem("selectedPalette", palette);
@@ -79,22 +94,40 @@ export class Settings extends Phaser.Scene {
 			yOffset += 50;
 		});
 
-		this.add
-			.text(this.cameras.main.width / 2, this.cameras.main.height - 100, "Close Settings", {
-				fontSize: "20px",
-				fill: "#fff",
-				backgroundColor: "#f28d3e",
-				padding: {x: 20, y: 10},
-				fontFamily: "Pixelify Sans",
-				stroke: "#000000",
-				strokeThickness: 4,
-			})
-			.setOrigin(0.5)
-			.setInteractive()
-			.on("pointerdown", () => {
+		// Close button with color constants applied
+		const closeButton = this.add.text(625, 625, "Close Settings", {
+			fontFamily: "'Pixelify Sans', sans-serif",
+			fontSize: 25,
+			backgroundColor: BACKGROUND_COLOR, // Use BACKGROUND_COLOR constant
+			color: TEXT_COLOR, // Use TEXT_COLOR constant
+			stroke: STROKE_COLOR, // Use STROKE_COLOR constant
+			strokeThickness: 5,
+			padding: {left: 20, right: 20, top: 10, bottom: 10},
+		});
+		closeButton.setOrigin(0.5);
+		closeButton.setInteractive();
+		closeButton.on(
+			"pointerdown",
+			function () {
 				this.scene.stop("Settings");
-			});
+			},
+			this
+		);
+		closeButton.setDepth(100);
 
+		// Close settings by clicking background or box
+		bg.setInteractive();
+		square.setInteractive();
+
+		bg.on("pointerdown", () => {
+			this.scene.stop("Settings");
+		});
+
+		square.on("pointerdown", (pointer) => {
+			pointer.event.stopPropagation(); // Prevent background click through
+		});
+
+		// Apply previously selected color palette
 		const savedPalette = localStorage.getItem("selectedPalette") || "default";
 		this.applyColorTheme(savedPalette);
 	}
