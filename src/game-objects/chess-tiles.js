@@ -598,6 +598,7 @@ export class ChessTiles {
 
 	makeComputerMove() {
 		EventBus.once("ComputerMove", (detail) => {
+			console.log(detail);
 			console.log("move: " + detail[0] + " to " + detail[1], detail[2]);
 			if (this.boardState.isOccupied(detail[1][0], detail[1][1])) {
 				this.capturePiece(this.boardState.getRank(detail[1][0], detail[1][1]), PLAYER);

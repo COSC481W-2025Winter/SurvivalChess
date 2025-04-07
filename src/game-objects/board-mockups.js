@@ -54,39 +54,7 @@ export class ChessPieceLite {
 export class BoardStateLite extends BoardState {
 	constructor(pieceCoordinates) {
 		super(null, pieceCoordinates, false);
-		// for (let i = 0; i<7; i++) {
-		// 	for (let j = 0; j<7; j++) {
-		// 		// pieceCoordinates.setCoordinate
-		// 	}
-		// }
 	}
-	// Move piece in input coordinate to output coordinate
-	// movePiece(input, output) {
-	// 	const incol = input[0];
-	// 	const inrow = input[1];
-	// 	const outcol = output[0];
-	// 	const outrow = output[1];
-
-	// 	if (!this.isOccupied(incol, inrow) || this.isOccupied(outcol, outrow)) return false;
-
-	// 	this.destroyEnPassantToken();
-	// 	if (this.getRank(incol, inrow) == PAWN && Math.abs(inrow - outrow) == 2)
-	// 		this.addEnPassantToken(incol, (inrow + outrow) / 2);
-
-	// 	this.#boardState[incol][inrow].setPosition(X_ANCHOR + outcol * TILE_SIZE, Y_ANCHOR + outrow * TILE_SIZE);
-	// 	this.#boardState[outcol][outrow] = this.#boardState[incol][inrow];
-	// 	this.#boardState[incol][inrow] = null;
-
-	// 	this.incrementMoveCounter(outcol, outrow);
-
-	// 	this.#boardState[outcol][outrow].setCoordinate(output[0], output[1]);
-
-	// 	const rank = this.#boardState[outcol][outrow].getRank();
-	// 	const alignment = this.#boardState[outcol][outrow].getAlignment();
-	// 	this.#pieceCoordinates.moveCoordinate(input, output, rank, alignment);
-
-	// 	return true;
-	// }
 
 	addPiece(col, row, rank, alignment, replace = false) {
 		if (!replace && this.isOccupied(col, row)) return false;

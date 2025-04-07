@@ -17,6 +17,7 @@ import {
 	KING_VALUE,
 	CAPTURE_WEIGHT,
 	THREATEN_WEIGHT,
+	DEPTH_LIMIT,
 } from "./constants";
 // LOSS_WEIGHT,
 import {EventBus} from "../game/EventBus.js";
@@ -29,19 +30,12 @@ import {BoardStateLite} from "./board-mockups";
 export class ChessGameState {
 	board;
 	pieceCoordinates;
-	bestValue;
-	bestMoveInput;
-	bestMoveOutput;
-	bestMoveCapture;
 
 	constructor(BoardState) {
 		if (BoardState) {
 			this.boardState = BoardState;
 			this.pieceCoordinates = BoardState.getPieceCoordinates();
-			this.bestValue = 1000000; // want lowest possible value. Dummy initialization value
-			console.log(this.boardState);
 		} else {
-			this.bestValue = 1000000;
 			this.pieceCoordinates;
 		}
 		// makes linter not complain about unused BoardStateLite import
@@ -51,6 +45,9 @@ export class ChessGameState {
 
 	// Find the best move using min-max algorithm
 	getBestMove() {
+		let bestMove = [100000];
+		let currentMove;
+
 		// console.log(this.pieceCoordinates);
 		console.log(this.boardState.getPieceCoordinates().getAllCoordinates(COMPUTER));
 		// all computer coordinates
@@ -60,16 +57,17 @@ export class ChessGameState {
 			// find all moves
 			const moves = this.boardState.searchMoves(pieceDict[piece][0], pieceDict[piece][1]);
 			// all possible moves for a piece
-			// console.log("moves:", moves);
 			for (const move in moves) {
-				// console.log(moves[move]);
-				this.evaluateBoard(this.boardState.cloneBoardState(), pieceDict[piece], moves[move]); // get score for board
+				// console.log(pieceDict[piece], moves[move]);
+				currentMove = this.computerMove(this.boardState.cloneBoardState(), pieceDict[piece], moves[move], 0); // get score for board
+				if (currentMove[0] < bestMove[0]) {
+					bestMove = currentMove;
+				}
 			}
 		}
 		// make chosen move
-		// this.sendMove(this.bestMoveInput, this.bestMoveOutput);
-		console.log("The Move: ", this.bestValue, this.bestMoveInput, this.bestMoveOutput, this.capture);
-		this.sendMove(this.bestMoveInput, this.bestMoveOutput, this.capture);
+		console.log("The Move: ", bestMove[1], bestMove[2], bestMove[3]);
+		this.sendMove(bestMove[1], bestMove[2], bestMove[3]);
 	}
 	// sends an event specifying the move as the computer's.
 	// Event handle in ChessTiles is created to listen for the event
@@ -79,11 +77,77 @@ export class ChessGameState {
 		EventBus.emit("ComputerMove", [input, output, capture]);
 	}
 
+	playerMove(boardState, input, move, depth) {
+		// console.log("Move: ", input, move);
+		if (move["isEnemy"] == true) {
+			// if a capture, remove the piece that is captured
+			boardState.destroyPiece(move["xy"][0], move["xy"][1]);
+		}
+		boardState.movePiece(input, move["xy"]); // make the move
+
+		let bestMove = [-100000];
+		let currentMove;
+
+		const pieceDict = boardState.getPieceCoordinates().getAllCoordinates(PLAYER);
+		// for each piece
+		for (const piece in pieceDict) {
+			// find all moves
+			const moves = boardState.searchMoves(pieceDict[piece][0], pieceDict[piece][1]);
+			// all possible moves for a piece
+			// console.log("moves:", moves);
+			for (const move in moves) {
+				// console.log(moves[move]);
+				if (depth < DEPTH_LIMIT) {
+					this.computerMove(boardState.cloneBoardState(), pieceDict[piece], moves[move], depth + 1); // calculate possible computer moves
+				} else {
+					currentMove = this.evaluateBoard(boardState.cloneBoardState(), pieceDict[piece], moves[move]); // get score for board
+					if (currentMove[0] > bestMove[0]) {
+						bestMove = currentMove;
+					}
+				}
+			}
+		}
+		return bestMove;
+	}
+
+	computerMove(boardState, input, move, depth) {
+		// console.log("Move: ", input, move);
+		if (move["isEnemy"] == true) {
+			// if a capture, remove the piece that is captured
+			boardState.destroyPiece(move["xy"][0], move["xy"][1]);
+		}
+		boardState.movePiece(input, move["xy"]); // make the move
+
+		const pieceDict = boardState.getPieceCoordinates().getAllCoordinates(COMPUTER);
+		// for each piece
+		let bestMove = [100000];
+		let currentMove;
+
+		for (const piece in pieceDict) {
+			// find all moves
+			const moves = boardState.searchMoves(pieceDict[piece][0], pieceDict[piece][1]);
+			// all possible moves for a piece
+			// console.log("moves:", moves);
+			for (const move in moves) {
+				// console.log(moves[move]);
+				if (depth < DEPTH_LIMIT) {
+					this.playerMove(boardState.cloneBoardState(), pieceDict[piece], moves[move], depth + 1); // calculate possible computer moves
+				} else {
+					currentMove = this.evaluateBoard(boardState.cloneBoardState(), pieceDict[piece], moves[move]); // get score for board
+					if (currentMove[0] < bestMove[0]) {
+						bestMove = currentMove;
+					}
+				}
+			}
+		}
+		return bestMove;
+	}
+
 	// determines score of a board, lower is better for computer
 	evaluateBoard(boardState, input, move) {
 		// console.log("Move: ", input, move);
 		if (move["isEnemy"] == true) {
-			console.log(move);
+			// console.log(move);
 			// if a capture, remove the piece that is captured
 			boardState.destroyPiece(move["xy"][0], move["xy"][1]);
 		}
@@ -93,12 +157,15 @@ export class ChessGameState {
 		let threatenedComputer;
 
 		// get total value of player material - 0.01*value of player material threatened
-		let coordinates = this.pieceCoordinates.getAllCoordinates(PLAYER);
+		let coordinates = boardState.getPieceCoordinates().getAllCoordinates(PLAYER);
+		// console.log(coordinates);
 		coordinates.forEach((piece) => {
+			// console.log("Piece: ", piece);
+			// console.log(boardState.getBoardState()[piece[0]][piece[1]]);
 			// console.log(piece, this.boardState.getRank(piece[0],piece[1]));
 			threatenedComputer = boardState.seekThreats(piece[0], piece[1], COMPUTER); // player pieces protecting the given piece
 			threatenedPlayer = boardState.seekThreats(piece[0], piece[1], PLAYER); // computer pieces threatening the chosen piece
-			switch (boardState.getRank(piece[0], piece[1])) {
+			switch (boardState.getBoardState()[piece[0]][piece[1]].getRank()) {
 				case PAWN:
 					score += PAWN_VALUE * CAPTURE_WEIGHT;
 					score += PAWN_VALUE * THREATEN_WEIGHT * threatenedComputer.length;
@@ -177,14 +244,16 @@ export class ChessGameState {
 		// 	}
 		// }
 
-		if (score < this.bestValue) {
-			// if move is better than current best move
-			console.log("Move for finding best: ", move);
-			this.bestValue = score;
-			this.bestMoveInput = input;
-			this.bestMoveOutput = move["xy"];
-			this.bestMoveCapture = move["isEnemy"];
-		}
+		return [score, input, move["xy"], move["isEnemy"]];
+
+		// if (score < this.bestValue) {
+		// 	// if move is better than current best move
+		// 	console.log("Move for finding best: ", move);
+		// 	this.bestValue = score;
+		// 	this.bestMoveInput = input;
+		// 	this.bestMoveOutput = move["xy"];
+		// 	this.bestMoveCapture = move["isEnemy"];
+		// }
 	}
 
 	// gets a random legal move
