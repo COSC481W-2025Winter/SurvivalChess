@@ -4,7 +4,7 @@ export class TurnCounter {
 		this.scene = scene;
 		this.turnCount = 0;
 
-		this.turnCounterText = this.scene.add.text(910, 500, `Turn: ${this.turnCount}`, {
+		this.turnCounterText = this.scene.add.text(1000, 375, `Turn: ${this.turnCount}`, {
 			fontSize: 28,
 			color: "#ffffff",
 		});
