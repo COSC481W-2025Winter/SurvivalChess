@@ -1,4 +1,4 @@
-import {TILE_SIZE, X_ANCHOR, Y_ANCHOR} from "./constants";
+import {TILE_SIZE, UNIT_HEIGHT, X_ANCHOR, Y_ANCHOR} from "./constants";
 import {PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING} from "./constants";
 import {PLAYER, COMPUTER} from "./constants";
 import {EN_PASSANT_TOKEN} from "./constants";
@@ -26,8 +26,16 @@ export class BoardState {
 		// this.initializePieces(COMPUTER);
 
 		// Add 4 pawns as the first generic wave
-		for (let i = 2; i < 6; i++)
-			this.addPiece(i, 1, PAWN, COMPUTER);
+		for (let i = 2; i < 6; i++) this.addPiece(i, 1, PAWN, COMPUTER);
+	}
+
+	resize() {
+		for (let i = 0; i < 8; i++)
+			for (let j = 0; j < 8; j++)
+				if (this.isOccupied(i, j)) {
+					this.#boardState[i][j].setPosition(X_ANCHOR + i * TILE_SIZE, Y_ANCHOR + j * TILE_SIZE);
+					this.#boardState[i][j].scale = UNIT_HEIGHT / 5;
+				}
 	}
 
 	// initialize player pieces (and computer pieces for testing purposes)
@@ -115,6 +123,8 @@ export class BoardState {
 			alignment,
 			[col, row]
 		);
+		this.#boardState[col][row].scale = UNIT_HEIGHT / 5;
+
 		this.#scene.add.existing(this.#boardState[col][row]);
 
 		this.#pieceCoordinates.addCoordinate(col, row, rank, alignment);
@@ -166,10 +176,9 @@ export class BoardState {
 
 	// Destroy all pieces of given alignment
 	zapPieces(alignment) {
-		for (let i = 0; i < 8; i++) {
+		for (let i = 0; i < 8; i++)
 			for (let j = 0; j < 8; j++)
 				if (this.isOccupied(i, j) && this.getAlignment(i, j) == alignment) this.destroyPiece(i, j);
-		}
 	}
 
 	// ================================================================
