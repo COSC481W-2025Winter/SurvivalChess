@@ -6,6 +6,9 @@ import {RulesButton} from "./RulesButton";
 import {START_BACKGROUND_COLOR, START_TEXT_ONE, START_TEXT_TWO} from "../../game-objects/constants";
 import {SettingsButton} from "./SettingsButton";
 
+import {pieceStyleValue} from "./PieceStyle";
+import {setPieceStyle} from "./PieceStyle";
+
 export class Start extends Scene {
 	constructor() {
 		super("Game");
@@ -23,6 +26,9 @@ export class Start extends Scene {
 		// this.add.image(0, 0, "background");
 		// this.add.image(512, 200, "logo").setDepth(100);
 		// Load the pixel font
+		if (pieceStyleValue == null) {
+			setPieceStyle(1);
+		}
 		WebFont.load({
 			google: {
 				families: ["Pixelify Sans"],

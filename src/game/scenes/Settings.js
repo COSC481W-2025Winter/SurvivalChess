@@ -96,8 +96,8 @@ export class Settings extends Scene {
 			this
 		);
 
-		tileOption2.setInteractive();
-		tileOption2.on(
+		pieceOption2.setInteractive();
+		pieceOption2.on(
 			"pointerdown",
 			function () {
 				setPieceStyle(2);
@@ -105,23 +105,11 @@ export class Settings extends Scene {
 			this
 		);
 
-		pieceOption2.setInteractive();
-		pieceOption2.on(
-			"pointerdown",
-			function () {
-				// sends event telling promotion is to pieceOption2
-			},
-			this
-		);
-
 		tileOption1.setInteractive();
-		tileOption1.on(
-			"pointerdown",
-			function () {
-				// sends event telling promotion is to tileOption1
-			},
-			this
-		);
+		tileOption1.on("pointerdown", function () {}, this);
+
+		tileOption2.setInteractive();
+		tileOption2.on("pointerdown", function () {}, this);
 
 		// make options larger when moused over to indicate selection
 		for (const option in options) {
