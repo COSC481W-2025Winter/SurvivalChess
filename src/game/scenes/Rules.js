@@ -15,8 +15,8 @@ export class Rules extends Scene {
 
 	preload() {
 		this.load.setPath("assets");
-		this.load.image("star", "star.png");
-		this.load.image("background", "bg.png");
+		// this.load.image("star", "star.png");
+		// this.load.image("background", "bg.png");
 
 		// Load the pixel font
 		WebFont.load({

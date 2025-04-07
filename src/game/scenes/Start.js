@@ -4,6 +4,7 @@ import {EventBus} from "../EventBus";
 import {RulesButton} from "./RulesButton";
 
 import {START_BACKGROUND_COLOR, START_TEXT_ONE, START_TEXT_TWO} from "../../game-objects/constants";
+import {SettingsButton} from "./SettingsButton";
 
 export class Start extends Scene {
 	constructor() {
@@ -106,6 +107,15 @@ export class Start extends Scene {
 					},
 					this
 				);
+				// When the pointer hovers over the button, scale it up
+				startButton.on("pointerover", () => {
+					startButton.setScale(1.2); // Increase the scale (grow the button by 20%)
+				});
+
+				// When the pointer moves away from the button, reset the scale to normal
+				startButton.on("pointerout", () => {
+					startButton.setScale(1);
+				});
 
 				const settingsButton = this.add.text(100, 100, "Settings", {
 					fontFamily: "'Pixelify Sans', sans-serif",
@@ -115,23 +125,16 @@ export class Start extends Scene {
 				});
 				settingsButton.setPosition(1100, 70);
 				settingsButton.setInteractive();
-				settingsButton.on(
-					"pointerdown",
-					function () {
-						import("./Settings") // Dynamically import the Settings scene
-							.then((module) => {
-								// Only add the scene if it's not already registered
-								if (!this.scene.get("Settings")) {
-									this.scene.add("Settings", module.Settings); // Add the scene dynamically
-								}
+				settingsButton.on("pointerdown", new SettingsButton(this).click, this);
+				// When the pointer hovers over the button, scale it up
+				settingsButton.on("pointerover", () => {
+					settingsButton.setScale(1.2); // Increase the scale (grow the button by 20%)
+				});
 
-								// Start the scene
-								this.scene.launch("Settings");
-								this.scene.moveAbove("MainGame", "Settings");
-							});
-					},
-					this
-				);
+				// When the pointer moves away from the button, reset the scale to normal
+				settingsButton.on("pointerout", () => {
+					settingsButton.setScale(1);
+				});
 
 				const rulesButton = this.add.text(1100, 600, "Rules", {
 					fontFamily: "'Pixelify Sans', sans-serif",

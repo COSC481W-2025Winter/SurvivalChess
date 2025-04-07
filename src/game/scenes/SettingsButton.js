@@ -12,7 +12,6 @@ export class SettingsButton {
 
 			// Use launch to run scene in parallel to current
 			this.scene.launch("Settings");
-			this.scene.moveAbove("MainGame", "Settings");
 		});
 	}
 }

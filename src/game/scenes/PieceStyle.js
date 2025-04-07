@@ -1,7 +1,5 @@
-let pieceStyleValue = 1;
-
-export function setPieceStyle(number) {
-	pieceStyleValue = number;
+export class PieceStyle {
+	constructor(s) {
+		this.scene = s;
+	}
 }
-
-export {pieceStyleValue};
