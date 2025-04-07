@@ -26,6 +26,8 @@ export class Game extends Scene {
 	}
 
 	preload() {
+		this.load.audio("gameMusic", "../assets/music/SurvivalChess-Game.mp3");
+
 		this.load.setPath("assets");
 		// Load Chess piece pngs
 		this.load.setPath("assets/ourChessPieces");
@@ -48,6 +50,34 @@ export class Game extends Scene {
 	}
 
 	create() {
+		// Play music
+		this.gameMusic = this.sound.add("gameMusic", {loop: false, volume: 1});
+		this.gameMusicPlaying = false;
+
+		// Play the music
+		this.gameMusic.play();
+		if (this.gameMusic.isPlaying) {
+			this.gameMusicPlaying = true;
+		}
+
+		// Manually loop specific part of the song
+		const loopStartTime = 44; // in seconds
+		const loopEndTime = 116; // in seconds
+
+		// Track the current time of the music and restart the loop when necessary
+		this.time.addEvent({
+			delay: 10, // Check every 100 ms
+			loop: true,
+			callback: () => {
+				const currentTime = this.gameMusic.seek;
+
+				// If the current time is past the loopEndTime, restart from loopStartTime
+				if (currentTime >= loopEndTime) {
+					this.gameMusic.seek = loopStartTime;
+				}
+			},
+		});
+
 		this.cameras.main.setBackgroundColor(BACKGROUND_COLOR);
 
 		// and a board, and an icon, and a black tile, and a white tile; Totaling to 40 images
@@ -69,6 +99,10 @@ export class Game extends Scene {
 			function () {
 				import("./GameOver") //
 					.then((module) => {
+						// Stop background music
+						this.gameMusic.stop();
+						this.gameMusicPlaying = false;
+
 						// Only add the scene if it's not already registered
 						if (!this.scene.get("GameOver")) {
 							this.scene.add("GameOver", module.GameOver); // Add the MainGame scene dynamically
