@@ -327,6 +327,7 @@ export class ChessTiles {
 				if (computerHasValidMove) {
 					this.currentPlayer = COMPUTER;
 					if (!dev_deadAI) {
+						// console.log(this.pieceCoordinates.getAllCoordinates(PLAYER));
 						this.makeComputerMove(); // do the computer move
 					}
 					if (!--this.turnsUntilNextWave) this.spawnNextWave();
@@ -608,8 +609,9 @@ export class ChessTiles {
 			// this.toggleTurn(); // end computer turn
 			this.checkPromotion(detail[1]);
 		});
-		console.log(this.boardState.getPieceCoordinates().clonePieceCoordinates());
+		// console.log(this.boardState.getPieceCoordinates().clonePieceCoordinates());
 		this.futureMoves = new ChessGameState(this.boardState.cloneBoardState());
+		// console.log(this.futureMoves);
 		this.futureMoves.getBestMove();
 		// this.futureMoves.sendMove([0,1],[0,3]);
 		// this.futureMoves.getRandomMove();

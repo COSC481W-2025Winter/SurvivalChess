@@ -517,6 +517,9 @@ export class BoardState {
 			return true;
 		}
 		let coordinate = this.#pieceCoordinates.getCoordinate(KING, alignment);
+		if (!coordinate) {
+			return false;
+		}
 		coordinate = isSamePoint(input, coordinate) ? output : coordinate;
 		return !this.seekThreats(...coordinate, alignment, input, output).length;
 	}
@@ -529,6 +532,12 @@ export class BoardState {
 			return false;
 		}
 		const coordinate = this.#pieceCoordinates.getCoordinate(KING, alignment);
+		// console.log(coordinate);
+		if (!coordinate) {
+			// king captured
+			this.#isChecked = true;
+			return this.#isChecked;
+		}
 		this.#isChecked = !!this.seekThreats(...coordinate, alignment).length;
 		return this.#isChecked;
 	}
