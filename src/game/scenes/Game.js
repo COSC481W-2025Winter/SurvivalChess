@@ -51,7 +51,11 @@ export class Game extends Scene {
 		this.cameras.main.setBackgroundColor(BACKGROUND_COLOR);
 
 		// and a board, and an icon, and a black tile, and a white tile; Totaling to 40 images
-		new ChessTiles(this);
+		this.chessTiles = new ChessTiles(this);
+
+        const savedPalette = localStorage.getItem("selectedPalette") || "default";
+        this.chessTiles.updateColorTheme(savedPalette);
+
 
 		const endButton = this.add.text(100, 100, "End Game!", {
 			fill: CREAMHEX,

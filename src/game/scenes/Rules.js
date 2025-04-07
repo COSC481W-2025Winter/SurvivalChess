@@ -1,12 +1,5 @@
 import {Scene} from "phaser";
 import {EventBus} from "../EventBus";
-import {
-	RULES_BACKGROUND_COLOR,
-	RULES_TEXT_ONE,
-	RULES_TEXT_TWO,
-	RULES_BACKGROUND_COLOR_TWO,
-	RULES_TEXT_THREE,
-} from "../../game-objects/constants";
 
 export class Rules extends Scene {
 	constructor() {
@@ -18,43 +11,54 @@ export class Rules extends Scene {
 		this.load.image("star", "star.png");
 		this.load.image("background", "bg.png");
 
-		// Load the pixel font
 		WebFont.load({
 			google: {
 				families: ["Pixelify Sans"],
 			},
 			active: () => {
-				// Once the font is loaded, we can start the scene
-				this.fontLoaded = true; // Flag to indicate that the font is loaded
+				this.fontLoaded = true;
+				this.createContent();
 			},
 		});
 	}
 
 	create() {
-		// put Rules over game screen
+		// If font already loaded (from earlier), rebuild the scene
+		if (this.fontLoaded) {
+			this.createContent(); // added the ()
+		}
+	}
+	
+
+	createContent() {
+		const selectedPalette = localStorage.getItem("selectedPalette") || "default";
+		const themeColors = {
+			default: { light: 0xe5aa70, dark: 0xc04000 },
+			dark: { light: 0xbbb8b1, dark: 0x222222 },
+			light: { light: 0xffffff, dark: 0x3b3b3b },
+		}[selectedPalette];
+
+		const textColor = Phaser.Display.Color.IntegerToColor(
+			selectedPalette === "light" ? themeColors.dark : themeColors.light
+		).rgba;
+
+		const backgroundColor = themeColors.dark;
+		const panelColor = themeColors.light;
+
 		this.scene.moveAbove("MainGame", "Rules");
-		// Creates a visual background that also blocks input on the scene underneath
-		const bg = this.add.rectangle(625, 384, 1250, 768, RULES_BACKGROUND_COLOR, 0.5);
+
+		const bg = this.add.rectangle(625, 384, 1250, 768, backgroundColor, 0.5);
 		bg.setDepth(50);
 
-		// Creates a visual background that also blocks input on the scene underneath
-		const square = this.add.rectangle(
-			625,
-			384,
-			800,
-			400,
-			RULES_BACKGROUND_COLOR_TWO,
-			0.9 // Opacity
-		);
+		const square = this.add.rectangle(625, 384, 800, 400, panelColor, 0.9);
 		square.setDepth(50);
 
-		// Rules text
 		this.add
 			.text(625, 215, "RULES", {
 				fontFamily: "'Pixelify Sans', sans-serif",
 				fontSize: 38,
-				color: RULES_TEXT_TWO,
-				stroke: RULES_TEXT_ONE,
+				color: textColor,
+				stroke: textColor,
 				strokeThickness: 5,
 				align: "center",
 			})
@@ -72,12 +76,12 @@ export class Rules extends Scene {
 					"- Your goal is to capture enemy pieces while avoiding checkmate\n\n" +
 					"- The more pieces you capture the more points you will gain\n\n" +
 					"- A new wave of pieces will spawn every        rounds\n\n" +
-					"- Capturing all the enemy pieces will progress you to the next round early",
+					"- Capturing all the enemy pieces will progress you to thenext round early",
 				{
 					fontFamily: "'Pixelify Sans', sans-serif",
 					fontSize: 20,
-					color: RULES_TEXT_TWO,
-					stroke: RULES_TEXT_ONE,
+					color: textColor,
+					stroke: textColor,
 					strokeThickness: 0,
 					align: "left",
 				}
@@ -88,8 +92,8 @@ export class Rules extends Scene {
 		this.add
 			.text(723, 390, "7 8", {
 				fontSize: 20,
-				color: RULES_TEXT_TWO,
-				stroke: RULES_TEXT_ONE,
+				color: textColor,
+				stroke: textColor,
 				strokeThickness: 0,
 				align: "center",
 			})
@@ -99,45 +103,29 @@ export class Rules extends Scene {
 		this.add
 			.text(625, 510, "13", {
 				fontSize: 20,
-				color: RULES_TEXT_TWO,
-				stroke: RULES_TEXT_ONE,
+				color: textColor,
+				stroke: textColor,
 				strokeThickness: 0,
 				align: "center",
 			})
 			.setOrigin(0.5)
 			.setDepth(100);
 
-		// Button for closing out (this should stay unlike the above)
-		const closeButton = this.add.text(100, 100, "Close Rules", {
+		const closeButton = this.add.text(625, 625, "Close Rules", {
 			fontFamily: "'Pixelify Sans', sans-serif",
 			fontSize: 25,
-			backgroundColor: RULES_TEXT_THREE,
-			color: RULES_TEXT_TWO,
-			stroke: RULES_TEXT_ONE,
+			backgroundColor: textColor,
+			color: Phaser.Display.Color.IntegerToColor(backgroundColor).rgba,
+			stroke: textColor,
 			strokeThickness: 5,
-			padding: {left: 20, right: 20, top: 10, bottom: 10},
+			padding: { left: 20, right: 20, top: 10, bottom: 10 },
 		});
 		closeButton.setOrigin(0.5);
-		closeButton.setPosition(625, 625);
 		closeButton.setInteractive();
-		closeButton.on(
-			"pointerdown",
-			function () {
-				this.scene.stop("Rules");
-			},
-			this
-		);
+		closeButton.on("pointerdown", () => this.scene.stop("Rules"));
+		closeButton.on("pointerover", () => closeButton.setScale(1.2));
+		closeButton.on("pointerout", () => closeButton.setScale(1));
 		closeButton.setDepth(100);
-
-		// When the pointer hovers over the button, scale it up
-		closeButton.on("pointerover", () => {
-			closeButton.setScale(1.2); // Increase the scale (grow the button by 20%)
-		});
-
-		// When the pointer moves away from the button, reset the scale to normal
-		closeButton.on("pointerout", () => {
-			closeButton.setScale(1); // Reset to original size
-		});
 
 		bg.setInteractive();
 		square.setInteractive();

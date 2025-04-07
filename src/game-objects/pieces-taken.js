@@ -74,8 +74,10 @@ export class PiecesTaken {
 			fontSize: 34,
 			color: START_TEXT_ONE,
 		});
-		this.scene.add.rectangle(1050, 144, 7.25 * TILE_SIZE, 2.5 * TILE_SIZE, WHITE_TILE_COLOR);
-		this.scene.add.rectangle(1050, 144, 7 * TILE_SIZE, 2.25 * TILE_SIZE, BLACK_TILE_COLOR);
+
+		this.panelBack = this.scene.add.rectangle(1050, 144, 7.25 * TILE_SIZE, 2.5 * TILE_SIZE, WHITE_TILE_COLOR);
+		this.panelFront = this.scene.add.rectangle(1050, 144, 7 * TILE_SIZE, 2.25 * TILE_SIZE, BLACK_TILE_COLOR);
+
 		// Set up captured pieces table
 		for (let i = 0; i < 5; i++) {
 			this.piecesTaken.push([]);
@@ -136,6 +138,12 @@ export class PiecesTaken {
 			fontSize: 22,
 			color: START_TEXT_ONE,
 		});
+	}
+	
+	// Method to update panel colors based on theme
+	updatePanelColor(darkHex, lightHex) {
+		if (this.panelFront) this.panelFront.setFillStyle(darkHex);
+		if (this.panelBack) this.panelBack.setFillStyle(lightHex);
 	}
 
 	addPiece(i, j, rank, alignment) {
