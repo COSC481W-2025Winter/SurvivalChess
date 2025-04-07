@@ -49,6 +49,10 @@ class MockChessPiece {
 		return this.coordinate;
 	}
 
+	setOrigin() {
+		return this;
+	}
+
 	destroy() {}
 }
 jest.mock("../chess-piece", () => {
@@ -110,7 +114,16 @@ describe("", () => {
 			this.fillColor = color;
 		}
 
+		setOrigin() {
+			return this;
+		}
 		setInteractive() {
+			return this;
+		}
+		setPosition() {
+			return this;
+		}
+		setSize() {
 			return this;
 		}
 		on() {
@@ -136,7 +149,13 @@ describe("", () => {
 		setInteractive() {
 			return this;
 		}
+		setPosition() {
+			return this;
+		}
 		on() {
+			return this;
+		}
+		setFontSize() {
 			return this;
 		}
 
