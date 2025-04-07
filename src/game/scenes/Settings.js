@@ -1,34 +1,58 @@
 import Phaser from "phaser";
 import {COLOR_THEMES} from "../../game-objects/constants.js";
+import WebFont from "webfontloader";
 
 export class Settings extends Phaser.Scene {
 	constructor() {
 		super({key: "Settings"});
 	}
 
+	preload() {
+		this.load.setPath("assets");
+		this.load.image("star", "star.png");
+		this.load.image("background", "bg.png");
+
+		WebFont.load({
+			google: {
+				families: ["Pixelify Sans"],
+			},
+			active: () => {
+				this.fontLoaded = true;
+			},
+		});
+	}
+
 	create() {
-		// Semi-transparent overlay background
+		if (!this.fontLoaded) {
+			this.time.delayedCall(100, () => this.create(), [], this);
+			return;
+		}
+
 		const overlay = this.add.rectangle(
 			this.cameras.main.width / 2,
 			this.cameras.main.height / 2,
 			this.cameras.main.width * 0.8,
 			this.cameras.main.height * 0.7,
-			0x000000,
-			0.7 // Transparency level
+			0xffffff,
+			0.9
 		);
 		overlay.setOrigin(0.5, 0.5);
 
-		// SETTINGS Title
 		this.add
 			.text(this.cameras.main.width / 2, 100, "SETTINGS", {
 				fontSize: "32px",
 				fill: "#f28d3e",
-				fontFamily: "Press Start 2P",
+				fontFamily: "Pixelify Sans",
+				stroke: "#000000",
+				strokeThickness: 6,
 			})
 			.setOrigin(0.5);
 
-		// Color Palette Section
-		this.add.text(200, 170, "Color Palette:", {fontSize: "20px", fill: "#fff"});
+		this.add.text(200, 170, "Color Palette:", {
+			fontSize: "20px",
+			fill: "#f28d3e",
+			fontFamily: "Pixelify Sans",
+		});
 
 		const palettes = ["default", "dark", "light"];
 		let yOffset = 220;
@@ -37,42 +61,33 @@ export class Settings extends Phaser.Scene {
 			this.add
 				.text(220, yOffset, palette, {
 					fontSize: "18px",
-					fill: "#f28d3e",
+					fill: "#fff",
 					backgroundColor: "#333",
-					padding: {x: 10, y: 5},
+					padding: {x: 15, y: 10},
+					fontFamily: "Pixelify Sans",
+					stroke: "#f28d3e",
+					strokeThickness: 2,
 				})
 				.setInteractive()
 				.on("pointerdown", () => {
 					localStorage.setItem("selectedPalette", palette);
 					this.applyColorTheme(palette);
-					this.scene.restart(); // Refresh scene
+					this.updateChessPieceMode(palette);
+					this.scene.restart();
 				});
 
 			yOffset += 50;
 		});
 
-		// Dev Mode Toggle Button
-		// this.add
-		//   .text(200, yOffset, "Toggle Dev Mode", {
-		//     fontSize: "18px",
-		//     fill: "#f28d3e",
-		//     backgroundColor: "#333",
-		//     padding: { x: 10, y: 5 },
-		//   })
-		//   .setInteractive()
-		//   .on("pointerdown", () => {
-		//     toggleDev();
-		//   });
-
-		// yOffset += 50;
-
-		// Close Button (Same Style as "Close Rules")
 		this.add
 			.text(this.cameras.main.width / 2, this.cameras.main.height - 100, "Close Settings", {
 				fontSize: "20px",
 				fill: "#fff",
 				backgroundColor: "#f28d3e",
 				padding: {x: 20, y: 10},
+				fontFamily: "Pixelify Sans",
+				stroke: "#000000",
+				strokeThickness: 4,
 			})
 			.setOrigin(0.5)
 			.setInteractive()
@@ -80,19 +95,20 @@ export class Settings extends Phaser.Scene {
 				this.scene.stop("Settings");
 			});
 
-		// Apply stored settings
 		const savedPalette = localStorage.getItem("selectedPalette") || "default";
 		this.applyColorTheme(savedPalette);
 	}
 
 	applyColorTheme(selectedPalette) {
 		const colors = COLOR_THEMES[selectedPalette];
-
-		if (!colors) {
-			return;
-		}
+		if (!colors) return;
 
 		document.documentElement.style.setProperty("--primary-chess-color", colors.primary);
 		document.documentElement.style.setProperty("--secondary-chess-color", colors.secondary);
+	}
+
+	updateChessPieceMode(selectedPalette) {
+		localStorage.setItem("mode", selectedPalette);
+		window.dispatchEvent(new Event("storage"));
 	}
 }
