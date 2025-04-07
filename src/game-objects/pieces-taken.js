@@ -1,11 +1,9 @@
-// local constants for my "captured pieces" container
-const TILE_SIZE = 52; // width & height of each tile
-const X_ANCHOR = 1072 - 3.5 * TILE_SIZE; // x pixel of leftmost tile
-const Y_ANCHOR = 300 - 3.5 * TILE_SIZE; // y pixel of topmost tile for captured table
-import {WHITE_TILE_COLOR, BLACK_TILE_COLOR} from "./constants";
+import {WHITE_TILE_COLOR, BLACK_TILE_COLOR, fontsizeTexts} from "./constants";
 import {PAWN, ROOK, KNIGHT, BISHOP, QUEEN, START_TEXT_ONE} from "./constants";
 import {PLAYER, COMPUTER} from "./constants";
 import {ChessPiece} from "./chess-piece";
+
+import {RIGHT_X_CENTER, RIGHT_UNIT} from "./constants";
 
 export class PiecesTaken {
 	preload() {
@@ -28,191 +26,82 @@ export class PiecesTaken {
 	}
 
 	scene;
-	piecesTaken;
 
-	wPawnScore;
-	bPawnScore;
-	wRookScore;
-	bRookScore;
-	wKnightScore;
-	bKnightScore;
-	wBishopScore;
-	bBishopScore;
-	wQueenScore;
-	bQueenScore;
+	titleText;
+	box1;
+	box2;
 
-	wPawnScores;
-	bPawnScores;
-	wRookScores;
-	bRookScores;
-	wKnightScores;
-	bKnightScores;
-	wBishopScores;
-	bBishopScores;
-	wQueenScores;
-	bQueenScores;
+	scores;
+	texts;
+	images;
 
 	constructor(scene) {
 		// set up variables to keep track of elements
 		this.scene = scene;
-		this.piecesTaken = [];
-
-		this.wPawnScore = 0;
-		this.bPawnScore = 0;
-		this.wRookScore = 0;
-		this.bRookScore = 0;
-		this.wKnightScore = 0;
-		this.bKnightScore = 0;
-		this.wBishopScore = 0;
-		this.bBishopScore = 0;
-		this.wQueenScore = 0;
-		this.bQueenScore = 0;
 
 		// add the title and the two "boxes" for the pieces
-		this.scene.add.text(910, 26, "Captured Pieces:", {
+		this.titleText = this.scene.add.text(0, 0, "Captured Pieces", {
 			fontFamily: "'Pixelify Sans', sans-serif",
-			fontSize: 34,
 			color: START_TEXT_ONE,
 		});
-		this.scene.add.rectangle(1050, 144, 7.25 * TILE_SIZE, 2.5 * TILE_SIZE, WHITE_TILE_COLOR);
-		this.scene.add.rectangle(1050, 144, 7 * TILE_SIZE, 2.25 * TILE_SIZE, BLACK_TILE_COLOR);
-		// Set up captured pieces table
-		for (let i = 0; i < 5; i++) {
-			this.piecesTaken.push([]);
+		this.box1 = this.scene.add.rectangle(0, 0, 0, 0, WHITE_TILE_COLOR).setOrigin(0.5);
+		this.box2 = this.scene.add.rectangle(0, 0, 0, 0, BLACK_TILE_COLOR).setOrigin(0.5);
+
+		this.scores = {};
+		this.texts = {};
+		this.images = {};
+		for (const alignment of [PLAYER, COMPUTER]) {
+			this.scores[alignment] = {};
+			this.texts[alignment] = {};
+			this.images[alignment] = {};
+			for (const rank of [PAWN, ROOK, KNIGHT, BISHOP, QUEEN]) {
+				this.scores[alignment][rank] = 0;
+
+				this.texts[alignment][rank] = this.scene.add
+					.text(0, 0, "00", {
+						color: START_TEXT_ONE,
+					})
+					.setOrigin(0.5);
+
+				this.images[alignment][rank] = new ChessPiece(this.scene, 0, 0, rank, alignment).setOrigin(0.5);
+				this.scene.add.existing(this.images[alignment][rank]);
+			}
 		}
 
-		var j = 0;
-		this.addPiece(0, j, PAWN, COMPUTER);
-		this.addPiece(1, j, ROOK, COMPUTER);
-		this.addPiece(2, j, KNIGHT, COMPUTER);
-		this.addPiece(3, j, BISHOP, COMPUTER);
-		this.addPiece(4, j, QUEEN, COMPUTER);
-
-		j = 1;
-		this.addPiece(0, j, PAWN, PLAYER);
-		this.addPiece(1, j, ROOK, PLAYER);
-		this.addPiece(2, j, KNIGHT, PLAYER);
-		this.addPiece(3, j, BISHOP, PLAYER);
-		this.addPiece(4, j, QUEEN, PLAYER);
-
-		// add in score keeping
-		this.scene.bPawnScores = this.scene.add.text(X_ANCHOR + 26, Y_ANCHOR - 10, "0", {
-			fontSize: 22,
-			color: START_TEXT_ONE,
-		});
-		this.scene.bRookScores = this.scene.add.text(X_ANCHOR + 26 + 72, Y_ANCHOR - 10, "0", {
-			fontSize: 22,
-			color: START_TEXT_ONE,
-		});
-		this.scene.bKnightScores = this.scene.add.text(X_ANCHOR + 26 + 2 * 72, Y_ANCHOR - 10, "0", {
-			fontSize: 22,
-			color: START_TEXT_ONE,
-		});
-		this.scene.bBishopScores = this.scene.add.text(X_ANCHOR + 26 + 3 * 72, Y_ANCHOR - 10, "0", {
-			fontSize: 22,
-			color: START_TEXT_ONE,
-		});
-		this.scene.bQueenScores = this.scene.add.text(X_ANCHOR + 26 + 4 * 72, Y_ANCHOR - 10, "0", {
-			fontSize: 22,
-			color: START_TEXT_ONE,
-		});
-		this.scene.wPawnScores = this.scene.add.text(X_ANCHOR + 26, Y_ANCHOR - 10 + TILE_SIZE, "0", {
-			fontSize: 22,
-			color: START_TEXT_ONE,
-		});
-		this.scene.wRookScores = this.scene.add.text(X_ANCHOR + 26 + 72, Y_ANCHOR - 10 + TILE_SIZE, "0", {
-			fontSize: 22,
-			color: START_TEXT_ONE,
-		});
-		this.scene.wKnightScores = this.scene.add.text(X_ANCHOR + 26 + 2 * 72, Y_ANCHOR - 10 + TILE_SIZE, "0", {
-			fontSize: 22,
-			color: START_TEXT_ONE,
-		});
-		this.scene.wBishopScores = this.scene.add.text(X_ANCHOR + 26 + 3 * 72, Y_ANCHOR - 10 + TILE_SIZE, "0", {
-			fontSize: 22,
-			color: START_TEXT_ONE,
-		});
-		this.scene.wQueenScores = this.scene.add.text(X_ANCHOR + 26 + 4 * 72, Y_ANCHOR - 10 + TILE_SIZE, "0", {
-			fontSize: 22,
-			color: START_TEXT_ONE,
-		});
+		this.resize();
 	}
 
-	addPiece(i, j, rank, alignment) {
-		this.piecesTaken[i][j] = new ChessPiece(this.scene, X_ANCHOR + i * 72, Y_ANCHOR + j * TILE_SIZE, rank, alignment);
-		this.scene.add.existing(this.piecesTaken[i][j]);
-		this.scene.add.text(X_ANCHOR + 15 + i * 72, Y_ANCHOR - 7 + j * TILE_SIZE, "x ", {
-			fontFamily: "'Pixelify Sans', sans-serif",
-			fontSize: 16,
-			color: START_TEXT_ONE,
-		});
+	resize() {
+		this.titleText.setPosition(RIGHT_X_CENTER, 0.5 * RIGHT_UNIT).setOrigin(0.5);
+		fontsizeTexts(RIGHT_UNIT / 2, this.titleText);
+
+		this.box1.setPosition(RIGHT_X_CENTER, 2.5 * RIGHT_UNIT);
+		this.box2.setPosition(RIGHT_X_CENTER, 2.5 * RIGHT_UNIT);
+		this.box1.setSize(5.75 * RIGHT_UNIT, 2.75 * RIGHT_UNIT);
+		this.box2.setSize(5.5 * RIGHT_UNIT, 2.5 * RIGHT_UNIT);
+
+		let x, y, counter;
+		for (const alignment of [PLAYER, COMPUTER]) {
+			y = 2.5 * RIGHT_UNIT;
+			y += alignment == PLAYER ? (2.5 / 4) * RIGHT_UNIT : (-2.5 / 4) * RIGHT_UNIT;
+			counter = -2;
+			for (const rank of [PAWN, ROOK, KNIGHT, BISHOP, QUEEN]) {
+				x = RIGHT_X_CENTER + (1.1 * counter + 0.25) * RIGHT_UNIT;
+				this.texts[alignment][rank].setPosition(x, y);
+				x = RIGHT_X_CENTER + (1.1 * counter - 0.25) * RIGHT_UNIT;
+				this.images[alignment][rank].setPosition(x, y);
+
+				fontsizeTexts(RIGHT_UNIT / 3, this.texts[alignment][rank]);
+				this.images[alignment][rank].scale = RIGHT_UNIT / 60;
+
+				counter += 1;
+			}
+		}
 	}
 
 	takePiece(rank, alignment) {
-		var t = "error";
-		// determine which count to update from based on rank and alignment
-		if (alignment == PLAYER) {
-			if (rank == PAWN) {
-				this.scene.wPawnScore = this.wPawnScore + 1;
-				t = this.scene.wPawnScore.toString();
-				this.scene.wPawnScores.text = t;
-				this.wPawnScore = this.wPawnScore + 1;
-			}
-			if (rank == KNIGHT) {
-				this.scene.wKnightScore = this.wKnightScore + 1;
-				t = this.scene.wKnightScore.toString();
-				this.scene.wKnightScores.text = t;
-				this.wKnightScore = this.wKnightScore + 1;
-			}
-			if (rank == ROOK) {
-				this.scene.wRookScore = this.wRookScore + 1;
-				t = this.scene.wRookScore.toString();
-				this.scene.wRookScores.text = t;
-				this.wRookScore = this.wRookScore + 1;
-			}
-			if (rank == BISHOP) {
-				this.scene.wBishopScore = this.wBishopScore + 1;
-				t = this.scene.wBishopScore.toString();
-				this.scene.wBishopScores.text = t;
-				this.wBishopScore = this.wBishopScore + 1;
-			}
-			if (rank == QUEEN) {
-				this.scene.wQueenScore = this.wQueenScore + 1;
-				t = this.scene.wQueenScore.toString();
-				this.scene.wQueenScores.text = t;
-				this.wQueenScore = this.wQueenScore + 1;
-			}
-		} else if (alignment == COMPUTER) {
-			if (rank == PAWN) {
-				this.scene.bPawnScore = this.bPawnScore + 1;
-				t = this.scene.bPawnScore.toString();
-				this.scene.bPawnScores.text = t;
-				this.bPawnScore = this.bPawnScore + 1;
-			}
-			if (rank == KNIGHT) {
-				this.scene.bKnightScore = this.bKnightScore + 1;
-				t = this.scene.bKnightScore.toString();
-				this.scene.bKnightScores.text = t;
-				this.bKnightScore = this.bKnightScore + 1;
-			}
-			if (rank == ROOK) {
-				this.scene.bRookScore = this.bRookScore + 1;
-				t = this.scene.bRookScore.toString();
-				this.scene.bRookScores.text = t;
-				this.bRookScore = this.bRookScore + 1;
-			}
-			if (rank == BISHOP) {
-				this.scene.bBishopScore = this.bBishopScore + 1;
-				t = this.scene.bBishopScore.toString();
-				this.scene.bBishopScores.text = t;
-				this.bBishopScore = this.bBishopScore + 1;
-			}
-			if (rank == QUEEN) {
-				this.scene.bQueenScore = this.bQueenScore + 1;
-				t = this.scene.bQueenScore.toString();
-				this.scene.bQueenScores.text = t;
-				this.bQueenScore = this.bQueenScore + 1;
-			}
-		}
+		this.scores[alignment][rank] += 1;
+		let text = this.scores[alignment][rank].toString().padStart(2, "0");
+		this.texts[alignment][rank].text = text;
 	}
 }
