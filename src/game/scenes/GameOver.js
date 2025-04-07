@@ -1,16 +1,10 @@
-import {Scene} from "phaser";
-import {EventBus} from "../EventBus";
-import {
-	GAMEOVER_BACKGROUND_COLOR,
-	GAMEOVER_TEXT_ONE,
-	GAMEOVER_TEXT_TWO,
-	GAMEOVER_BACKGROUND_COLOR_TWO,
-} from "../../game-objects/constants";
-import {globalMoves, globalPieces, globalWaves} from "../../game-objects/global-stats";
+import { Scene } from "phaser";
+import { EventBus } from "../EventBus";
+import { globalMoves, globalPieces, globalWaves } from "../../game-objects/global-stats";
 
 export class GameOver extends Scene {
 	constructor() {
-		super({key: "GameOver"}); // Scene identifier
+		super({ key: "GameOver" });
 	}
 
 	preload() {
@@ -18,167 +12,123 @@ export class GameOver extends Scene {
 		this.load.image("star", "star.png");
 		this.load.image("background", "bg.png");
 
-		// Load the pixel font
 		WebFont.load({
 			google: {
 				families: ["Pixelify Sans"],
 			},
 			active: () => {
-				// Once the font is loaded, we can start the scene
-				this.fontLoaded = true; // Flag to indicate that the font is loaded
+				this.fontLoaded = true;
 			},
 		});
 	}
 
 	create() {
-		// put GAMEOVER over game screen
+		const selectedPalette = localStorage.getItem("selectedPalette") || "default";
+
+		const themeColors = {
+			default: { light: 0xe5aa70, dark: 0xc04000 }, // fawn & mahogany
+			dark: { light: 0xbbb8b1, dark: 0x222222 },     // light text, dark background
+			light: { light: 0xffffff, dark: 0x3b3b3b },    // white text, dark gray background
+		}[selectedPalette];
+		
+
+		// Store theme colors as class properties for access in createButton
+		this.titleFillColor = themeColors.light;
+		this.titleStrokeColor = themeColors.dark;
+		this.panelTextColor = themeColors.light;
+		this.panelBgColor = themeColors.dark;
+		this.buttonTextColor = themeColors.light;
+		this.buttonBgColor = themeColors.dark;
+
 		this.scene.moveAbove("MainGame", "GameOver");
-		// Creates an invisible background that also blocks input on the scene underneath
-		const bg = this.add.rectangle(625, 384, 1250, 768, GAMEOVER_BACKGROUND_COLOR, 0);
+
+		// Background rectangles
+		const bg = this.add.rectangle(625, 384, 1250, 768, 0xffffff, 0); // White transparent BG
 		bg.setDepth(50);
 
-		// Creates a visual background that also blocks input on the scene underneath
-		const square = this.add.rectangle(
-			625,
-			375,
-			800,
-			600,
-			GAMEOVER_BACKGROUND_COLOR_TWO,
-			0.95 // Opacity
-		);
+		const square = this.add.rectangle(625, 375, 800, 600, 0xffffff, 0.95); // White panel
 		square.setDepth(50);
 
-		// Creates a visual background that also blocks input on the scene underneath
-		const square2 = this.add.rectangle(
-			625,
-			350,
-			450,
-			225,
-			GAMEOVER_BACKGROUND_COLOR,
-			0.9 // Opacity
-		);
+		const square2 = this.add.rectangle(625, 350, 450, 225, this.panelBgColor, 0.9); // Score panel
 		square2.setDepth(50);
-		// GAMEOVER text
-		this.add
-			.text(625, 175, "Game Over!", {
-				fontFamily: "'Pixelify Sans', sans-serif",
-				fontSize: 75,
-				color: GAMEOVER_TEXT_TWO,
-				stroke: GAMEOVER_TEXT_ONE,
-				strokeThickness: 5,
-				align: "center",
-			})
-			.setOrigin(0.5)
-			.setDepth(100);
 
-		var textWidth = 185; // Variable to offset numbers
-		this.add
-			.text(625, 275, "Number of Moves Made: ", {
-				fontFamily: "'Pixelify Sans', sans-serif",
-				fontSize: 25,
-				color: GAMEOVER_TEXT_TWO,
-				stroke: GAMEOVER_TEXT_ONE,
-				strokeThickness: 4,
-				align: "center",
-			})
-			.setOrigin(0.5)
-			.setDepth(100);
-		this.add
-			.text(625 + textWidth, 275, globalMoves + "", {
-				fontSize: 25,
-				color: GAMEOVER_TEXT_TWO,
-				stroke: GAMEOVER_TEXT_ONE,
-				strokeThickness: 4,
-				align: "center",
-			})
-			.setOrigin(0.5)
-			.setDepth(100);
+		// Game Over Title
+		this.add.text(625, 175, "Game Over!", {
+			fontFamily: "'Pixelify Sans', sans-serif",
+			fontSize: 75,
+			color: Phaser.Display.Color.IntegerToColor(this.titleFillColor).rgba,
+			stroke: Phaser.Display.Color.IntegerToColor(this.titleStrokeColor).rgba,
+			strokeThickness: 5,
+			align: "center",
+		})
+		.setOrigin(0.5)
+		.setDepth(100);
 
-		this.add
-			.text(625, 350, "Number of Captured Pieces: ", {
-				fontFamily: "'Pixelify Sans', sans-serif",
-				fontSize: 25,
-				color: GAMEOVER_TEXT_TWO,
-				stroke: GAMEOVER_TEXT_ONE,
-				strokeThickness: 4,
-				align: "center",
-			})
-			.setOrigin(0.5)
-			.setDepth(100);
+		// Score values
+		const textOffsetX = 185;
 
-		this.add
-			.text(625 + textWidth, 350, globalPieces + "", {
-				fontSize: 25,
-				color: GAMEOVER_TEXT_TWO,
-				stroke: GAMEOVER_TEXT_ONE,
-				strokeThickness: 4,
-				align: "center",
-			})
-			.setOrigin(0.5)
-			.setDepth(100);
+		this.createStatText(625, 275, "Number of Moves Made:", globalMoves, textOffsetX);
+		this.createStatText(625, 350, "Number of Captured Pieces:", globalPieces, textOffsetX);
+		this.createStatText(625, 425, "Number of Waves Survived:", globalWaves, textOffsetX);
 
-		this.add
-			.text(625, 425, "Number of Waves Survived: ", {
-				fontFamily: "'Pixelify Sans', sans-serif",
-				fontSize: 25,
-				color: GAMEOVER_TEXT_TWO,
-				stroke: GAMEOVER_TEXT_ONE,
-				strokeThickness: 4,
-				align: "center",
-			})
-			.setOrigin(0.5)
-			.setDepth(100);
-
-		this.add
-			.text(625 + textWidth, 425, globalWaves + "", {
-				fontSize: 25,
-				color: GAMEOVER_TEXT_TWO,
-				stroke: GAMEOVER_TEXT_ONE,
-				strokeThickness: 4,
-				align: "center",
-			})
-			.setOrigin(0.5)
-			.setDepth(100);
-
-		this.createButton(625, 600, "Restart Game", () => {
-			console.log("Restarting game...");
+		// Buttons
+		this.createButton(625, 525, "Main Menu", () => {
 			this.scene.stop("GameOver");
-			this.scene.stop("MainGame"); // Reset game state
-			this.scene.start("MainGame");
+			this.scene.stop("MainGame");
+			this.scene.start("Game"); // back to menu scene
 		});
 
-		this.createButton(625, 525, "Main Menu", () => {
-			console.log("Returning to main menu...");
+		this.createButton(625, 600, "Restart Game", () => {
 			this.scene.stop("GameOver");
-			this.scene.stop("MainGame"); // Reset main game before menu
-			this.scene.start("Game"); // can change if needed
+			this.scene.stop("MainGame");
+			this.scene.start("MainGame");
 		});
 
 		bg.setInteractive();
 		square.setInteractive();
 		square2.setInteractive();
-		EventBus.emit("current-scene-ready", this); // notify event system
+		EventBus.emit("current-scene-ready", this);
+	}
+
+	createStatText(x, y, label, value, offsetX) {
+		this.add.text(x, y, label, {
+			fontFamily: "'Pixelify Sans', sans-serif",
+			fontSize: 25,
+			color: Phaser.Display.Color.IntegerToColor(this.panelTextColor).rgba,
+			stroke: Phaser.Display.Color.IntegerToColor(this.panelBgColor).rgba,
+			strokeThickness: 4,
+			align: "center",
+		})
+		.setOrigin(0.5)
+		.setDepth(100);
+
+		this.add.text(x + offsetX, y, value + "", {
+			fontSize: 25,
+			color: Phaser.Display.Color.IntegerToColor(this.panelTextColor).rgba,
+			stroke: Phaser.Display.Color.IntegerToColor(this.panelBgColor).rgba,
+			strokeThickness: 4,
+			align: "center",
+		})
+		.setOrigin(0.5)
+		.setDepth(100);
 	}
 
 	createButton(x, y, text, callback) {
-		// Create a text-based button with styling
-		const button = this.add
-			.text(x, y, text, {
-				fontFamily: "'Pixelify Sans', sans-serif",
-				fontSize: 20,
-				backgroundColor: GAMEOVER_TEXT_ONE,
-				color: GAMEOVER_TEXT_TWO,
-				stroke: GAMEOVER_TEXT_ONE,
-				strokeThickness: 5,
-				padding: {left: 20, right: 20, top: 10, bottom: 10},
-			})
-			.setOrigin(0.5) // Center the button
-			.setDepth(150)
-			.setInteractive(); // Make it clickable
+		const button = this.add.text(x, y, text, {
+			fontFamily: "'Pixelify Sans', sans-serif",
+			fontSize: 20,
+			backgroundColor: Phaser.Display.Color.IntegerToColor(this.buttonBgColor).rgba,
+			color: Phaser.Display.Color.IntegerToColor(this.buttonTextColor).rgba,
+			stroke: Phaser.Display.Color.IntegerToColor(this.buttonBgColor).rgba,
+			strokeThickness: 5,
+			padding: { left: 20, right: 20, top: 10, bottom: 10 },
+		})
+		.setOrigin(0.5)
+		.setDepth(150)
+		.setInteractive();
 
-		// Set up button interactions
-		button.on("pointerdown", callback); // Execute the callback on click
-		button.on("pointerover", () => button.setScale(1.1)); // Slightly enlarge on hover
-		button.on("pointerout", () => button.setScale(1)); // Reset scale when not hovered
+		button.on("pointerdown", callback);
+		button.on("pointerover", () => button.setScale(1.1));
+		button.on("pointerout", () => button.setScale(1));
 	}
 }
