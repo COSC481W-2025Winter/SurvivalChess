@@ -115,6 +115,9 @@ export class Start extends Scene {
 					function () {
 						import("./Game") // Dynamically import the Game scene
 							.then((module) => {
+								// Stop background music
+								this.backgroundMusic.stop();
+								this.backgroundMusicPlaying = false;
 								// Only add the scene if it's not already registered
 								if (!this.scene.get("MainGame")) {
 									this.scene.add("MainGame", module.Game); // Add the MainGame scene dynamically
