@@ -134,6 +134,11 @@ export class Start extends Scene {
 				rulesButton.on("pointerout", () => rulesButton.setScale(1));
 
 				EventBus.emit("current-scene-ready", this);
+
+				EventBus.on("PaletteChanged", () => {
+					this.scene.restart();
+				});
+				
 			},
 		});
 	}
