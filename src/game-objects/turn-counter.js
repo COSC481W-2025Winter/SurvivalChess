@@ -11,7 +11,11 @@ export class TurnCounter {
 	}
 
 	updateTurnCounter() {
-		this.turnCounterText.setText(`Turn: ${this.turnCount}`);
+		if (this.turnCounterText && this.turnCounterText.setText) {
+			this.turnCounterText.setText(`Turn: ${this.turnCount}`);
+		} else {
+			console.error("turnCounterText is not a valid Phaser Text object");
+		}
 	}
 
 	incrementTurnCounter() {
