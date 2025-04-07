@@ -1,13 +1,12 @@
 import {TILE_SIZE, X_ANCHOR, Y_ANCHOR} from "./constants";
 import {
 	HOVER_COLOR,
-	WHITE_TILE_COLOR,
-	BLACK_TILE_COLOR,
 	NON_LETHAL_COLOR,
 	LETHAL_COLOR,
 	THREAT_COLOR,
 	CHECKED_COLOR,
 	STAGE_COLOR,
+	BACKGROUND_COLOR,
 } from "./constants";
 import WebFont from "webfontloader"; // Correctly import WebFont
 import {SIDE_BASE_COLOR, SIDE_HIGHLIGHT_COLOR} from "./constants";
@@ -42,7 +41,7 @@ export class ChessTiles {
 				this.fontLoaded = true; // Flag to indicate the font is loaded
 			},
 		});
-			
+
 		// Register theme change listener
 		EventBus.on("PaletteChanged", (palette) => {
 			this.updateColorTheme(palette);
@@ -50,9 +49,9 @@ export class ChessTiles {
 
 		this.currentTheme = {
 			light: 0xe5aa70, // default light
-			dark: 0xc04000,  // default dark
+			dark: 0xc04000, // default dark
 		};
-		
+
 		this.chessTiles; // 8x8 array of chess tiles
 		this.boardState; // contains BoardState object that manages an 8x8 array of chess pieces
 		this.pieceCoordinates; // contains PieceCoordinates object that manages coordinate info sorted by rank & alignment
@@ -78,7 +77,7 @@ export class ChessTiles {
 		this.isChecked; // is true if the current player's king is checked
 
 		// Set up stage behind (surrounding) chessboard
-		this.scene.add.rectangle(
+		this.stage = this.scene.add.rectangle(
 			X_ANCHOR + 3.5 * TILE_SIZE,
 			Y_ANCHOR + 3.5 * TILE_SIZE,
 			9 * TILE_SIZE,
@@ -159,31 +158,38 @@ export class ChessTiles {
 		this.boardState = new BoardState(this.scene, this.pieceCoordinates);
 		this.piecesTaken = new PiecesTaken(this.scene);
 		this.devButtons = new DevButtons(this.scene, this);
-	} //constructor ends here!!
-	
-	// modified this 
+	} // constructor ends here!!
+
+	// modified this
 	updateColorTheme(palette) {
 		const themeColors = {
-			default: { light: 0xe5aa70, dark: 0xc04000 },
-			dark: { light: 0xbbb8b1, dark: 0x222222 },
-			light: { light: 0xffffff, dark: 0x3b3b3b },
-		}[palette] || { light: 0xe5aa70, dark: 0xc04000 };
-	
+			default: {light: 0xe5aa70, dark: 0xc04000},
+			dark: {light: 0xbbb8b1, dark: 0x222222},
+			light: {light: 0xffffff, dark: 0x3b3b3b},
+		}[palette] || {light: 0xe5aa70, dark: 0xc04000};
+
 		this.currentTheme = themeColors;
-	
-		// Update board tiles immediately
+
+		// Update stage color
+		if (palette == "default") {
+			this.stage.setFillStyle(STAGE_COLOR); // BROWN
+		} else {
+			this.stage.setFillStyle(BACKGROUND_COLOR); // ONYX
+		}
+
+		// Update board tiles
 		for (let i = 0; i < 8; i++) {
 			for (let j = 0; j < 8; j++) {
 				const isLight = (i + j) % 2 === 0;
 				this.chessTiles[i][j].setFillStyle(isLight ? themeColors.light : themeColors.dark);
 			}
 		}
-	
+
 		// Update captured panel
 		if (this.piecesTaken?.updatePanelColor) {
 			this.piecesTaken.updatePanelColor(themeColors.dark, themeColors.light);
 		}
-	}	
+	}
 
 	// ================================================================
 	// Pointer Events
