@@ -49,6 +49,14 @@ export class GameOver extends Scene {
 	}
 
 	create() {
+		// Access the Game scene
+		const gameScene = this.scene.get("MainGame");
+
+		// Call the stopMusic method of the Game scene
+		if (gameScene) {
+			gameScene.stopMusic();
+		}
+
 		// Play music
 		this.endMusic = this.sound.add("endMusic", {loop: false, volume: 0.5});
 		this.endMusicPlaying = false;
