@@ -68,10 +68,10 @@ export class Rules extends Scene {
 				"- Pieces move the same as in regular chess\n\n" +
 					"- To move, click on the piece you want to move, and then click on the square\n   you want to move it to\n\n" +
 					"- The enemy pieces spawn in waves that will increase in dificulty in later rounds\n\n" +
-					"- Enemy pieces spawn in the top two rows (rows 7&8)\n\n" +
+					"- Enemy pieces spawn in the top two rows (rows    &   )\n\n" +
 					"- Your goal is to capture enemy pieces while avoiding checkmate\n\n" +
 					"- The more pieces you capture the more points you will gain\n\n" +
-					"- A new wave of pieces will spawn every 8 rounds\n\n" +
+					"- A new wave of pieces will spawn every        rounds\n\n" +
 					"- Capturing all the enemy pieces will progress you to the next round early",
 				{
 					fontFamily: "'Pixelify Sans', sans-serif",
@@ -82,6 +82,28 @@ export class Rules extends Scene {
 					align: "left",
 				}
 			)
+			.setOrigin(0.5)
+			.setDepth(100);
+
+		this.add
+			.text(723, 390, "7 8", {
+				fontSize: 20,
+				color: RULES_TEXT_TWO,
+				stroke: RULES_TEXT_ONE,
+				strokeThickness: 0,
+				align: "center",
+			})
+			.setOrigin(0.5)
+			.setDepth(100);
+
+		this.add
+			.text(625, 510, "13", {
+				fontSize: 20,
+				color: RULES_TEXT_TWO,
+				stroke: RULES_TEXT_ONE,
+				strokeThickness: 0,
+				align: "center",
+			})
 			.setOrigin(0.5)
 			.setDepth(100);
 
