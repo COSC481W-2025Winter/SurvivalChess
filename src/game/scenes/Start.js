@@ -25,66 +25,69 @@ export class Start extends Scene {
 				const selectedPalette = localStorage.getItem("selectedPalette") || "default";
 
 				const themeColors = {
-					default: { background: 0xe5aa70, panel: 0xc04000, stroke: 0xc04000 },
-					dark: { background: 0xbbb8b1, panel: 0x222222, stroke: 0x222222 },
-					light: { background: 0xffffff, panel: 0x3b3b3b, stroke: 0x3b3b3b },
+					default: {background: 0xe5aa70, panel: 0xc04000, stroke: 0xc04000},
+					dark: {background: 0x222222, panel: 0xbbb8b1, stroke: 0x222222},
+					light: {background: 0xffffff, panel: 0x3b3b3b, stroke: 0x3b3b3b},
 				}[selectedPalette];
 
 				// Set background
 				this.cameras.main.setBackgroundColor(themeColors.background);
 
 				// === Title: Survival Chess ===
-				this.add.text(630, 230, "Survival Chess", {
-					fontFamily: "'Pixelify Sans', sans-serif",
-					fontSize: 130,
-					color: "#FFFFFF", // Always white fill
-					stroke: Phaser.Display.Color.IntegerToColor(themeColors.stroke).rgba, // Theme-based border
-					strokeThickness: 8,
-					align: "center",
-				})
-				.setOrigin(0.5)
-				.setDepth(100);
+				this.add
+					.text(630, 230, "Survival Chess", {
+						fontFamily: "'Pixelify Sans', sans-serif",
+						fontSize: 130,
+						color: "#FFFFFF", // Always white fill
+						stroke: Phaser.Display.Color.IntegerToColor(themeColors.stroke).rgba, // Theme-based border
+						strokeThickness: 8,
+						align: "center",
+					})
+					.setOrigin(0.5)
+					.setDepth(100);
 
 				// === Description Panel ===
-				this.add.text(
-					630,
-					525,
-					"Survival Chess is an arcade style chess game. In this game, you play chess against a computer while trying to survive waves of incoming pieces. Capture as many pieces as you can while avoiding checkmate. Good Luck!",
-					{
-						fontFamily: "'Pixelify Sans', sans-serif",
-						fontSize: 20,
-						color: Phaser.Display.Color.IntegerToColor(themeColors.stroke).rgba,
-						backgroundColor: "#FFFFFF", // Always white
-						stroke: Phaser.Display.Color.IntegerToColor(themeColors.stroke).rgba,
-						strokeThickness: 0,
-						align: "center",
-						padding: 15,
-						fixedWidth: 570,
-						wordWrap: {width: 560},
-					}
-				)
-				.setOrigin(0.5)
-				.setDepth(100);
+				this.add
+					.text(
+						630,
+						525,
+						"Survival Chess is an arcade style chess game. In this game, you play chess against a computer while trying to survive waves of incoming pieces. Capture as many pieces as you can while avoiding checkmate. Good Luck!",
+						{
+							fontFamily: "'Pixelify Sans', sans-serif",
+							fontSize: 20,
+							color: Phaser.Display.Color.IntegerToColor(themeColors.stroke).rgba,
+							backgroundColor: "#FFFFFF", // Always white
+							stroke: Phaser.Display.Color.IntegerToColor(themeColors.stroke).rgba,
+							strokeThickness: 0,
+							align: "center",
+							padding: 15,
+							fixedWidth: 570,
+							wordWrap: {width: 560},
+						}
+					)
+					.setOrigin(0.5)
+					.setDepth(100);
 
 				// === Credits Panel ===
-				this.add.text(
-					625,
-					710,
-					"Credits: Riana Therrien, Marley Higbee, David Goh, Kaydee Ferrel, Hope Heck, Durva Kadam, Mohamad Tiba, Ritu Ghosh",
-					{
-						fontFamily: "'Pixelify Sans', sans-serif",
-						fontSize: 20,
-						color: Phaser.Display.Color.IntegerToColor(themeColors.stroke).rgba,
-						backgroundColor: "#FFFFFF", // Always white
-						stroke: Phaser.Display.Color.IntegerToColor(themeColors.stroke).rgba,
-						strokeThickness: 0,
-						align: "center",
-						padding: 10,
-						fixedWidth: 1500,
-					}
-				)
-				.setOrigin(0.5)
-				.setDepth(100);
+				this.add
+					.text(
+						625,
+						710,
+						"Credits: Riana Therrien, Marley Higbee, David Goh, Kaydee Ferrel, Hope Heck, Durva Kadam, Mohamad Tiba, Ritu Ghosh",
+						{
+							fontFamily: "'Pixelify Sans', sans-serif",
+							fontSize: 20,
+							color: Phaser.Display.Color.IntegerToColor(themeColors.stroke).rgba,
+							backgroundColor: "#FFFFFF", // Always white
+							stroke: Phaser.Display.Color.IntegerToColor(themeColors.stroke).rgba,
+							strokeThickness: 0,
+							align: "center",
+							padding: 10,
+							fixedWidth: 1500,
+						}
+					)
+					.setOrigin(0.5)
+					.setDepth(100);
 
 				// === Start Button ===
 				const startButton = this.add.text(550, 370, "Start Game", {
@@ -138,7 +141,6 @@ export class Start extends Scene {
 				EventBus.on("PaletteChanged", () => {
 					this.scene.restart();
 				});
-				
 			},
 		});
 	}
