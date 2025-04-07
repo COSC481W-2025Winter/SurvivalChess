@@ -72,6 +72,8 @@ export class PiecesTaken {
 		this.scene.add.text(910, 26, "Captured Pieces:", {
 			fontFamily: "'Pixelify Sans', sans-serif",
 			fontSize: 34,
+			stroke: "#3b3b3b",
+			strokeThickness: 8,
 			color: START_TEXT_ONE,
 		});
 
@@ -139,7 +141,7 @@ export class PiecesTaken {
 			color: START_TEXT_ONE,
 		});
 	}
-	
+
 	// Method to update panel colors based on theme
 	updatePanelColor(darkHex, lightHex) {
 		if (this.panelFront) this.panelFront.setFillStyle(darkHex);
