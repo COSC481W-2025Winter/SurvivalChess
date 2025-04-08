@@ -37,15 +37,10 @@ function dev_setRank(rank) {
 function toggleDev() {
 	DEV_MODE = !DEV_MODE;
 	if (!DEV_MODE) {
-		// Reset all dev features to inactive when dev mode is turned off
-		dev_bamzap = null;
-		dev_stopOn = false;
-		dev_deadAI = false;
-
-		// Reset the buttons to their inactive state
 		prev_bamzap = dev_bamzap;
 		prev_stopOn = dev_stopOn;
 		prev_deadAI = dev_deadAI;
+		dev_bamzap = dev_stopOn = dev_deadAI = false;
 	}
 
 	return DEV_MODE;
@@ -87,20 +82,6 @@ export class DevButtons {
 			fill: CREAMHEX,
 			backgroundColor: ONYXHEX,
 		});
-		// this.#devButton.on("pointerdown", () => {
-		// 	if (DEV_MODE == true) {
-		// 		prev_bamzap = dev_bamzap;
-		// 		prev_stopOn = dev_stopOn;
-		// 		prev_deadAI = dev_deadAI;
-		// 		dev_bamzap = dev_stopOn = dev_deadAI = false;
-		// 	} else {
-		// 		dev_bamzap = prev_bamzap;
-		// 		dev_stopOn = prev_stopOn;
-		// 		dev_deadAI = prev_deadAI;
-		// 	}
-		// 	toggleDev();
-		// 	for (let button of this.getNondevButtons()) button.visible = !button.visible;
-		// });
 
 		for (let i = 0; i < alignments.length; i++) {
 			this.#alignmentButtons[alignments[i]] = this.#scene.add.text(0, 0, alignment_names[i], STYLE_OFF);
