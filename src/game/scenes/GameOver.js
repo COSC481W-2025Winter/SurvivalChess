@@ -13,6 +13,13 @@ import {
 	UNIT_HEIGHT,
 } from "../../game-objects/constants";
 
+import {
+	GAMEOVER_BACKGROUND_COLOR,
+	GAMEOVER_TEXT_ONE,
+	GAMEOVER_TEXT_TWO,
+	GAMEOVER_BACKGROUND_COLOR_TWO,
+} from "../../game-objects/constants";
+
 export class GameOver extends Scene {
 	bg;
 	square;
@@ -107,7 +114,7 @@ export class GameOver extends Scene {
 			this.endMusicPlaying = false;
 			this.scene.stop("GameOver");
 			this.scene.stop("MainGame");
-			this.scene.start("MainGame");
+			this.scene.start("Game");
 		});
 
 		this.restartButton = this.createButton(0, 0, "Restart Game", () => {

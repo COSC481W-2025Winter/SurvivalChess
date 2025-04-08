@@ -12,6 +12,14 @@ import {
 	UNIT_HEIGHT,
 } from "../../game-objects/constants";
 
+import {
+	RULES_BACKGROUND_COLOR,
+	RULES_TEXT_ONE,
+	RULES_TEXT_TWO,
+	RULES_BACKGROUND_COLOR_TWO,
+	RULES_TEXT_THREE,
+} from "../../game-objects/constants";
+
 export class Rules extends Scene {
 	bg;
 	square;
