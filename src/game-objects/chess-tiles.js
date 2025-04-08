@@ -1,5 +1,13 @@
 import {TILE_SIZE, X_ANCHOR, Y_ANCHOR} from "./constants";
-import {HOVER_COLOR, NON_LETHAL_COLOR, LETHAL_COLOR, THREAT_COLOR, CHECKED_COLOR, STAGE_COLOR} from "./constants";
+import {
+	HOVER_COLOR,
+	NON_LETHAL_COLOR,
+	LETHAL_COLOR,
+	THREAT_COLOR,
+	CHECKED_COLOR,
+	STAGE_COLOR,
+	BACKGROUND_COLOR,
+} from "./constants";
 import WebFont from "webfontloader"; // Correctly import WebFont
 import {SIDE_BASE_COLOR, SIDE_HIGHLIGHT_COLOR} from "./constants";
 import {PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING} from "./constants";
@@ -164,7 +172,14 @@ export class ChessTiles {
 
 		this.currentTheme = themeColors;
 
-		// Update board tiles immediately
+		// Update stage color
+		if (palette == "default") {
+			this.stage.setFillStyle(STAGE_COLOR); // BROWN
+		} else {
+			this.stage.setFillStyle(BACKGROUND_COLOR); // ONYX
+		}
+
+		// Update board tiles
 		for (let i = 0; i < 8; i++) {
 			for (let j = 0; j < 8; j++) {
 				const isLight = (i + j) % 2 === 0;

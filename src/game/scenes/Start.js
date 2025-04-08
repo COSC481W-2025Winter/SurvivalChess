@@ -1,8 +1,6 @@
 import {Scene} from "phaser";
 import {EventBus} from "../EventBus";
 
-import {START_TEXT_ONE, START_TEXT_TWO} from "../../game-objects/constants";
-
 import {configureButtons, paddingTexts, fontsizeTexts} from "../../game-objects/constants";
 import {resize_constants} from "../../game-objects/constants";
 import {
@@ -15,13 +13,6 @@ import {
 } from "../../game-objects/constants";
 
 export class Start extends Scene {
-	titleText;
-	introText;
-	creditText;
-	startButton;
-	settingsButton;
-	rulesButton;
-
 	constructor() {
 		super("Game");
 		this.fontLoaded = false;
@@ -29,12 +20,10 @@ export class Start extends Scene {
 
 	preload() {
 		this.load.setPath("assets");
-
 		this.load.audio("backgroundMusic", "../assets/music/SurvivalChess-Menu.mp3");
 	}
 
 	async create() {
-		// Load the pixel font
 		WebFont.load({
 			google: {
 				families: ["Pixelify Sans"],
@@ -42,50 +31,45 @@ export class Start extends Scene {
 			active: () => {
 				this.fontLoaded = true;
 
-				// Play music
+				// === Play Music ===
 				this.backgroundMusic = this.sound.add("backgroundMusic", {loop: true, volume: 0.5});
-				this.backgroundMusicPlaying = false;
-
-				// Try to play music without user click
-				this.backgroundMusic.play();
-				if (this.backgroundMusic.isPlaying) {
+				if (!this.backgroundMusic.isPlaying) {
+					this.backgroundMusic.play();
 					this.backgroundMusicPlaying = true;
 				}
 
-				// If it is not playing it will wait for user click
-				// This is necessary for most browsers settings
 				this.input.on("pointerdown", () => {
-					if (!this.backgroundMusicPlaying) {
-						// Play only if not already playing
+					if (!this.backgroundMusic.isPlaying) {
 						this.backgroundMusic.play();
 						this.backgroundMusicPlaying = true;
 					}
 				});
 
-				// Get selected color palette
+				// === Color Themes ===
 				const selectedPalette = localStorage.getItem("selectedPalette") || "default";
-
 				const themeColors = {
 					default: {background: 0xe5aa70, panel: 0xc04000, stroke: 0xc04000},
 					dark: {background: 0x222222, panel: 0xbbb8b1, stroke: 0x222222},
 					light: {background: 0xffffff, panel: 0x3b3b3b, stroke: 0x3b3b3b},
 				}[selectedPalette];
 
-				// Set background
+				this.themeColors = themeColors;
+
 				this.cameras.main.setBackgroundColor(themeColors.background);
 
-				// === Title: Survival Chess ===
+				// === Title ===
 				this.titleText = this.add
 					.text(0, 0, "Survival Chess", {
 						fontFamily: "'Pixelify Sans', sans-serif",
 						fontSize: 130,
-						color: "#FFFFFF", // Always white fill
-						stroke: Phaser.Display.Color.IntegerToColor(themeColors.stroke).rgba, // Theme-based border
+						color: "#FFFFFF",
+						stroke: Phaser.Display.Color.IntegerToColor(themeColors.stroke).rgba,
 						strokeThickness: 8,
 						align: "center",
 					})
 					.setOrigin(0.5);
-				// === Description Panel ===
+
+				// === Intro ===
 				this.introText = this.add
 					.text(
 						0,
@@ -94,16 +78,17 @@ export class Start extends Scene {
 						{
 							fontFamily: "'Pixelify Sans', sans-serif",
 							color: Phaser.Display.Color.IntegerToColor(themeColors.stroke).rgba,
-							backgroundColor: "#FFFFFF", // Always white
+							backgroundColor: "#FFFFFF",
 							stroke: Phaser.Display.Color.IntegerToColor(themeColors.stroke).rgba,
 							strokeThickness: 0,
 							align: "center",
 							padding: 15,
-							wordWrap: {width: 4 * DOZEN_WIDTH}, // Explicitly enable word wrap
+							wordWrap: {width: 4 * DOZEN_WIDTH},
 						}
 					)
 					.setOrigin(0.5);
-				// === Credits Panel ===
+
+				// === Credits ===
 				this.creditText = this.add
 					.text(
 						0,
@@ -112,7 +97,7 @@ export class Start extends Scene {
 						{
 							fontFamily: "'Pixelify Sans', sans-serif",
 							color: Phaser.Display.Color.IntegerToColor(themeColors.stroke).rgba,
-							backgroundColor: "#FFFFFF", // Always white
+							backgroundColor: "#FFFFFF",
 							stroke: Phaser.Display.Color.IntegerToColor(themeColors.stroke).rgba,
 							strokeThickness: 0,
 							align: "center",
@@ -124,51 +109,36 @@ export class Start extends Scene {
 				// === Start Button ===
 				this.startButton = this.add.text(0, 0, "Start Game", {
 					fontFamily: "'Pixelify Sans', sans-serif",
-					fill: START_TEXT_ONE,
-					backgroundColor: START_TEXT_TWO,
+					fill: "#FFFFFF",
+					backgroundColor: Phaser.Display.Color.IntegerToColor(themeColors.panel).rgba,
+					padding: {left: 20, right: 20, top: 10, bottom: 10},
 				});
-				this.startButton.on(
-					"pointerdown",
-					function () {
-						import("./Game") // Dynamically import the Game scene
-							.then((module) => {
-								// Stop background music
-								this.backgroundMusic.stop();
-								this.backgroundMusicPlaying = false;
-								// Only add the scene if it's not already registered
-								if (!this.scene.get("MainGame")) {
-									this.scene.add("MainGame", module.Game); // Add the MainGame scene dynamically
-								}
-								// Start the MainGame scene
-								this.scene.start("MainGame");
-							});
-					},
-					this
-				);
+				this.startButton.setInteractive().on("pointerdown", () => {
+					import("./Game").then((module) => {
+						this.backgroundMusic.stop();
+						this.backgroundMusicPlaying = false;
+						if (!this.scene.get("MainGame")) {
+							this.scene.add("MainGame", module.Game);
+						}
+						this.scene.start("MainGame");
+					});
+				});
 
 				// === Settings Button ===
 				this.settingsButton = this.add.text(0, 0, "Settings", {
 					fontFamily: "'Pixelify Sans', sans-serif",
-					fill: "#FFFFFF", // Always white text
+					fill: "#FFFFFF",
 					backgroundColor: Phaser.Display.Color.IntegerToColor(themeColors.panel).rgba,
 				});
-				this.settingsButton.on(
-					"pointerdown",
-					function () {
-						import("./Settings") // Dynamically import the Settings scene
-							.then((module) => {
-								// Only add the scene if it's not already registered
-								if (!this.scene.get("Settings")) {
-									this.scene.add("Settings", module.Settings); // Add the scene dynamically
-								}
-
-								// Start the scene
-								this.scene.launch("Settings");
-								this.scene.moveAbove("MainGame", "Settings");
-							});
-					},
-					this
-				);
+				this.settingsButton.setInteractive().on("pointerdown", () => {
+					import("./Settings").then((module) => {
+						if (!this.scene.get("Settings")) {
+							this.scene.add("Settings", module.Settings);
+						}
+						this.scene.launch("Settings");
+						this.scene.moveAbove("MainGame", "Settings");
+					});
+				});
 
 				// === Rules Button ===
 				this.rulesButton = this.add.text(0, 0, "Rules", {
@@ -194,20 +164,19 @@ export class Start extends Scene {
 					this
 				);
 
-				const scene = this;
+				// === Final Setup ===
 				configureButtons(this.startButton, this.settingsButton, this.rulesButton);
-				window.addEventListener(
-					"resize",
-					function (event) {
-						scene.resize();
-					},
-					false
-				);
+				window.addEventListener("resize", () => this.resize(), false);
 
 				this.resize();
 				EventBus.emit("current-scene-ready", this);
 
+				// === Handle Theme Change ===
 				EventBus.on("PaletteChanged", () => {
+					if (this.backgroundMusic && this.backgroundMusic.isPlaying) {
+						this.backgroundMusic.stop();
+						this.backgroundMusicPlaying = false;
+					}
 					this.scene.restart();
 				});
 			},
@@ -215,13 +184,26 @@ export class Start extends Scene {
 	}
 
 	resize() {
+		const {themeColors} = this;
+
 		resize_constants(this);
+
 		this.titleText.setPosition(CENTER_WIDTH, 3 * DOZEN_HEIGHT);
 		this.introText.setPosition(CENTER_WIDTH, 8 * DOZEN_HEIGHT);
 		this.creditText.setPosition(CENTER_WIDTH, 11 * DOZEN_HEIGHT);
 		this.startButton.setPosition(CENTER_WIDTH, 5 * DOZEN_HEIGHT);
 		this.settingsButton.setPosition(10.5 * DOZEN_WIDTH, 1.5 * DOZEN_HEIGHT);
 		this.rulesButton.setPosition(10.5 * DOZEN_WIDTH, 9.5 * DOZEN_HEIGHT);
+
+		this.titleText.setStroke(Phaser.Display.Color.IntegerToColor(themeColors.stroke).rgba, 2 * UNIT_HEIGHT);
+
+		this.introText.setColor(Phaser.Display.Color.IntegerToColor(themeColors.stroke).rgba);
+		this.introText.setStroke(themeColors.stroke, 0);
+		this.creditText.setColor(Phaser.Display.Color.IntegerToColor(themeColors.stroke).rgba);
+
+		this.introText.setWordWrapWidth(6 * DOZEN_WIDTH);
+		this.creditText.setFixedSize(WINDOW_WIDTH, 0);
+
 		paddingTexts(
 			4 * UNIT_HEIGHT,
 			2 * UNIT_HEIGHT,
@@ -232,11 +214,9 @@ export class Start extends Scene {
 			this.settingsButton,
 			this.rulesButton
 		);
+
 		fontsizeTexts(2 * DOZEN_HEIGHT, this.titleText);
 		fontsizeTexts(2.5 * UNIT_WIDTH, this.creditText);
 		fontsizeTexts(6 * UNIT_HEIGHT, this.introText, this.startButton, this.settingsButton, this.rulesButton);
-		this.titleText.setStroke(START_TEXT_TWO, 2 * UNIT_HEIGHT);
-		this.introText.setWordWrapWidth(6 * DOZEN_WIDTH);
-		this.creditText.setFixedSize(WINDOW_WIDTH, 0);
 	}
 }
