@@ -1,4 +1,6 @@
 // turn-counter.js
+import {globalMoves} from "./global-stats";
+
 export class TurnCounter {
 	constructor(scene) {
 		this.scene = scene;
@@ -12,14 +14,9 @@ export class TurnCounter {
 
 	updateTurnCounter() {
 		if (this.turnCounterText && this.turnCounterText.setText) {
-			this.turnCounterText.setText(`Turn: ${this.turnCount}`);
+			this.turnCounterText.setText(`Turn: ${globalMoves}`);
 		} else {
 			console.error("turnCounterText is not a valid Phaser Text object");
 		}
-	}
-
-	incrementTurnCounter() {
-		this.turnCount++;
-		this.updateTurnCounter();
 	}
 }

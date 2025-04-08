@@ -207,7 +207,7 @@ export class BoardState {
 	// Increment move counter of piece
 	incrementMoveCounter(col, row) {
 		this.#boardState[col][row].incrementMoveCounter();
-		this.turnCounter.incrementTurnCounter();
+		this.turnCounter.updateTurnCounter();
 	}
 
 	// Check whether coordinate has different alignment
