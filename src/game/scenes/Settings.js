@@ -55,7 +55,7 @@ export class Settings extends Phaser.Scene {
 
 		// Dev Mode Toggle Button
 		this.devButton = this.add
-			.text(200, yOffset, "Dev Mode " + (DEV_MODE ? "ON" : "OFF"), {
+			.text(200, yOffset, "Dev Mode: " + (DEV_MODE ? "ON" : "OFF"), {
 				fontSize: "18px",
 				fill: "#f28d3e",
 				backgroundColor: "#333",
@@ -68,7 +68,7 @@ export class Settings extends Phaser.Scene {
 					// DEV_MODE is on: Create and show DevButtons
 					this.devButtons = new DevButtons(this.scene.get("MainGame"), ChessTiles);
 					this.devButtons.resize();
-					this.devButton.setText("Dev Mode " + (DEV_MODE ? "ON" : "OFF"));
+					this.devButton.setText("Dev Mode: " + (DEV_MODE ? "ON" : "OFF"));
 				} else {
 					if (this.devButtons) {
 						// Hide the dev buttons by making them invisible
