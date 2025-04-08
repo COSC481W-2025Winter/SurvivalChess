@@ -8,7 +8,26 @@ import {
 } from "../../game-objects/constants";
 import {globalMoves, globalPieces, globalWaves} from "../../game-objects/global-stats";
 
+import {paddingTexts, fontsizeTexts} from "../../game-objects/constants";
+import {
+	WINDOW_WIDTH,
+	WINDOW_HEIGHT,
+	CENTER_WIDTH,
+	CENTER_HEIGHT,
+	DOZEN_WIDTH,
+	DOZEN_HEIGHT,
+	UNIT_HEIGHT,
+} from "../../game-objects/constants";
+
 export class GameOver extends Scene {
+	bg;
+	square;
+	titleText;
+	wordsText;
+	numbersText;
+	restartButton;
+	menuButton;
+
 	constructor() {
 		super({key: "GameOver"}); // Scene identifier
 	}
@@ -16,8 +35,6 @@ export class GameOver extends Scene {
 	preload() {
 		this.load.audio("endMusic", "../assets/music/SurvivalChess-End.mp3");
 		this.load.setPath("assets");
-		this.load.image("star", "star.png");
-		this.load.image("background", "bg.png");
 
 		// Load the pixel font
 		WebFont.load({
@@ -45,123 +62,59 @@ export class GameOver extends Scene {
 		// put GAMEOVER over game screen
 		this.scene.moveAbove("MainGame", "GameOver");
 		// Creates an invisible background that also blocks input on the scene underneath
-		const bg = this.add.rectangle(625, 384, 1250, 768, GAMEOVER_BACKGROUND_COLOR, 0);
-		bg.setDepth(50);
+		this.bg = this.add.rectangle(1, 1, 1, 1, GAMEOVER_BACKGROUND_COLOR, 0);
+		this.bg.setDepth(50);
 
 		// Creates a visual background that also blocks input on the scene underneath
-		const square = this.add.rectangle(
-			625,
-			375,
-			800,
-			600,
+		this.square = this.add.rectangle(
+			0,
+			0,
+			0,
+			0,
 			GAMEOVER_BACKGROUND_COLOR_TWO,
 			0.95 // Opacity
 		);
-		square.setDepth(50);
+		this.square.setDepth(50);
 
-		// Creates a visual background that also blocks input on the scene underneath
-		const square2 = this.add.rectangle(
-			625,
-			350,
-			450,
-			225,
-			GAMEOVER_BACKGROUND_COLOR,
-			0.9 // Opacity
-		);
-		square2.setDepth(50);
 		// GAMEOVER text
-		this.add
-			.text(625, 175, "Game Over!", {
+		this.titleText = this.add
+			.text(0, 0, "Game Over!", {
 				fontFamily: "'Pixelify Sans', sans-serif",
-				fontSize: 75,
 				color: GAMEOVER_TEXT_TWO,
 				stroke: GAMEOVER_TEXT_ONE,
-				strokeThickness: 5,
 				align: "center",
 			})
 			.setOrigin(0.5)
 			.setDepth(100);
 
-		var textWidth = 185; // Variable to offset numbers
-		this.add
-			.text(625, 275, "Number of Moves Made: ", {
+		this.wordsText = this.add
+			.text(0, 0, "Number of Moves Made: \nNumber of Captured Pieces: \nNumber of Waves Survived: \nFinal Score: ", {
 				fontFamily: "'Pixelify Sans', sans-serif",
-				fontSize: 25,
 				color: GAMEOVER_TEXT_TWO,
+				backgroundColor: GAMEOVER_TEXT_ONE,
 				stroke: GAMEOVER_TEXT_ONE,
-				strokeThickness: 4,
-				align: "center",
+				align: "left",
 			})
 			.setOrigin(0.5)
-			.setDepth(100);
-		this.add
-			.text(625 + textWidth, 275, globalMoves + "", {
-				fontSize: 25,
+			.setDepth(100)
+			.setLineSpacing(50);
+
+		// Calculate final score
+		// Idea #1: "efficiency" (pieces captured / moves) as a measurement of performance
+		let efficiency = globalMoves == 0 ? 0 : globalPieces / globalMoves;
+		let score = Math.ceil(efficiency * globalWaves * 1000);
+
+		this.numbersText = this.add
+			.text(0, 0, globalMoves + "\n" + globalPieces + "\n" + globalWaves + "\n" + score, {
 				color: GAMEOVER_TEXT_TWO,
 				stroke: GAMEOVER_TEXT_ONE,
-				strokeThickness: 4,
-				align: "center",
+				align: "right",
 			})
 			.setOrigin(0.5)
-			.setDepth(100);
+			.setDepth(100)
+			.setLineSpacing(50);
 
-		this.add
-			.text(625, 350, "Number of Captured Pieces: ", {
-				fontFamily: "'Pixelify Sans', sans-serif",
-				fontSize: 25,
-				color: GAMEOVER_TEXT_TWO,
-				stroke: GAMEOVER_TEXT_ONE,
-				strokeThickness: 4,
-				align: "center",
-			})
-			.setOrigin(0.5)
-			.setDepth(100);
-
-		this.add
-			.text(625 + textWidth, 350, globalPieces + "", {
-				fontSize: 25,
-				color: GAMEOVER_TEXT_TWO,
-				stroke: GAMEOVER_TEXT_ONE,
-				strokeThickness: 4,
-				align: "center",
-			})
-			.setOrigin(0.5)
-			.setDepth(100);
-
-		this.add
-			.text(625, 425, "Number of Waves Survived: ", {
-				fontFamily: "'Pixelify Sans', sans-serif",
-				fontSize: 25,
-				color: GAMEOVER_TEXT_TWO,
-				stroke: GAMEOVER_TEXT_ONE,
-				strokeThickness: 4,
-				align: "center",
-			})
-			.setOrigin(0.5)
-			.setDepth(100);
-
-		this.add
-			.text(625 + textWidth, 425, globalWaves + "", {
-				fontSize: 25,
-				color: GAMEOVER_TEXT_TWO,
-				stroke: GAMEOVER_TEXT_ONE,
-				strokeThickness: 4,
-				align: "center",
-			})
-			.setOrigin(0.5)
-			.setDepth(100);
-
-		this.createButton(625, 600, "Restart Game", () => {
-			console.log("Restarting game...");
-			// Stop background music
-			this.endMusic.stop();
-			this.endMusicPlaying = false;
-			this.scene.stop("GameOver");
-			this.scene.stop("MainGame"); // Reset game state
-			this.scene.start("MainGame");
-		});
-
-		this.createButton(625, 525, "Main Menu", () => {
+		this.menuButton = this.createButton(0, 0, "Main Menu", () => {
 			console.log("Returning to main menu...");
 			// Stop background music
 			this.endMusic.stop();
@@ -171,10 +124,113 @@ export class GameOver extends Scene {
 			this.scene.start("Game"); // can change if needed
 		});
 
-		bg.setInteractive();
-		square.setInteractive();
-		square2.setInteractive();
+		this.restartButton = this.createButton(0, 0, "Restart Game", () => {
+			console.log("Restarting game...");
+			// Stop background music
+			this.endMusic.stop();
+			this.endMusicPlaying = false;
+			this.scene.stop("GameOver");
+			this.scene.stop("MainGame"); // Reset game state
+			this.scene.start("MainGame");
+		});
+
+		// Minimize button
+		this.createMinimize();
+
+		this.bg.setInteractive();
+		this.square.setInteractive();
+
+		const scene = this;
+		window.addEventListener(
+			"resize",
+			function (event) {
+				scene.resize();
+			},
+			false
+		);
+
+		this.resize();
 		EventBus.emit("current-scene-ready", this); // notify event system
+	}
+
+	createMinimize() {
+		this.currentButton?.destroy();
+
+		// Minimize button
+		this.currentButton = this.createButton(0, 0, "▼", () => {
+			for (let element of [
+				this.bg,
+				this.square,
+				this.titleText,
+				this.wordsText,
+				this.numbersText,
+				this.menuButton,
+				this.restartButton,
+			])
+				element.setAlpha(0);
+
+			this.createMaximize();
+		});
+
+		this.resize();
+	}
+
+	createMaximize() {
+		this.currentButton?.destroy();
+		// Creates a visual background that also blocks input on the scene underneath
+		this.bg = this.add.rectangle(1, 1, 1, 1, 0x3b3b3b, 0.0001);
+		this.bg.setOrigin(0.5);
+		this.bg.setInteractive();
+
+		// Maximize button
+		this.currentButton = this.createButton(0, 0, "▲", () => {
+			for (let element of [
+				this.bg,
+				this.square,
+				this.titleText,
+				this.wordsText,
+				this.numbersText,
+				this.menuButton,
+				this.restartButton,
+			])
+				element.setAlpha(1);
+
+			this.createMinimize();
+		});
+
+		this.resize();
+	}
+
+	resize() {
+		this.bg.setPosition(CENTER_WIDTH, CENTER_HEIGHT);
+		this.bg.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
+		this.square.setPosition(CENTER_WIDTH, CENTER_HEIGHT);
+		this.square.setSize(10 * DOZEN_HEIGHT, 10 * DOZEN_HEIGHT);
+		this.titleText.setPosition(CENTER_WIDTH, 2 * DOZEN_HEIGHT);
+		fontsizeTexts(1.5 * DOZEN_HEIGHT, this.titleText);
+
+		this.wordsText.setPosition(6 * DOZEN_WIDTH, 5 * DOZEN_HEIGHT);
+		this.numbersText.setPosition(6 * DOZEN_WIDTH + 3.45 * DOZEN_HEIGHT, 5 * DOZEN_HEIGHT);
+		fontsizeTexts(6 * UNIT_HEIGHT, this.wordsText, this.numbersText);
+		this.wordsText.setPadding(4 * UNIT_HEIGHT, 2.5 * UNIT_HEIGHT, DOZEN_HEIGHT, 2.5 * UNIT_HEIGHT);
+		this.wordsText.setLineSpacing(6 * UNIT_HEIGHT);
+		this.numbersText.setLineSpacing(6 * UNIT_HEIGHT);
+
+		this.menuButton.setPosition(CENTER_WIDTH, 8 * DOZEN_HEIGHT);
+		this.restartButton.setPosition(CENTER_WIDTH, 10 * DOZEN_HEIGHT);
+		this.currentButton.setPosition(9 * DOZEN_WIDTH, 10 * DOZEN_HEIGHT);
+		paddingTexts(4 * UNIT_HEIGHT, 2 * UNIT_HEIGHT, this.menuButton, this.restartButton, this.currentButton);
+		fontsizeTexts(9 * UNIT_HEIGHT, this.menuButton, this.restartButton, this.currentButton);
+
+		for (let text of [
+			this.titleText,
+			this.wordsText,
+			this.numbersText,
+			this.restartButton,
+			this.menuButton,
+			this.currentButton,
+		])
+			text.setStroke(GAMEOVER_TEXT_ONE, UNIT_HEIGHT);
 	}
 
 	createButton(x, y, text, callback) {
@@ -197,5 +253,7 @@ export class GameOver extends Scene {
 		button.on("pointerdown", callback); // Execute the callback on click
 		button.on("pointerover", () => button.setScale(1.1)); // Slightly enlarge on hover
 		button.on("pointerout", () => button.setScale(1)); // Reset scale when not hovered
+
+		return button;
 	}
 }

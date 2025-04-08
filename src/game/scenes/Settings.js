@@ -1,11 +1,5 @@
 import Phaser from "phaser";
 import {COLOR_THEMES} from "../../game-objects/constants.js";
-import WebFont from "webfontloader";
-
-// Define the color constants (can be moved to a separate constants file if preferred)
-const TEXT_COLOR = "#f28d3e"; // Text color
-const BACKGROUND_COLOR = "#444"; // Background color
-const STROKE_COLOR = "#000000"; // Stroke color
 
 export class Settings extends Phaser.Scene {
 	constructor() {
@@ -94,25 +88,38 @@ export class Settings extends Phaser.Scene {
 			yOffset += 50;
 		});
 
-		// Close button with color constants applied
-		const closeButton = this.add.text(625, 625, "Close Settings", {
-			fontFamily: "'Pixelify Sans', sans-serif",
-			fontSize: 25,
-			backgroundColor: BACKGROUND_COLOR, // Use BACKGROUND_COLOR constant
-			color: TEXT_COLOR, // Use TEXT_COLOR constant
-			stroke: STROKE_COLOR, // Use STROKE_COLOR constant
-			strokeThickness: 5,
-			padding: {left: 20, right: 20, top: 10, bottom: 10},
-		});
-		closeButton.setOrigin(0.5);
-		closeButton.setInteractive();
-		closeButton.on(
-			"pointerdown",
-			function () {
-				this.scene.stop("Settings");
-			},
-			this
-		);
+		// Dev Mode Toggle Button
+		// this.add
+		//   .text(200, yOffset, "Toggle Dev Mode", {
+		//     fontSize: "18px",
+		//     fill: "#f28d3e",
+		//     backgroundColor: "#333",
+		//     padding: { x: 10, y: 5 },
+		//   })
+		//   .setInteractive()
+		//   .on("pointerdown", () => {
+		//     toggleDev();
+		//   });
+
+		// yOffset += 50;
+
+		// Close Button (Same Style as "Close Rules")
+		this.add
+			.text(this.cameras.main.width / 2, this.cameras.main.height - 100, "Close Settings", {
+				fontSize: "20px",
+				fill: "#fff",
+				backgroundColor: "#f28d3e",
+				padding: {x: 20, y: 10},
+			})
+			.setOrigin(0.5)
+			.setInteractive()
+			.on(
+				"pointerdown",
+				() => {
+					this.scene.stop("Settings");
+				},
+				this
+			);
 		closeButton.setDepth(100);
 
 		// Close settings by clicking background or box
