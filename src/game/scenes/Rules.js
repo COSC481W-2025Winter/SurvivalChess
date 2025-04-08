@@ -1,12 +1,5 @@
 import {Scene} from "phaser";
 import {EventBus} from "../EventBus";
-import {
-	RULES_BACKGROUND_COLOR,
-	RULES_TEXT_ONE,
-	RULES_TEXT_TWO,
-	RULES_BACKGROUND_COLOR_TWO,
-	RULES_TEXT_THREE,
-} from "../../game-objects/constants";
 
 import {configureButtons, paddingTexts, fontsizeTexts} from "../../game-objects/constants";
 import {
@@ -33,20 +26,50 @@ export class Rules extends Scene {
 	preload() {
 		this.load.setPath("assets");
 
-		// Load the pixel font
 		WebFont.load({
 			google: {
 				families: ["Pixelify Sans"],
 			},
 			active: () => {
-				// Once the font is loaded, we can start the scene
-				this.fontLoaded = true; // Flag to indicate that the font is loaded
+				this.fontLoaded = true;
+				this.createContent();
 			},
 		});
 	}
 
 	create() {
-		// put Rules over game screen
+		if (this.fontLoaded) {
+			this.createContent();
+		}
+	}
+
+	createContent() {
+		/* const selectedPalette = localStorage.getItem("selectedPalette") || "default";
+
+		const themeColors = {
+			default: {
+				fill: 0xe5aa70, // fawn
+				stroke: 0xc04000, // mahogany
+				bgOpacity: 0.3,
+				panelOpacity: 0.9,
+			},
+			dark: {
+				fill: 0xbbb8b1, // replacing fawn
+				stroke: 0x222222, // replacing mahogany
+				bgOpacity: 0.4,
+				panelOpacity: 0.9,
+			},
+			light: {
+				fill: 0x3b3b3b, // replacing fawn
+				stroke: 0xffffff, // replacing mahogany
+				bgOpacity: 0.3,
+				panelOpacity: 0.8,
+			},
+		}[selectedPalette];
+
+		 const fillColor = Phaser.Display.Color.IntegerToColor(themeColors.fill).rgba;
+		const strokeColor = Phaser.Display.Color.IntegerToColor(themeColors.stroke).rgba;*/
+
 		this.scene.moveAbove("MainGame", "Rules");
 		// Creates a visual background that also blocks input on the scene underneath
 		this.bg = this.add.rectangle(1, 1, 1, 1, RULES_BACKGROUND_COLOR, 0.5);

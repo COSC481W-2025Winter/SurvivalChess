@@ -1,11 +1,5 @@
 import {Scene} from "phaser";
 import {EventBus} from "../EventBus";
-import {
-	GAMEOVER_BACKGROUND_COLOR,
-	GAMEOVER_TEXT_ONE,
-	GAMEOVER_TEXT_TWO,
-	GAMEOVER_BACKGROUND_COLOR_TWO,
-} from "../../game-objects/constants";
 import {globalMoves, globalPieces, globalWaves} from "../../game-objects/global-stats";
 
 import {paddingTexts, fontsizeTexts} from "../../game-objects/constants";
@@ -29,21 +23,19 @@ export class GameOver extends Scene {
 	menuButton;
 
 	constructor() {
-		super({key: "GameOver"}); // Scene identifier
+		super({key: "GameOver"});
 	}
 
 	preload() {
 		this.load.audio("endMusic", "../assets/music/SurvivalChess-End.mp3");
 		this.load.setPath("assets");
 
-		// Load the pixel font
 		WebFont.load({
 			google: {
 				families: ["Pixelify Sans"],
 			},
 			active: () => {
-				// Once the font is loaded, we can start the scene
-				this.fontLoaded = true; // Flag to indicate that the font is loaded
+				this.fontLoaded = true;
 			},
 		});
 	}
@@ -115,8 +107,8 @@ export class GameOver extends Scene {
 			this.endMusic.stop();
 			this.endMusicPlaying = false;
 			this.scene.stop("GameOver");
-			this.scene.stop("MainGame"); // Reset main game before menu
-			this.scene.start("Game"); // can change if needed
+			this.scene.stop("MainGame");
+			this.scene.start("MainGame");
 		});
 
 		this.restartButton = this.createButton(0, 0, "Restart Game", () => {
@@ -170,20 +162,19 @@ export class GameOver extends Scene {
 	}
 
 	createButton(x, y, text, callback) {
-		// Create a text-based button with styling
 		const button = this.add
 			.text(x, y, text, {
 				fontFamily: "'Pixelify Sans', sans-serif",
 				fontSize: 20,
-				backgroundColor: GAMEOVER_TEXT_ONE,
-				color: GAMEOVER_TEXT_TWO,
-				stroke: GAMEOVER_TEXT_ONE,
+				backgroundColor: Phaser.Display.Color.IntegerToColor(this.buttonBgColor).rgba,
+				color: Phaser.Display.Color.IntegerToColor(this.buttonTextColor).rgba,
+				stroke: Phaser.Display.Color.IntegerToColor(this.buttonBgColor).rgba,
 				strokeThickness: 5,
 				padding: {left: 20, right: 20, top: 10, bottom: 10},
 			})
-			.setOrigin(0.5) // Center the button
+			.setOrigin(0.5)
 			.setDepth(150)
-			.setInteractive(); // Make it clickable
+			.setInteractive();
 
 		// Set up button interactions
 		button.on("pointerdown", callback); // Execute the callback on click

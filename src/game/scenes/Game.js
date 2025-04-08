@@ -19,7 +19,6 @@ import {
 	KING,
 	CREAMHEX,
 	ONYXHEX,
-	BACKGROUND_COLOR,
 	PLAYER,
 	COMPUTER,
 } from "../../game-objects/constants";
@@ -87,10 +86,20 @@ export class Game extends Scene {
 			},
 		});
 
-		this.cameras.main.setBackgroundColor(BACKGROUND_COLOR);
+		const savedPalette = localStorage.getItem("selectedPalette") || "default";
+
+		const themeColors = {
+			default: {background: 0x3b3b3b, panel: 0xc04000, stroke: 0xc04000},
+			dark: {background: 0x222222, panel: 0xbbb8b1, stroke: 0x222222},
+			light: {background: 0xffffff, panel: 0x3b3b3b, stroke: 0x3b3b3b},
+		}[savedPalette];
+
+		this.cameras.main.setBackgroundColor(themeColors.background);
 
 		// Add Chessboard & Chess Piece Images
 		this.chessTiles = new ChessTiles(this);
+
+		this.chessTiles.updateColorTheme(savedPalette);
 
 		this.endButton = this.add.text(0, 0, "End Game!", {
 			fill: CREAMHEX,
@@ -152,5 +161,21 @@ export class Game extends Scene {
 		fontsizeTexts(6 * UNIT_HEIGHT, this.endButton, this.settingsButton, this.rulesButton);
 		paddingTexts(4 * UNIT_HEIGHT, 2 * UNIT_HEIGHT, this.endButton, this.settingsButton, this.rulesButton);
 		this.chessTiles.resize();
+	}
+	changeBackground() {
+		const selectedPalette = localStorage.getItem("selectedPalette") || "default";
+
+		const themeColors = {
+			default: {background: 0x3b3b3b, panel: 0xc04000, stroke: 0xc04000},
+			dark: {background: 0x222222, panel: 0xbbb8b1, stroke: 0x222222},
+			light: {background: 0xffffff, panel: 0x3b3b3b, stroke: 0x3b3b3b},
+		}[selectedPalette];
+
+		// Check if camera exists
+		if (this.cameras && this.cameras.main) {
+			this.cameras.main.setBackgroundColor(themeColors.background);
+		} else {
+			console.error("Main camera not available.");
+		}
 	}
 }

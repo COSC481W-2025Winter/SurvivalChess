@@ -1,9 +1,8 @@
 import {Scene} from "phaser";
 import {EventBus} from "../EventBus";
-
 import {RulesButton} from "./RulesButton";
 
-import {START_BACKGROUND_COLOR, START_TEXT_ONE, START_TEXT_TWO} from "../../game-objects/constants";
+import {START_TEXT_ONE, START_TEXT_TWO} from "../../game-objects/constants";
 
 import {configureButtons, paddingTexts, fontsizeTexts} from "../../game-objects/constants";
 import {resize_constants} from "../../game-objects/constants";
@@ -34,6 +33,7 @@ export class Start extends Scene {
 
 		this.load.audio("backgroundMusic", "../assets/music/SurvivalChess-Menu.mp3");
 	}
+
 	async create() {
 		// Load the pixel font
 		WebFont.load({
@@ -41,8 +41,7 @@ export class Start extends Scene {
 				families: ["Pixelify Sans"],
 			},
 			active: () => {
-				// Once the font is loaded, we can start the scene
-				this.fontLoaded = true; // Flag to indicate that the font is loaded
+				this.fontLoaded = true;
 
 				// Play music
 				this.backgroundMusic = this.sound.add("backgroundMusic", {loop: true, volume: 0.5});
@@ -64,16 +63,30 @@ export class Start extends Scene {
 					}
 				});
 
-				this.cameras.main.setBackgroundColor(START_BACKGROUND_COLOR);
+				// Get selected color palette
+				const selectedPalette = localStorage.getItem("selectedPalette") || "default";
 
+				const themeColors = {
+					default: {background: 0xe5aa70, panel: 0xc04000, stroke: 0xc04000},
+					dark: {background: 0x222222, panel: 0xbbb8b1, stroke: 0x222222},
+					light: {background: 0xffffff, panel: 0x3b3b3b, stroke: 0x3b3b3b},
+				}[selectedPalette];
+
+				// Set background
+				this.cameras.main.setBackgroundColor(themeColors.background);
+
+				// === Title: Survival Chess ===
 				this.titleText = this.add
 					.text(0, 0, "Survival Chess", {
 						fontFamily: "'Pixelify Sans', sans-serif",
-						color: START_TEXT_ONE,
-						stroke: START_TEXT_TWO,
+						fontSize: 130,
+						color: "#FFFFFF", // Always white fill
+						stroke: Phaser.Display.Color.IntegerToColor(themeColors.stroke).rgba, // Theme-based border
+						strokeThickness: 8,
 						align: "center",
 					})
 					.setOrigin(0.5);
+				// === Description Panel ===
 				this.introText = this.add
 					.text(
 						0,
@@ -81,14 +94,17 @@ export class Start extends Scene {
 						"Survival Chess is an arcade style chess game. In this game, you play chess against a computer while trying to survive waves of incoming pieces. Capture as many pieces as you can while avoiding checkmate. Good Luck!",
 						{
 							fontFamily: "'Pixelify Sans', sans-serif",
-							color: START_TEXT_TWO,
-							backgroundColor: START_TEXT_ONE,
-							stroke: START_TEXT_TWO,
+							color: Phaser.Display.Color.IntegerToColor(themeColors.stroke).rgba,
+							backgroundColor: "#FFFFFF", // Always white
+							stroke: Phaser.Display.Color.IntegerToColor(themeColors.stroke).rgba,
+							strokeThickness: 0,
 							align: "center",
+							padding: 15,
 							wordWrap: {width: 4 * DOZEN_WIDTH}, // Explicitly enable word wrap
 						}
 					)
 					.setOrigin(0.5);
+				// === Credits Panel ===
 				this.creditText = this.add
 					.text(
 						0,
@@ -96,15 +112,17 @@ export class Start extends Scene {
 						"Credits: Riana Therrien, Marley Higbee, David Goh, Kaydee Ferrel, Hope Heck, Durva Kadam, Mohamad Tiba, Ritu Ghosh",
 						{
 							fontFamily: "'Pixelify Sans', sans-serif",
-							color: START_TEXT_TWO,
-							backgroundColor: START_TEXT_ONE,
-							stroke: START_TEXT_TWO,
+							color: Phaser.Display.Color.IntegerToColor(themeColors.stroke).rgba,
+							backgroundColor: "#FFFFFF", // Always white
+							stroke: Phaser.Display.Color.IntegerToColor(themeColors.stroke).rgba,
+							strokeThickness: 0,
 							align: "center",
 							fixedWidth: WINDOW_WIDTH,
 						}
 					)
 					.setOrigin(0.5);
 
+				// === Start Button ===
 				this.startButton = this.add.text(0, 0, "Start Game", {
 					fontFamily: "'Pixelify Sans', sans-serif",
 					fill: START_TEXT_ONE,
@@ -129,10 +147,11 @@ export class Start extends Scene {
 					this
 				);
 
+				// === Settings Button ===
 				this.settingsButton = this.add.text(0, 0, "Settings", {
 					fontFamily: "'Pixelify Sans', sans-serif",
-					fill: START_TEXT_ONE,
-					backgroundColor: START_TEXT_TWO,
+					fill: "#FFFFFF", // Always white text
+					backgroundColor: Phaser.Display.Color.IntegerToColor(themeColors.panel).rgba,
 				});
 				this.settingsButton.on(
 					"pointerdown",
@@ -152,12 +171,15 @@ export class Start extends Scene {
 					this
 				);
 
+				// === Rules Button ===
 				this.rulesButton = this.add.text(0, 0, "Rules", {
 					fontFamily: "'Pixelify Sans', sans-serif",
-					fill: START_TEXT_ONE,
-					backgroundColor: START_TEXT_TWO,
+					fill: "#FFFFFF",
+					backgroundColor: Phaser.Display.Color.IntegerToColor(themeColors.panel).rgba,
 				});
 				this.rulesButton.on("pointerdown", new RulesButton(this).click, this);
+				this.rulesButton.on("pointerover", () => rulesButton.setScale(1.2));
+				this.rulesButton.on("pointerout", () => rulesButton.setScale(1));
 
 				const scene = this;
 				configureButtons(this.startButton, this.settingsButton, this.rulesButton);
@@ -171,6 +193,10 @@ export class Start extends Scene {
 
 				this.resize();
 				EventBus.emit("current-scene-ready", this);
+
+				EventBus.on("PaletteChanged", () => {
+					this.scene.restart();
+				});
 			},
 		});
 	}

@@ -1,14 +1,5 @@
 import {TILE_SIZE, X_ANCHOR, Y_ANCHOR} from "./constants";
-import {
-	HOVER_COLOR,
-	WHITE_TILE_COLOR,
-	BLACK_TILE_COLOR,
-	NON_LETHAL_COLOR,
-	LETHAL_COLOR,
-	THREAT_COLOR,
-	CHECKED_COLOR,
-	STAGE_COLOR,
-} from "./constants";
+import {HOVER_COLOR, NON_LETHAL_COLOR, LETHAL_COLOR, THREAT_COLOR, CHECKED_COLOR, STAGE_COLOR} from "./constants";
 import WebFont from "webfontloader"; // Correctly import WebFont
 import {SIDE_BASE_COLOR, SIDE_HIGHLIGHT_COLOR} from "./constants";
 import {PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING} from "./constants";
@@ -34,6 +25,7 @@ import {EventBus} from "../game/EventBus";
 
 export class ChessTiles {
 	constructor(scene) {
+		this.scene = scene;
 		// Load the pixel font
 		WebFont.load({
 			google: {
@@ -44,7 +36,16 @@ export class ChessTiles {
 			},
 		});
 
-		this.scene = scene;
+		// Register theme change listener
+		EventBus.on("PaletteChanged", (palette) => {
+			this.updateColorTheme(palette);
+		});
+
+		this.currentTheme = {
+			light: 0xe5aa70, // default light
+			dark: 0xc04000, // default dark
+		};
+
 		this.chessTiles; // 8x8 array of chess tiles
 		this.boardState; // contains BoardState object that manages an 8x8 array of chess pieces
 		this.pieceCoordinates; // contains PieceCoordinates object that manages coordinate info sorted by rank & alignment
@@ -151,6 +152,30 @@ export class ChessTiles {
 		this.boardState = new BoardState(this.scene, this.pieceCoordinates);
 		this.piecesTaken = new PiecesTaken(this.scene);
 		this.devButtons = new DevButtons(this.scene, this);
+	} // constructor ends here!!
+
+	// modified this
+	updateColorTheme(palette) {
+		const themeColors = {
+			default: {light: 0xe5aa70, dark: 0xc04000},
+			dark: {light: 0xbbb8b1, dark: 0x222222},
+			light: {light: 0xffffff, dark: 0x3b3b3b},
+		}[palette] || {light: 0xe5aa70, dark: 0xc04000};
+
+		this.currentTheme = themeColors;
+
+		// Update board tiles immediately
+		for (let i = 0; i < 8; i++) {
+			for (let j = 0; j < 8; j++) {
+				const isLight = (i + j) % 2 === 0;
+				this.chessTiles[i][j].setFillStyle(isLight ? themeColors.light : themeColors.dark);
+			}
+		}
+
+		// Update captured panel
+		if (this.piecesTaken?.updatePanelColor) {
+			this.piecesTaken.updatePanelColor(themeColors.dark, themeColors.light);
+		}
 	}
 
 	resize() {
@@ -568,7 +593,7 @@ export class ChessTiles {
 
 	// Get original tile color
 	getTileColor([col, row]) {
-		return (col + row) % 2 == 0 ? WHITE_TILE_COLOR : BLACK_TILE_COLOR;
+		return (col + row) % 2 === 0 ? this.currentTheme.light : this.currentTheme.dark;
 	}
 
 	// Restore original tile color
