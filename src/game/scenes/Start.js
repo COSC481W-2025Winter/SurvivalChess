@@ -177,7 +177,9 @@ export class Start extends Scene {
 						this.backgroundMusic.stop();
 						this.backgroundMusicPlaying = false;
 					}
-					this.scene.restart();
+					if (this.scene.isVisible("Game")) {
+						this.scene.restart();
+					}
 				});
 			},
 		});

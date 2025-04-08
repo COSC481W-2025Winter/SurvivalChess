@@ -189,7 +189,7 @@ export class ChessTiles {
 
 		// Update captured panel
 		if (this.piecesTaken?.updatePanelColor) {
-			this.piecesTaken.updatePanelColor(themeColors.dark, themeColors.light);
+			this.piecesTaken.updatePanelColor(themeColors.dark, themeColors.light, palette);
 		}
 	}
 

@@ -99,9 +99,14 @@ export class PiecesTaken {
 		}
 	}
 	// Method to update panel colors based on theme
-	updatePanelColor(darkHex, lightHex) {
+	updatePanelColor(darkHex, lightHex, palette = "default") {
 		if (this.box2) this.box2.setFillStyle(darkHex);
 		if (this.box1) this.box1.setFillStyle(lightHex);
+
+		// Update title text color based on theme
+		if (this.titleText) {
+			this.titleText.setColor(palette === "light" ? "#3B3B3B" : "#FFFFFF");
+		}
 	}
 
 	addPiece(i, j, rank, alignment) {
