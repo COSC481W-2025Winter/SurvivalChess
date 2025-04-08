@@ -1,6 +1,5 @@
 import {Scene} from "phaser";
 import {EventBus} from "../EventBus";
-import {RulesButton} from "./RulesButton";
 
 import {START_TEXT_ONE, START_TEXT_TWO} from "../../game-objects/constants";
 
@@ -177,9 +176,23 @@ export class Start extends Scene {
 					fill: "#FFFFFF",
 					backgroundColor: Phaser.Display.Color.IntegerToColor(themeColors.panel).rgba,
 				});
-				this.rulesButton.on("pointerdown", new RulesButton(this).click, this);
-				this.rulesButton.on("pointerover", () => rulesButton.setScale(1.2));
-				this.rulesButton.on("pointerout", () => rulesButton.setScale(1));
+				this.rulesButton.on(
+					"pointerdown",
+					function () {
+						import("./Rules") // Dynamically import the Rules scene
+							.then((module) => {
+								// Only add the scene if it's not already registered
+								if (!this.scene.get("Rules")) {
+									this.scene.add("Rules", module.Rules); // Add the scene dynamically
+								}
+
+								// Start the scene
+								this.scene.launch("Rules");
+								this.scene.moveAbove("MainGame", "Rules");
+							});
+					},
+					this
+				);
 
 				const scene = this;
 				configureButtons(this.startButton, this.settingsButton, this.rulesButton);

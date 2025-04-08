@@ -23,7 +23,7 @@ export class GameOver extends Scene {
 	menuButton;
 
 	constructor() {
-		super({key: "GameOver"});
+		super("GameOver");
 	}
 
 	preload() {
@@ -55,7 +55,6 @@ export class GameOver extends Scene {
 		this.scene.moveAbove("MainGame", "GameOver");
 		// Creates an invisible background that also blocks input on the scene underneath
 		this.bg = this.add.rectangle(1, 1, 1, 1, GAMEOVER_BACKGROUND_COLOR, 0);
-		this.bg.setDepth(50);
 
 		// Creates a visual background that also blocks input on the scene underneath
 		this.square = this.add.rectangle(
@@ -77,7 +76,7 @@ export class GameOver extends Scene {
 				align: "center",
 			})
 			.setOrigin(0.5)
-			.setDepth(100);
+			.setDepth(101);
 
 		this.wordsText = this.add
 			.text(0, 0, "Number of Moves Made: \nNumber of Captured Pieces: \nNumber of Waves Survived: ", {
