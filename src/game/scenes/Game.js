@@ -6,6 +6,10 @@ import {RulesButton} from "./RulesButton";
 
 import {ChessTiles} from "../../game-objects/chess-tiles";
 
+import {RIGHT_X_CENTER} from "../../game-objects/constants";
+import {DOZEN_HEIGHT, UNIT_HEIGHT} from "../../game-objects/constants";
+import {configureButtons, paddingTexts, fontsizeTexts} from "../../game-objects/constants";
+
 import {
 	PAWN,
 	ROOK,
@@ -21,6 +25,11 @@ import {
 } from "../../game-objects/constants";
 
 export class Game extends Scene {
+	endButton;
+	settingsButton;
+	rulesButton;
+	chessTiles;
+
 	constructor() {
 		super("MainGame");
 	}
@@ -80,21 +89,15 @@ export class Game extends Scene {
 
 		this.cameras.main.setBackgroundColor(BACKGROUND_COLOR);
 
-		// and a board, and an icon, and a black tile, and a white tile; Totaling to 40 images
-		new ChessTiles(this);
+		// Add Chessboard & Chess Piece Images
+		this.chessTiles = new ChessTiles(this);
 
-		const endButton = this.add.text(100, 100, "End Game!", {
+		this.endButton = this.add.text(0, 0, "End Game!", {
 			fill: CREAMHEX,
 			backgroundColor: ONYXHEX,
 			fontFamily: "'Pixelify Sans', sans-serif",
-			fontSize: 20,
-			padding: {left: 20, right: 20, top: 10, bottom: 10},
 		});
-		endButton.setPosition(1050, 700);
-		endButton.setInteractive();
-		endButton.setOrigin(0.5);
-
-		endButton.on(
+		this.endButton.on(
 			"pointerdown",
 			function () {
 				import("./GameOver") //
@@ -114,61 +117,40 @@ export class Game extends Scene {
 			this
 		);
 
-		// When the pointer hovers over the button, scale it up
-		endButton.on("pointerover", () => {
-			endButton.setScale(1.2); // Increase the scale (grow the button by 20%)
-		});
-
-		// When the pointer moves away from the button, reset the scale to normal
-		endButton.on("pointerout", () => {
-			endButton.setScale(1); // Reset to original size
-		});
-
-		const settingsButton = this.add.text(100, 100, "See Settings", {
+		this.settingsButton = this.add.text(0, 0, "Settings", {
 			fill: CREAMHEX,
 			backgroundColor: ONYXHEX,
 			fontFamily: "'Pixelify Sans', sans-serif",
-			fontSize: 20,
-			padding: {left: 20, right: 20, top: 10, bottom: 10},
 		});
+		this.settingsButton.on("pointerdown", new SettingsButton(this).click, this);
 
-		const rulesButton = this.add.text(100, 100, "See Rules", {
+		this.rulesButton = this.add.text(0, 0, "Rules", {
 			fill: CREAMHEX,
 			backgroundColor: ONYXHEX,
 			fontFamily: "'Pixelify Sans', sans-serif",
-			fontSize: 20,
-			padding: {left: 20, right: 20, top: 10, bottom: 10},
 		});
+		this.rulesButton.on("pointerdown", new RulesButton(this).click, this);
 
-		settingsButton.setPosition(1050, 600);
-		settingsButton.setInteractive();
-		settingsButton.setOrigin(0.5);
-		settingsButton.on("pointerdown", new SettingsButton(this).click, this);
-		// When the pointer hovers over the button, scale it up
-		settingsButton.on("pointerover", () => {
-			settingsButton.setScale(1.2); // Increase the scale (grow the button by 20%)
-		});
-		// When the pointer moves away from the button, reset the scale to normal
-		settingsButton.on("pointerout", () => {
-			settingsButton.setScale(1); // Reset to original size
-		});
+		const scene = this;
+		configureButtons(this.endButton, this.settingsButton, this.rulesButton);
+		window.addEventListener(
+			"resize",
+			function (event) {
+				scene.resize();
+			},
+			false
+		);
 
-		rulesButton.setPosition(1050, 650);
-
-		rulesButton.setInteractive();
-		rulesButton.setOrigin(0.5);
-		rulesButton.on("pointerdown", new RulesButton(this).click, this);
-
-		// When the pointer hovers over the button, scale it up
-		rulesButton.on("pointerover", () => {
-			rulesButton.setScale(1.2); // Increase the scale (grow the button by 20%)
-		});
-
-		// When the pointer moves away from the button, reset the scale to normal
-		rulesButton.on("pointerout", () => {
-			rulesButton.setScale(1); // Reset to original size
-		});
-
+		this.resize();
 		EventBus.emit("current-scene-ready", this);
+	}
+
+	resize() {
+		this.settingsButton.setPosition(RIGHT_X_CENTER, 9 * DOZEN_HEIGHT);
+		this.rulesButton.setPosition(RIGHT_X_CENTER, 10 * DOZEN_HEIGHT);
+		this.endButton.setPosition(RIGHT_X_CENTER, 11 * DOZEN_HEIGHT);
+		fontsizeTexts(6 * UNIT_HEIGHT, this.endButton, this.settingsButton, this.rulesButton);
+		paddingTexts(4 * UNIT_HEIGHT, 2 * UNIT_HEIGHT, this.endButton, this.settingsButton, this.rulesButton);
+		this.chessTiles.resize();
 	}
 }
