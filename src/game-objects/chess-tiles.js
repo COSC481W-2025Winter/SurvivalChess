@@ -27,6 +27,8 @@ import {dev_alignment, dev_rank, dev_bamzap, dev_stopOn, dev_deadAI} from "./dev
 import {BAM, ZAP} from "./dev-buttons";
 import {DevButtons} from "./dev-buttons";
 
+import {fontsizeTexts} from "./constants";
+
 import {EventBus} from "../game/EventBus";
 
 export class ChessTiles {
@@ -189,6 +191,37 @@ export class ChessTiles {
 		if (this.piecesTaken?.updatePanelColor) {
 			this.piecesTaken.updatePanelColor(themeColors.dark, themeColors.light);
 		}
+	}
+
+	resize() {
+		this.stage.setPosition(X_ANCHOR + 3.5 * TILE_SIZE, Y_ANCHOR + 3.5 * TILE_SIZE);
+		this.stage.setSize(9 * TILE_SIZE, 9 * TILE_SIZE);
+		for (let i = 0; i < 4; i++)
+			for (let j = 0; j < 8; j++) {
+				fontsizeTexts(TILE_SIZE / 2, this.sideLights[i][j]);
+				switch (i) {
+					case 0: // [0,1][0~7] top & bottom rows of a~h
+						this.sideLights[i][j].setPosition(X_ANCHOR + j * TILE_SIZE, Y_ANCHOR - 0.75 * TILE_SIZE);
+						break;
+					case 1: // [0,1][0~7] top & bottom rows of a~h
+						this.sideLights[i][j].setPosition(X_ANCHOR + j * TILE_SIZE, Y_ANCHOR + 7.75 * TILE_SIZE);
+						break;
+					case 2: // [2,3][0~7] left & right columns of 1~8
+						this.sideLights[i][j].setPosition(X_ANCHOR - 0.75 * TILE_SIZE, Y_ANCHOR + j * TILE_SIZE);
+						break;
+					case 3: // [2,3][0~7] left & right columns of 1~8
+						this.sideLights[i][j].setPosition(X_ANCHOR + 7.75 * TILE_SIZE, Y_ANCHOR + j * TILE_SIZE);
+						break;
+				}
+			}
+		for (let i = 0; i < 8; i++)
+			for (let j = 0; j < 8; j++) {
+				this.chessTiles[i][j].setPosition(X_ANCHOR + i * TILE_SIZE, Y_ANCHOR + j * TILE_SIZE);
+				this.chessTiles[i][j].setSize(TILE_SIZE, TILE_SIZE);
+			}
+		this.boardState.resize();
+		this.devButtons.resize();
+		this.piecesTaken.resize();
 	}
 
 	// ================================================================

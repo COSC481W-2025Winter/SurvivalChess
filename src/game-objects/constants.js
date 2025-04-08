@@ -1,9 +1,81 @@
-// === TILE & BOARD POSITIONING ===
+let WINDOW_WIDTH;
+let WINDOW_HEIGHT;
+let CENTER_WIDTH;
+let CENTER_HEIGHT;
+let DOZEN_WIDTH;
+let DOZEN_HEIGHT;
+let UNIT_WIDTH;
+let UNIT_HEIGHT;
+
+let TILE_SIZE;
+let X_CENTER;
+let Y_CENTER;
+let X_ANCHOR;
+let Y_ANCHOR;
+
+let LEFT_X_CENTER;
+let RIGHT_X_CENTER;
+let LEFT_UNIT;
+let RIGHT_UNIT;
+
+resize_constants();
+
+export function configureButtons(...buttons) {
+	for (let button of buttons)
+		button
+			.setOrigin(0.5)
+			.setInteractive()
+			.on("pointerover", () => {
+				button.setScale(1.2); // Increase the scale (grow the button by 20%)
+			})
+			.on("pointerout", () => {
+				button.setScale(1); // Reset to original size
+			});
+}
+
+export function paddingTexts(width, height, ...texts) {
+	for (let text of texts) text.setPadding(width, height);
+}
+
+export function fontsizeTexts(fontSize, ...texts) {
+	for (let text of texts) text.setFontSize(fontSize);
+}
+
+export function resize_constants(scene = null) {
+	WINDOW_WIDTH = window.innerWidth;
+	WINDOW_HEIGHT = window.innerHeight;
+	if (WINDOW_WIDTH / WINDOW_HEIGHT > 21 / 9) WINDOW_WIDTH = (WINDOW_HEIGHT * 21) / 9;
+	else if (WINDOW_WIDTH / WINDOW_HEIGHT < 16 / 10) WINDOW_HEIGHT = (WINDOW_WIDTH / 16) * 10;
+
+	CENTER_WIDTH = WINDOW_WIDTH / 2;
+	CENTER_HEIGHT = WINDOW_HEIGHT / 2;
+	DOZEN_WIDTH = WINDOW_WIDTH / 12 ** 1;
+	DOZEN_HEIGHT = WINDOW_HEIGHT / 12 ** 1;
+	UNIT_WIDTH = WINDOW_WIDTH / 12 ** 2;
+	UNIT_HEIGHT = WINDOW_HEIGHT / 12 ** 2;
+
+	TILE_SIZE = WINDOW_HEIGHT / 9;
+	X_CENTER = 4 * DOZEN_HEIGHT + 2 * DOZEN_WIDTH;
+	Y_CENTER = CENTER_HEIGHT;
+	X_ANCHOR = X_CENTER - 2.5 * TILE_SIZE;
+	Y_ANCHOR = Y_CENTER - 3.5 * TILE_SIZE;
+
+	LEFT_X_CENTER = (X_ANCHOR - TILE_SIZE) / 2;
+	RIGHT_X_CENTER = (WINDOW_WIDTH + (X_ANCHOR + 8 * TILE_SIZE)) / 2;
+	LEFT_UNIT = LEFT_X_CENTER / 3;
+	RIGHT_UNIT = (WINDOW_WIDTH - RIGHT_X_CENTER) / 3;
+
+	if (scene != null) scene.scale.resize(WINDOW_WIDTH, WINDOW_HEIGHT);
+}
+
+export {WINDOW_WIDTH, WINDOW_HEIGHT, CENTER_WIDTH, CENTER_HEIGHT, DOZEN_WIDTH, DOZEN_HEIGHT, UNIT_WIDTH, UNIT_HEIGHT};
+export {LEFT_X_CENTER, RIGHT_X_CENTER, LEFT_UNIT, RIGHT_UNIT};
+/* // === TILE & BOARD POSITIONING ===
 const TILE_SIZE = 80;
 const X_CENTER = 500;
 const Y_CENTER = 360;
 const X_ANCHOR = X_CENTER - 3.5 * TILE_SIZE;
-const Y_ANCHOR = Y_CENTER - 3.5 * TILE_SIZE;
+const Y_ANCHOR = Y_CENTER - 3.5 * TILE_SIZE;*/
 
 // === COLOR HEX CODES ===
 const GRAY = "7D7F7C";
@@ -128,6 +200,11 @@ export function isSamePoint([col1, row1], [col2, row2]) {
 
 export function dim2Array(dim1, dim2) {
 	return Array.from(Array(dim1), () => new Array(dim2));
+}
+
+export function zip(...arrays) {
+	const length = Math.min(...arrays.map((arr) => arr.length));
+	return Array.from({length}, (_, i) => arrays.map((arr) => arr[i]));
 }
 
 // === EXPORTS ===

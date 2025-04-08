@@ -2,7 +2,27 @@ import {Scene} from "phaser";
 import {EventBus} from "../EventBus";
 import {RulesButton} from "./RulesButton";
 
+import {START_TEXT_ONE, START_TEXT_TWO} from "../../game-objects/constants";
+
+import {configureButtons, paddingTexts, fontsizeTexts} from "../../game-objects/constants";
+import {resize_constants} from "../../game-objects/constants";
+import {
+	WINDOW_WIDTH,
+	CENTER_WIDTH,
+	DOZEN_WIDTH,
+	DOZEN_HEIGHT,
+	UNIT_WIDTH,
+	UNIT_HEIGHT,
+} from "../../game-objects/constants";
+
 export class Start extends Scene {
+	titleText;
+	introText;
+	creditText;
+	startButton;
+	settingsButton;
+	rulesButton;
+
 	constructor() {
 		super("Game");
 		this.fontLoaded = false;
@@ -10,16 +30,38 @@ export class Start extends Scene {
 
 	preload() {
 		this.load.setPath("assets");
-		this.load.image("logo", "logo.png");
+
+		this.load.audio("backgroundMusic", "../assets/music/SurvivalChess-Menu.mp3");
 	}
 
 	async create() {
+		// Load the pixel font
 		WebFont.load({
 			google: {
 				families: ["Pixelify Sans"],
 			},
 			active: () => {
 				this.fontLoaded = true;
+
+				// Play music
+				this.backgroundMusic = this.sound.add("backgroundMusic", {loop: true, volume: 0.5});
+				this.backgroundMusicPlaying = false;
+
+				// Try to play music without user click
+				this.backgroundMusic.play();
+				if (this.backgroundMusic.isPlaying) {
+					this.backgroundMusicPlaying = true;
+				}
+
+				// If it is not playing it will wait for user click
+				// This is necessary for most browsers settings
+				this.input.on("pointerdown", () => {
+					if (!this.backgroundMusicPlaying) {
+						// Play only if not already playing
+						this.backgroundMusic.play();
+						this.backgroundMusicPlaying = true;
+					}
+				});
 
 				// Get selected color palette
 				const selectedPalette = localStorage.getItem("selectedPalette") || "default";
@@ -34,8 +76,8 @@ export class Start extends Scene {
 				this.cameras.main.setBackgroundColor(themeColors.background);
 
 				// === Title: Survival Chess ===
-				this.add
-					.text(630, 230, "Survival Chess", {
+				this.titleText = this.add
+					.text(0, 0, "Survival Chess", {
 						fontFamily: "'Pixelify Sans', sans-serif",
 						fontSize: 130,
 						color: "#FFFFFF", // Always white fill
@@ -43,99 +85,113 @@ export class Start extends Scene {
 						strokeThickness: 8,
 						align: "center",
 					})
-					.setOrigin(0.5)
-					.setDepth(100);
-
+					.setOrigin(0.5);
 				// === Description Panel ===
-				this.add
+				this.introText = this.add
 					.text(
-						630,
-						525,
+						0,
+						0,
 						"Survival Chess is an arcade style chess game. In this game, you play chess against a computer while trying to survive waves of incoming pieces. Capture as many pieces as you can while avoiding checkmate. Good Luck!",
 						{
 							fontFamily: "'Pixelify Sans', sans-serif",
-							fontSize: 20,
 							color: Phaser.Display.Color.IntegerToColor(themeColors.stroke).rgba,
 							backgroundColor: "#FFFFFF", // Always white
 							stroke: Phaser.Display.Color.IntegerToColor(themeColors.stroke).rgba,
 							strokeThickness: 0,
 							align: "center",
 							padding: 15,
-							fixedWidth: 570,
-							wordWrap: {width: 560},
+							wordWrap: {width: 4 * DOZEN_WIDTH}, // Explicitly enable word wrap
 						}
 					)
-					.setOrigin(0.5)
-					.setDepth(100);
-
+					.setOrigin(0.5);
 				// === Credits Panel ===
-				this.add
+				this.creditText = this.add
 					.text(
-						625,
-						710,
+						0,
+						0,
 						"Credits: Riana Therrien, Marley Higbee, David Goh, Kaydee Ferrel, Hope Heck, Durva Kadam, Mohamad Tiba, Ritu Ghosh",
 						{
 							fontFamily: "'Pixelify Sans', sans-serif",
-							fontSize: 20,
 							color: Phaser.Display.Color.IntegerToColor(themeColors.stroke).rgba,
 							backgroundColor: "#FFFFFF", // Always white
 							stroke: Phaser.Display.Color.IntegerToColor(themeColors.stroke).rgba,
 							strokeThickness: 0,
 							align: "center",
-							padding: 10,
-							fixedWidth: 1500,
+							fixedWidth: WINDOW_WIDTH,
 						}
 					)
-					.setOrigin(0.5)
-					.setDepth(100);
+					.setOrigin(0.5);
 
 				// === Start Button ===
-				const startButton = this.add.text(550, 370, "Start Game", {
+				this.startButton = this.add.text(0, 0, "Start Game", {
+					fontFamily: "'Pixelify Sans', sans-serif",
+					fill: START_TEXT_ONE,
+					backgroundColor: START_TEXT_TWO,
+				});
+				this.startButton.on(
+					"pointerdown",
+					function () {
+						import("./Game") // Dynamically import the Game scene
+							.then((module) => {
+								// Stop background music
+								this.backgroundMusic.stop();
+								this.backgroundMusicPlaying = false;
+								// Only add the scene if it's not already registered
+								if (!this.scene.get("MainGame")) {
+									this.scene.add("MainGame", module.Game); // Add the MainGame scene dynamically
+								}
+								// Start the MainGame scene
+								this.scene.start("MainGame");
+							});
+					},
+					this
+				);
+
+				// === Settings Button ===
+				this.settingsButton = this.add.text(0, 0, "Settings", {
 					fontFamily: "'Pixelify Sans', sans-serif",
 					fill: "#FFFFFF", // Always white text
 					backgroundColor: Phaser.Display.Color.IntegerToColor(themeColors.panel).rgba,
-					padding: {left: 20, right: 20, top: 10, bottom: 10},
 				});
-				startButton.setInteractive();
-				startButton.on("pointerdown", () => {
-					import("./Game").then((module) => {
-						if (!this.scene.get("MainGame")) {
-							this.scene.add("MainGame", module.Game);
-						}
-						this.scene.start("MainGame");
-					});
-				});
+				this.settingsButton.on(
+					"pointerdown",
+					function () {
+						import("./Settings") // Dynamically import the Settings scene
+							.then((module) => {
+								// Only add the scene if it's not already registered
+								if (!this.scene.get("Settings")) {
+									this.scene.add("Settings", module.Settings); // Add the scene dynamically
+								}
 
-				// === Settings Button ===
-				const settingsButton = this.add.text(1100, 70, "Settings", {
-					fontFamily: "'Pixelify Sans', sans-serif",
-					fill: "#FFFFFF",
-					backgroundColor: Phaser.Display.Color.IntegerToColor(themeColors.panel).rgba,
-					padding: {left: 20, right: 20, top: 10, bottom: 10},
-				});
-				settingsButton.setInteractive();
-				settingsButton.on("pointerdown", () => {
-					import("./Settings").then((module) => {
-						if (!this.scene.get("Settings")) {
-							this.scene.add("Settings", module.Settings);
-						}
-						this.scene.launch("Settings");
-						this.scene.moveAbove("MainGame", "Settings");
-					});
-				});
+								// Start the scene
+								this.scene.launch("Settings");
+								this.scene.moveAbove("MainGame", "Settings");
+							});
+					},
+					this
+				);
 
 				// === Rules Button ===
-				const rulesButton = this.add.text(1100, 600, "Rules", {
+				this.rulesButton = this.add.text(0, 0, "Rules", {
 					fontFamily: "'Pixelify Sans', sans-serif",
 					fill: "#FFFFFF",
 					backgroundColor: Phaser.Display.Color.IntegerToColor(themeColors.panel).rgba,
-					padding: {left: 20, right: 20, top: 10, bottom: 10},
 				});
-				rulesButton.setInteractive();
-				rulesButton.on("pointerdown", new RulesButton(this).click, this);
-				rulesButton.on("pointerover", () => rulesButton.setScale(1.2));
-				rulesButton.on("pointerout", () => rulesButton.setScale(1));
+				this.rulesButton.on("pointerdown", new RulesButton(this).click, this);
+				this.rulesButton.on("pointerover", () => rulesButton.setScale(1.2));
+				this.rulesButton.on("pointerout", () => rulesButton.setScale(1));
 
+				const scene = this;
+				configureButtons(this.startButton, this.settingsButton, this.rulesButton);
+				window.addEventListener(
+					"resize",
+					function (event) {
+						scene.resize();
+					},
+					false
+				);
+
+				this.resize();
 				EventBus.emit("current-scene-ready", this);
 
 				EventBus.on("PaletteChanged", () => {
@@ -143,5 +199,31 @@ export class Start extends Scene {
 				});
 			},
 		});
+	}
+
+	resize() {
+		resize_constants(this);
+		this.titleText.setPosition(CENTER_WIDTH, 3 * DOZEN_HEIGHT);
+		this.introText.setPosition(CENTER_WIDTH, 8 * DOZEN_HEIGHT);
+		this.creditText.setPosition(CENTER_WIDTH, 11 * DOZEN_HEIGHT);
+		this.startButton.setPosition(CENTER_WIDTH, 5 * DOZEN_HEIGHT);
+		this.settingsButton.setPosition(10.5 * DOZEN_WIDTH, 1.5 * DOZEN_HEIGHT);
+		this.rulesButton.setPosition(10.5 * DOZEN_WIDTH, 9.5 * DOZEN_HEIGHT);
+		paddingTexts(
+			4 * UNIT_HEIGHT,
+			2 * UNIT_HEIGHT,
+			this.titleText,
+			this.introText,
+			this.creditText,
+			this.startButton,
+			this.settingsButton,
+			this.rulesButton
+		);
+		fontsizeTexts(2 * DOZEN_HEIGHT, this.titleText);
+		fontsizeTexts(2.5 * UNIT_WIDTH, this.creditText);
+		fontsizeTexts(6 * UNIT_HEIGHT, this.introText, this.startButton, this.settingsButton, this.rulesButton);
+		this.titleText.setStroke(START_TEXT_TWO, 2 * UNIT_HEIGHT);
+		this.introText.setWordWrapWidth(6 * DOZEN_WIDTH);
+		this.creditText.setFixedSize(WINDOW_WIDTH, 0);
 	}
 }
