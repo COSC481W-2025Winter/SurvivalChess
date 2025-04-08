@@ -9,6 +9,7 @@ import {
 	CHECKED_COLOR,
 	STAGE_COLOR,
 } from "./constants";
+import WebFont from "webfontloader"; // Correctly import WebFont
 import {SIDE_BASE_COLOR, SIDE_HIGHLIGHT_COLOR} from "./constants";
 import {PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING} from "./constants";
 import {PLAYER, COMPUTER} from "./constants";
@@ -25,12 +26,23 @@ import {resetGlobalStatus, resetGlobalMoves, resetGlobalPieces, resetGlobalWaves
 
 import {dev_alignment, dev_rank, dev_bamzap, dev_stopOn, dev_deadAI} from "./dev-buttons";
 import {BAM, ZAP} from "./dev-buttons";
-import {DevButtons} from "./dev-buttons";
+
+import {fontsizeTexts} from "./constants";
 
 import {EventBus} from "../game/EventBus";
 
 export class ChessTiles {
 	constructor(scene) {
+		// Load the pixel font
+		WebFont.load({
+			google: {
+				families: ["Pixelify Sans"],
+			},
+			active: () => {
+				this.fontLoaded = true; // Flag to indicate the font is loaded
+			},
+		});
+
 		this.scene = scene;
 		this.chessTiles; // 8x8 array of chess tiles
 		this.boardState; // contains BoardState object that manages an 8x8 array of chess pieces
@@ -44,8 +56,9 @@ export class ChessTiles {
 		this.temp; // temporary storage of coordinate & color; list of dictionaries of {'xy':[#,#],'color':color}
 		this.threats; // temporary storage of threats to chess piece, list of lists of [#,#]
 
-		this.turnsUntilNextWave = 8;
-		this.waveSpawnBudget = 8;
+		this.baseTurnsUntilNextWave = 13;
+		this.turnsUntilNextWave = this.baseTurnsUntilNextWave;
+		this.waveSpawnBudget = 4;
 
 		this.promotionCol; // temporary storage of column of piece to promote
 		this.promotionRow; // temporary storage of row of piece to promote
@@ -56,7 +69,7 @@ export class ChessTiles {
 		this.isChecked; // is true if the current player's king is checked
 
 		// Set up stage behind (surrounding) chessboard
-		this.scene.add.rectangle(
+		this.stage = this.scene.add.rectangle(
 			X_ANCHOR + 3.5 * TILE_SIZE,
 			Y_ANCHOR + 3.5 * TILE_SIZE,
 			9 * TILE_SIZE,
@@ -74,6 +87,7 @@ export class ChessTiles {
 								fontSize: TILE_SIZE / 2,
 							})
 							.setOrigin(0.5);
+						this.sideLights[i][j].setStyle({fontFamily: "'Pixelify Sans', sans-serif"});
 						break;
 					case 1: // [0,1][0~7] top & bottom rows of a~h
 						this.sideLights[i][j] = this.scene.add
@@ -81,6 +95,7 @@ export class ChessTiles {
 								fontSize: TILE_SIZE / 2,
 							})
 							.setOrigin(0.5);
+						this.sideLights[i][j].setStyle({fontFamily: "'Pixelify Sans', sans-serif"});
 						break;
 					case 2: // [2,3][0~7] left & right columns of 1~8
 						this.sideLights[i][j] = this.scene.add
@@ -134,7 +149,36 @@ export class ChessTiles {
 		this.pieceCoordinates = new PieceCoordinates();
 		this.boardState = new BoardState(this.scene, this.pieceCoordinates);
 		this.piecesTaken = new PiecesTaken(this.scene);
-		this.devButtons = new DevButtons(this.scene, this);
+	}
+
+	resize() {
+		this.stage.setPosition(X_ANCHOR + 3.5 * TILE_SIZE, Y_ANCHOR + 3.5 * TILE_SIZE);
+		this.stage.setSize(9 * TILE_SIZE, 9 * TILE_SIZE);
+		for (let i = 0; i < 4; i++)
+			for (let j = 0; j < 8; j++) {
+				fontsizeTexts(TILE_SIZE / 2, this.sideLights[i][j]);
+				switch (i) {
+					case 0: // [0,1][0~7] top & bottom rows of a~h
+						this.sideLights[i][j].setPosition(X_ANCHOR + j * TILE_SIZE, Y_ANCHOR - 0.75 * TILE_SIZE);
+						break;
+					case 1: // [0,1][0~7] top & bottom rows of a~h
+						this.sideLights[i][j].setPosition(X_ANCHOR + j * TILE_SIZE, Y_ANCHOR + 7.75 * TILE_SIZE);
+						break;
+					case 2: // [2,3][0~7] left & right columns of 1~8
+						this.sideLights[i][j].setPosition(X_ANCHOR - 0.75 * TILE_SIZE, Y_ANCHOR + j * TILE_SIZE);
+						break;
+					case 3: // [2,3][0~7] left & right columns of 1~8
+						this.sideLights[i][j].setPosition(X_ANCHOR + 7.75 * TILE_SIZE, Y_ANCHOR + j * TILE_SIZE);
+						break;
+				}
+			}
+		for (let i = 0; i < 8; i++)
+			for (let j = 0; j < 8; j++) {
+				this.chessTiles[i][j].setPosition(X_ANCHOR + i * TILE_SIZE, Y_ANCHOR + j * TILE_SIZE);
+				this.chessTiles[i][j].setSize(TILE_SIZE, TILE_SIZE);
+			}
+		this.boardState.resize();
+		this.piecesTaken.resize();
 	}
 
 	// ================================================================
@@ -327,12 +371,9 @@ export class ChessTiles {
 				if (computerHasValidMove) {
 					this.currentPlayer = COMPUTER;
 					if (!dev_deadAI) {
-						// console.log(this.pieceCoordinates.getAllCoordinates(PLAYER));
 						this.makeComputerMove(); // do the computer move
 					}
 					if (!--this.turnsUntilNextWave) this.spawnNextWave();
-
-					// AI logic would go here post-merge
 				} else {
 					// No moves means we clear all pieces and instantly start the next wave
 					this.boardState.zapPieces(COMPUTER);
@@ -370,7 +411,7 @@ export class ChessTiles {
 		try {
 			// console.log("NEW WAVE SPAWNS!");
 			// Reset turn counter
-			this.turnsUntilNextWave = 8;
+			this.turnsUntilNextWave = this.baseTurnsUntilNextWave;
 
 			// Randomly order what priority of pieces to go through to prevent a universal bias
 			let piecePriority = this.getPiecePriorityOrder();
@@ -420,7 +461,7 @@ export class ChessTiles {
 			window.alert("Error with new wave: " + ex.message);
 		}
 
-		this.waveSpawnBudget += 8;
+		this.waveSpawnBudget += 2;
 		incrementGlobalWaves();
 	}
 
@@ -455,8 +496,8 @@ export class ChessTiles {
 
 	// Get a random order of pieces to process to prevent a universal bias
 	getPiecePriorityOrder() {
-		// This order doesn't matter
-		let piecePriority = [QUEEN, PAWN, BISHOP, ROOK, KNIGHT];
+		// This order doesn't matter (gets randomized)
+		let piecePriority = [QUEEN, BISHOP, ROOK, KNIGHT];
 
 		// Sort it randomly
 		let currentIndex = piecePriority.length;
@@ -468,6 +509,10 @@ export class ChessTiles {
 				piecePriority[currentIndex],
 			];
 		}
+
+		// Append Pawn to the end so it is always bottom priority
+		// We wanted less pawns, so append it to the end to always be the lowest priority
+		piecePriority.push(PAWN);
 
 		return piecePriority;
 	}
@@ -599,21 +644,15 @@ export class ChessTiles {
 
 	makeComputerMove() {
 		EventBus.once("ComputerMove", (detail) => {
-			console.log(detail);
 			console.log("move: " + detail[0] + " to " + detail[1], detail[2]);
 			if (this.boardState.isOccupied(detail[1][0], detail[1][1])) {
 				this.capturePiece(this.boardState.getRank(detail[1][0], detail[1][1]), PLAYER);
 				this.boardState.destroyPiece(detail[1][0], detail[1][1]);
 			}
 			this.boardState.movePiece(detail[0], detail[1]); // make the move given
-			// this.toggleTurn(); // end computer turn
 			this.checkPromotion(detail[1]);
 		});
-		// console.log(this.boardState.getPieceCoordinates().clonePieceCoordinates());
 		this.futureMoves = new ChessGameState(this.boardState.cloneBoardState());
-		// console.log(this.futureMoves);
 		this.futureMoves.getBestMove();
-		// this.futureMoves.sendMove([0,1],[0,3]);
-		// this.futureMoves.getRandomMove();
 	}
 }

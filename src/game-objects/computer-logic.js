@@ -1,5 +1,3 @@
-// import { BoardState } from "./board-state";
-// import { PieceCoordinates } from "./piece-coordinates";
 import {
 	PLAYER,
 	COMPUTER,
@@ -23,10 +21,6 @@ import {
 import {EventBus} from "../game/EventBus.js";
 import {BoardStateLite} from "./board-mockups";
 
-// const MIN = 0; // if level % 2 = 0, its a min level
-// const MAX = 1; // if level % 2 = 1, its a max level
-// const LIMIT = 4; // depth of search
-
 export class ChessGameState {
 	board;
 
@@ -45,9 +39,6 @@ export class ChessGameState {
 		let bestMove;
 		let currentMove;
 
-		// console.log(this.pieceCoordinates);
-		// console.log(this.boardState.getPieceCoordinates().getAllCoordinates(COMPUTER));
-		// console.log(this.boardState.getPieceCoordinates().getAllCoordinates(PLAYER));
 		// all computer coordinates
 		const pieceDict = this.boardState.getPieceCoordinates().getAllCoordinates(COMPUTER);
 		// for each piece
@@ -58,10 +49,6 @@ export class ChessGameState {
 			for (const move in moves) {
 				// console.log(pieceDict[piece], moves[move]);
 				currentMove = this.computerMove(this.boardState.cloneBoardState(), pieceDict[piece], moves[move], 0); // get score for board
-				// console.log("CURRENT", currentMove);
-				// if (currentMove[0] == null) { // a loss for the player
-				// 	bestMove = [-999999, pieceDict[piece], moves[move]["xy"], moves[move]["isEnemy"]];
-				// }
 				if (!bestMove || currentMove[0] < bestMove[0]) {
 					bestMove = [currentMove[0], pieceDict[piece], moves[move]["xy"], moves[move]["isEnemy"]];
 
@@ -91,10 +78,6 @@ export class ChessGameState {
 
 		let bestMove;
 		let currentMove;
-		// let lost = (boardState.isCheckmated(PLAYER) || boardState.isStalemated(PLAYER));
-		// if (lost) {
-		// 	return [null]; // a checkmate ends the game
-		// };
 
 		const pieceDict = boardState.getPieceCoordinates().getAllCoordinates(PLAYER);
 		// for each piece
@@ -148,10 +131,6 @@ export class ChessGameState {
 					currentMove = this.evaluateBoard(boardState.cloneBoardState()); // get score for board
 					// console.log(currentMove, bestMove)
 				}
-				// if (currentMove[0] == null) { // a loss for the player
-				// 	console.log("checkmate");
-				// 	bestMove = [-999999, pieceDict[piece], moves[move]["xy"], moves[move]["isEnemy"]];
-				// }
 				if (!bestMove || currentMove < bestMove[0]) {
 					bestMove = [currentMove, pieceDict[piece], moves[move]["xy"], moves[move]["isEnemy"]];
 				}
@@ -164,12 +143,6 @@ export class ChessGameState {
 
 	// determines score of a board, lower is better for computer
 	evaluateBoard(boardState) {
-		// console.log("Move: ", input, move);
-		// if (move["isEnemy"] == true) {
-		// 	// if a capture, remove the piece that is captured
-		// 	boardState.destroyPiece(move["xy"][0], move["xy"][1]);
-		// }
-		// boardState.movePiece(input, move["xy"]); // make the move
 		let score = 0; // initialize score
 		let threatenedPlayer;
 		let threatenedComputer;
@@ -250,51 +223,6 @@ export class ChessGameState {
 			}
 		});
 
-		// console.log("score:", score);
-		// subtract value of computer material * capture weight and add threatenweight*piece value for each
-		// threatened computer piece
-
-		// for (piece in this.pieceCoordinates[COMPUTER]) {
-		// 	for (const rank of [ROOK, KNIGHT, BISHOP, QUEEN, KING, PAWN]) {
-		// 		// for all types of computer pieces
-		// 		for (const count of rank) {
-		// 			// for each player piece of a given rank
-		// 			switch (rank) {
-		// 				case PAWN:
-		// 					score -= PAWN_VALUE * CAPTURE_WEIGHT;
-		// 					threatenedPlayer = boardState.seekThreats(count[0], count[1], COMPUTER);
-		// 					score += PAWN_VALUE * THREATEN_WEIGHT * threatenedPlayer.length; // enemy each threatening it
-		// 					break;
-		// 				case ROOK:
-		// 					score -= ROOK_VALUE * CAPTURE_WEIGHT;
-		// 					threatenedPlayer = boardState.seekThreats(count[0], count[1], COMPUTER);
-		// 					score += ROOK_VALUE * THREATEN_WEIGHT * threatenedPlayer.length; // each piece threatening it
-		// 					break;
-		// 				case BISHOP:
-		// 					score += BISHOP_VALUE * CAPTURE_WEIGHT;
-		// 					threatenedPlayer = boardState.seekThreats(count[0], count[1], COMPUTER);
-		// 					score += BISHOP_VALUE * THREATEN_WEIGHT * threatenedPlayer.length; // each piece threatening it
-		// 					break;
-		// 				case KNIGHT:
-		// 					score -= KNIGHT_VALUE * CAPTURE_WEIGHT;
-		// 					threatenedPlayer = boardState.seekThreats(count[0], count[1], COMPUTER);
-		// 					score += KNIGHT_VALUE * THREATEN_WEIGHT * threatenedPlayer.length; // each piece threatening it
-		// 					break;
-		// 				case QUEEN:
-		// 					score -= QUEEN_VALUE * CAPTURE_WEIGHT;
-		// 					threatenedPlayer = boardState.seekThreats(count[0], count[1], COMPUTER);
-		// 					score += QUEEN_VALUE * THREATEN_WEIGHT * threatenedPlayer.length; // each piece threatening it
-		// 					break;
-		// 				case KING:
-		// 					score -= KING_VALUE * CAPTURE_WEIGHT;
-		// 					threatenedPlayer = boardState.seekThreats(count[0], count[1], COMPUTER);
-		// 					score += KING_VALUE * THREATEN_WEIGHT * threatenedPlayer.length; // each piece threatening it
-		// 					break;
-		// 			}
-		// 		}
-		// 	}
-		// }
-		// console.log("Score: " + score);
 		return score;
 	}
 
