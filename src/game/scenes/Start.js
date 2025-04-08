@@ -71,27 +71,27 @@ export class Start extends Scene {
 				// === Intro ===
 				this.introText = this.add.text(0, 0,
 					"Survival Chess is an arcade style chess game. In this game, you play chess against a computer while trying to survive waves of incoming pieces. Capture as many pieces as you can while avoiding checkmate. Good Luck!", {
-						fontFamily: "'Pixelify Sans', sans-serif",
-						color: Phaser.Display.Color.IntegerToColor(themeColors.stroke).rgba,
-						backgroundColor: "#FFFFFF",
-						stroke: Phaser.Display.Color.IntegerToColor(themeColors.stroke).rgba,
-						strokeThickness: 0,
-						align: "center",
-						padding: 15,
-						wordWrap: { width: 4 * DOZEN_WIDTH },
-					}).setOrigin(0.5);
+					fontFamily: "'Pixelify Sans', sans-serif",
+					color: Phaser.Display.Color.IntegerToColor(themeColors.stroke).rgba,
+					backgroundColor: "#FFFFFF",
+					stroke: Phaser.Display.Color.IntegerToColor(themeColors.stroke).rgba,
+					strokeThickness: 0,
+					align: "center",
+					padding: 15,
+					wordWrap: { width: 4 * DOZEN_WIDTH },
+				}).setOrigin(0.5);
 
 				// === Credits ===
 				this.creditText = this.add.text(0, 0,
 					"Credits: Riana Therrien, Marley Higbee, David Goh, Kaydee Ferrel, Hope Heck, Durva Kadam, Mohamad Tiba, Ritu Ghosh", {
-						fontFamily: "'Pixelify Sans', sans-serif",
-						color: Phaser.Display.Color.IntegerToColor(themeColors.stroke).rgba,
-						backgroundColor: "#FFFFFF",
-						stroke: Phaser.Display.Color.IntegerToColor(themeColors.stroke).rgba,
-						strokeThickness: 0,
-						align: "center",
-						fixedWidth: WINDOW_WIDTH,
-					}).setOrigin(0.5);
+					fontFamily: "'Pixelify Sans', sans-serif",
+					color: Phaser.Display.Color.IntegerToColor(themeColors.stroke).rgba,
+					backgroundColor: "#FFFFFF",
+					stroke: Phaser.Display.Color.IntegerToColor(themeColors.stroke).rgba,
+					strokeThickness: 0,
+					align: "center",
+					fixedWidth: WINDOW_WIDTH,
+				}).setOrigin(0.5);
 
 				// === Start Button ===
 				this.startButton = this.add.text(0, 0, "Start Game", {
@@ -151,7 +151,9 @@ export class Start extends Scene {
 						this.backgroundMusic.stop();
 						this.backgroundMusicPlaying = false;
 					}
-					this.scene.restart();
+					if (this.scene.isVisible("Game")) {
+						this.scene.restart();
+					}
 				});
 			},
 		});
