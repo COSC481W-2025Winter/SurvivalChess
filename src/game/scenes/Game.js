@@ -153,4 +153,12 @@ export class Game extends Scene {
 		paddingTexts(4 * UNIT_HEIGHT, 2 * UNIT_HEIGHT, this.endButton, this.settingsButton, this.rulesButton);
 		this.chessTiles.resize();
 	}
+
+	// Function to stop the background music
+	stopMusic() {
+		if (this.gameMusicPlaying) {
+			this.gameMusic.stop();
+			this.gameMusicPlaying = false;
+		}
+	}
 }
