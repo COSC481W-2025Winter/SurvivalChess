@@ -1,14 +1,5 @@
 import {TILE_SIZE, X_ANCHOR, Y_ANCHOR} from "./constants";
-import {
-	HOVER_COLOR,
-	WHITE_TILE_COLOR,
-	BLACK_TILE_COLOR,
-	NON_LETHAL_COLOR,
-	LETHAL_COLOR,
-	THREAT_COLOR,
-	CHECKED_COLOR,
-	STAGE_COLOR,
-} from "./constants";
+import {HOVER_COLOR, NON_LETHAL_COLOR, LETHAL_COLOR, THREAT_COLOR, CHECKED_COLOR, STAGE_COLOR} from "./constants";
 import WebFont from "webfontloader"; // Correctly import WebFont
 import {SIDE_BASE_COLOR, SIDE_HIGHLIGHT_COLOR} from "./constants";
 import {PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING} from "./constants";
@@ -28,10 +19,13 @@ import {dev_alignment, dev_rank, dev_bamzap, dev_stopOn, dev_deadAI} from "./dev
 import {BAM, ZAP} from "./dev-buttons";
 import {DevButtons} from "./dev-buttons";
 
+import {fontsizeTexts} from "./constants";
+
 import {EventBus} from "../game/EventBus";
 
 export class ChessTiles {
 	constructor(scene) {
+		this.scene = scene;
 		// Load the pixel font
 		WebFont.load({
 			google: {
@@ -42,7 +36,16 @@ export class ChessTiles {
 			},
 		});
 
-		this.scene = scene;
+		// Register theme change listener
+		EventBus.on("PaletteChanged", (palette) => {
+			this.updateColorTheme(palette);
+		});
+
+		this.currentTheme = {
+			light: 0xe5aa70, // default light
+			dark: 0xc04000, // default dark
+		};
+
 		this.chessTiles; // 8x8 array of chess tiles
 		this.boardState; // contains BoardState object that manages an 8x8 array of chess pieces
 		this.pieceCoordinates; // contains PieceCoordinates object that manages coordinate info sorted by rank & alignment
@@ -55,8 +58,9 @@ export class ChessTiles {
 		this.temp; // temporary storage of coordinate & color; list of dictionaries of {'xy':[#,#],'color':color}
 		this.threats; // temporary storage of threats to chess piece, list of lists of [#,#]
 
-		this.turnsUntilNextWave = 8;
-		this.waveSpawnBudget = 8;
+		this.baseTurnsUntilNextWave = 13;
+		this.turnsUntilNextWave = this.baseTurnsUntilNextWave;
+		this.waveSpawnBudget = 4;
 
 		this.promotionCol; // temporary storage of column of piece to promote
 		this.promotionRow; // temporary storage of row of piece to promote
@@ -67,7 +71,7 @@ export class ChessTiles {
 		this.isChecked; // is true if the current player's king is checked
 
 		// Set up stage behind (surrounding) chessboard
-		this.scene.add.rectangle(
+		this.stage = this.scene.add.rectangle(
 			X_ANCHOR + 3.5 * TILE_SIZE,
 			Y_ANCHOR + 3.5 * TILE_SIZE,
 			9 * TILE_SIZE,
@@ -148,6 +152,61 @@ export class ChessTiles {
 		this.boardState = new BoardState(this.scene, this.pieceCoordinates);
 		this.piecesTaken = new PiecesTaken(this.scene);
 		this.devButtons = new DevButtons(this.scene, this);
+	} // constructor ends here!!
+
+	// modified this
+	updateColorTheme(palette) {
+		const themeColors = {
+			default: {light: 0xe5aa70, dark: 0xc04000},
+			dark: {light: 0xbbb8b1, dark: 0x222222},
+			light: {light: 0xffffff, dark: 0x3b3b3b},
+		}[palette] || {light: 0xe5aa70, dark: 0xc04000};
+
+		this.currentTheme = themeColors;
+
+		// Update board tiles immediately
+		for (let i = 0; i < 8; i++) {
+			for (let j = 0; j < 8; j++) {
+				const isLight = (i + j) % 2 === 0;
+				this.chessTiles[i][j].setFillStyle(isLight ? themeColors.light : themeColors.dark);
+			}
+		}
+
+		// Update captured panel
+		if (this.piecesTaken?.updatePanelColor) {
+			this.piecesTaken.updatePanelColor(themeColors.dark, themeColors.light);
+		}
+	}
+
+	resize() {
+		this.stage.setPosition(X_ANCHOR + 3.5 * TILE_SIZE, Y_ANCHOR + 3.5 * TILE_SIZE);
+		this.stage.setSize(9 * TILE_SIZE, 9 * TILE_SIZE);
+		for (let i = 0; i < 4; i++)
+			for (let j = 0; j < 8; j++) {
+				fontsizeTexts(TILE_SIZE / 2, this.sideLights[i][j]);
+				switch (i) {
+					case 0: // [0,1][0~7] top & bottom rows of a~h
+						this.sideLights[i][j].setPosition(X_ANCHOR + j * TILE_SIZE, Y_ANCHOR - 0.75 * TILE_SIZE);
+						break;
+					case 1: // [0,1][0~7] top & bottom rows of a~h
+						this.sideLights[i][j].setPosition(X_ANCHOR + j * TILE_SIZE, Y_ANCHOR + 7.75 * TILE_SIZE);
+						break;
+					case 2: // [2,3][0~7] left & right columns of 1~8
+						this.sideLights[i][j].setPosition(X_ANCHOR - 0.75 * TILE_SIZE, Y_ANCHOR + j * TILE_SIZE);
+						break;
+					case 3: // [2,3][0~7] left & right columns of 1~8
+						this.sideLights[i][j].setPosition(X_ANCHOR + 7.75 * TILE_SIZE, Y_ANCHOR + j * TILE_SIZE);
+						break;
+				}
+			}
+		for (let i = 0; i < 8; i++)
+			for (let j = 0; j < 8; j++) {
+				this.chessTiles[i][j].setPosition(X_ANCHOR + i * TILE_SIZE, Y_ANCHOR + j * TILE_SIZE);
+				this.chessTiles[i][j].setSize(TILE_SIZE, TILE_SIZE);
+			}
+		this.boardState.resize();
+		this.devButtons.resize();
+		this.piecesTaken.resize();
 	}
 
 	// ================================================================
@@ -381,7 +440,7 @@ export class ChessTiles {
 		try {
 			// console.log("NEW WAVE SPAWNS!");
 			// Reset turn counter
-			this.turnsUntilNextWave = 8;
+			this.turnsUntilNextWave = this.baseTurnsUntilNextWave;
 
 			// Randomly order what priority of pieces to go through to prevent a universal bias
 			let piecePriority = this.getPiecePriorityOrder();
@@ -431,7 +490,7 @@ export class ChessTiles {
 			window.alert("Error with new wave: " + ex.message);
 		}
 
-		this.waveSpawnBudget += 8;
+		this.waveSpawnBudget += 2;
 		incrementGlobalWaves();
 	}
 
@@ -466,8 +525,8 @@ export class ChessTiles {
 
 	// Get a random order of pieces to process to prevent a universal bias
 	getPiecePriorityOrder() {
-		// This order doesn't matter
-		let piecePriority = [QUEEN, PAWN, BISHOP, ROOK, KNIGHT];
+		// This order doesn't matter (gets randomized)
+		let piecePriority = [QUEEN, BISHOP, ROOK, KNIGHT];
 
 		// Sort it randomly
 		let currentIndex = piecePriority.length;
@@ -479,6 +538,9 @@ export class ChessTiles {
 				piecePriority[currentIndex],
 			];
 		}
+
+		// We wanted less pawns, so append it to the end to always be the lowest priority
+		piecePriority.push(PAWN);
 
 		return piecePriority;
 	}
@@ -531,7 +593,7 @@ export class ChessTiles {
 
 	// Get original tile color
 	getTileColor([col, row]) {
-		return (col + row) % 2 == 0 ? WHITE_TILE_COLOR : BLACK_TILE_COLOR;
+		return (col + row) % 2 === 0 ? this.currentTheme.light : this.currentTheme.dark;
 	}
 
 	// Restore original tile color
@@ -621,6 +683,12 @@ export class ChessTiles {
 		this.futureMoves = new ChessGameState(this.boardState);
 		// this.futureMoves.getBestMove();
 		// this.futureMoves.sendMove([0,1],[0,3]);
-		this.futureMoves.getRandomMove();
+
+		try {
+			this.futureMoves.getRandomMove();
+		} catch (ex) {
+			window.alert("Error while getting random move: " + ex.message);
+		}
+		this.futureMoves = null;
 	}
 }

@@ -1,6 +1,17 @@
 import {Scene} from "phaser";
 import {EventBus} from "../EventBus";
-import {QUEEN, BISHOP, ROOK, KNIGHT, X_ANCHOR, Y_ANCHOR, TILE_SIZE} from "../../game-objects/constants";
+import {QUEEN, BISHOP, ROOK, KNIGHT} from "../../game-objects/constants";
+
+import {fontsizeTexts} from "../../game-objects/constants";
+import {
+	WINDOW_WIDTH,
+	WINDOW_HEIGHT,
+	CENTER_WIDTH,
+	CENTER_HEIGHT,
+	DOZEN_WIDTH,
+	DOZEN_HEIGHT,
+	UNIT_WIDTH,
+} from "../../game-objects/constants";
 
 export class Promotion extends Scene {
 	constructor() {
@@ -16,100 +27,106 @@ export class Promotion extends Scene {
     }
 
 	create() {
-		const bgX = this.cameras.main.width;
-		const bgY = this.cameras.main.height;
-		this.add
-			.text(500, 490, "Select what piece to promote your pawn into", {
+		this.text = this.add
+			.text(0, 0, "Select what piece to promote your pawn into", {
 				fontFamily: "Arial Black",
-				fontSize: 38,
 				color: "#ffffff",
 				stroke: "#000000",
-				strokeThickness: 8,
 				align: "center",
 			})
 			.setOrigin(0.5)
 			.setDepth(100);
 
-		const queen = this.add
-			.image(X_ANCHOR + 3.5 * TILE_SIZE - 150, Y_ANCHOR + 3.5 * TILE_SIZE, "queen")
-			.setDepth(5)
-			.setScale(1.5);
-		const bishop = this.add
-			.image(X_ANCHOR + 3.5 * TILE_SIZE - 50, Y_ANCHOR + 3.5 * TILE_SIZE, "bishop")
-			.setDepth(5)
-			.setScale(1.5);
-		const knight = this.add
-			.image(X_ANCHOR + 3.5 * TILE_SIZE + 50, Y_ANCHOR + 3.5 * TILE_SIZE, "knight")
-			.setDepth(5)
-			.setScale(1.5);
-		const rook = this.add
-			.image(X_ANCHOR + 3.5 * TILE_SIZE + 150, Y_ANCHOR + 3.5 * TILE_SIZE, "rook")
-			.setDepth(5)
-			.setScale(1.5);
-		const pieces = [queen, bishop, knight, rook];
+		this.queen = this.add.image(0, 0, "queen");
+		this.bishop = this.add.image(0, 0, "bishop");
+		this.knight = this.add.image(0, 0, "knight");
+		this.rook = this.add.image(0, 0, "rook");
+		this.pieces = [this.queen, this.bishop, this.knight, this.rook];
 
-		queen.setInteractive();
-		queen.on(
+		this.queen.on(
 			"pointerdown",
 			function () {
-				// sends event telling promotion is to queen
+				// sends event telling promotion is to this.queen
 				EventBus.emit("PawnPromoted", QUEEN);
 				this.scene.stop("Promotion");
 			},
 			this
 		);
 
-		rook.setInteractive();
-		rook.on(
+		this.rook.on(
 			"pointerdown",
 			function () {
-				// sends event telling promotion is to rook
+				// sends event telling promotion is to this.rook
 				EventBus.emit("PawnPromoted", ROOK);
 				this.scene.stop("Promotion");
 			},
 			this
 		);
 
-		bishop.setInteractive();
-		bishop.on(
+		this.bishop.on(
 			"pointerdown",
 			function () {
-				// sends event telling promotion is to bishop
+				// sends event telling promotion is to this.bishop
 				EventBus.emit("PawnPromoted", BISHOP);
 				this.scene.stop("Promotion");
 			},
 			this
 		);
 
-		knight.setInteractive();
-		knight.on(
+		this.knight.on(
 			"pointerdown",
 			function () {
-				// sends event telling promotion is to knight
+				// sends event telling promotion is to this.knight
 				EventBus.emit("PawnPromoted", KNIGHT);
 				this.scene.stop("Promotion");
 			},
 			this
 		);
 
-		// make pieces larger when moused over to indicate selection
-		for (const piece in pieces) {
+		// make this.pieces larger when moused over to indicate selection
+		for (const piece in this.pieces) {
+			this.pieces[piece].setDepth(5).setScale(1.5).setInteractive();
 			// When the pointer hovers over a piece, scale it up
-			pieces[piece].on("pointerover", () => {
-				pieces[piece].setScale(2);
+			this.pieces[piece].on("pointerover", () => {
+				this.pieces[piece].setScale(UNIT_WIDTH / 4);
 			});
 
 			// When the pointer moves away from the piece, reset the scale to normal
-			pieces[piece].on("pointerout", () => {
-				pieces[piece].setScale(1.5);
+			this.pieces[piece].on("pointerout", () => {
+				this.pieces[piece].setScale(UNIT_WIDTH / 6);
 			});
 		}
 
 		// Creates a visual background that also blocks input on the scene underneath
-		const bg = this.add.rectangle(bgX / 2, bgY / 2, bgX, bgY, 0x3b3b3b, 0.5);
-		bg.setOrigin(0.5);
-		bg.setInteractive();
+		this.bg = this.add.rectangle(1, 1, 1, 1, 0x3b3b3b, 0.5);
+		this.bg.setOrigin(0.5);
+		this.bg.setInteractive();
 
+		const scene = this;
+		window.addEventListener(
+			"resize",
+			function (event) {
+				scene.resize();
+			},
+			false
+		);
+
+		this.resize();
 		EventBus.emit("current-scene-ready", this);
+	}
+
+	resize() {
+		this.bg.setPosition(CENTER_WIDTH, CENTER_HEIGHT);
+		this.bg.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
+		this.text.setPosition(CENTER_WIDTH, 3 * DOZEN_HEIGHT);
+		this.text.setStroke("#000000", UNIT_WIDTH);
+		fontsizeTexts(4 * UNIT_WIDTH, this.text);
+
+		let counter = 0;
+		for (let piece in this.pieces) {
+			this.pieces[piece].setPosition((4.5 + counter) * DOZEN_WIDTH, CENTER_HEIGHT);
+			this.pieces[piece].scale = UNIT_WIDTH / 6;
+			counter += 1;
+		}
 	}
 }
