@@ -266,6 +266,9 @@ describe("", () => {
 		tiles.boardState.zapPieces(COMPUTER);
 		tiles.boardState.initializePieces(COMPUTER);
 
+		tiles.devButtons;
+		tiles.piecesTaken;
+
 		if (!dev_deadAI) dev_toggleAI(); // kills AI
 
 		// Trigger hover event where 'Start Game' button is
