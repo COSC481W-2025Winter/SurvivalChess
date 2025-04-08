@@ -514,6 +514,7 @@ export class ChessTiles {
 			];
 		}
 
+		// Append Pawn to the end so it is always bottom priority
 		// We wanted less pawns, so append it to the end to always be the lowest priority
 		piecePriority.push(PAWN);
 
