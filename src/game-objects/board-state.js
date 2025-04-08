@@ -4,6 +4,7 @@ import {PLAYER, COMPUTER} from "./constants";
 import {EN_PASSANT_TOKEN} from "./constants";
 import {isSamePoint, dim2Array} from "./constants";
 import {ChessPiece} from "./chess-piece";
+import {TurnCounter} from "./turn-counter";
 
 export class BoardState {
 	#scene;
@@ -12,6 +13,7 @@ export class BoardState {
 	#enPassantCoordinate;
 
 	#isChecked;
+	turnCounter;
 
 	constructor(scene, pieceCoordinates) {
 		this.#scene = scene;
@@ -27,6 +29,9 @@ export class BoardState {
 
 		// Add 4 pawns as the first generic wave
 		for (let i = 2; i < 6; i++) this.addPiece(i, 1, PAWN, COMPUTER);
+
+		// contains simple counter ui for all turns count till present
+		this.turnCounter = new TurnCounter(this.#scene);
 	}
 
 	resize() {
@@ -202,6 +207,7 @@ export class BoardState {
 	// Increment move counter of piece
 	incrementMoveCounter(col, row) {
 		this.#boardState[col][row].incrementMoveCounter();
+		this.turnCounter.updateTurnCounter();
 	}
 
 	// Check whether coordinate has different alignment
