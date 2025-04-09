@@ -25,12 +25,21 @@ export class Promotion extends Scene {
 		this.load.image("knight", "knightW" + getPieceStyle() + ".png");
 		this.load.image("rook", "rookW" + getPieceStyle() + ".png");
 		this.load.image("bishop", "bishopW" + getPieceStyle() + ".png");
+
+		WebFont.load({
+			google: {
+				families: ["Pixelify Sans"],
+			},
+			active: () => {
+				this.fontLoaded = true;
+			},
+		});
 	}
 
 	create() {
 		this.text = this.add
 			.text(0, 0, "Select what piece to promote your pawn into", {
-				fontFamily: "Arial Black",
+				fontFamily: "Pixelify Sans",
 				color: "#ffffff",
 				stroke: "#000000",
 				align: "center",
