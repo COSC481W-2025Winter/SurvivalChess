@@ -17,8 +17,8 @@ export class Settings extends Scene {
 	}
 
 	create() {
-		this.option1 = this.add.image(this.cameras.main.width / 2, this.cameras.main.height / 3 - 30, "option1");
-		this.option2 = this.add.image(this.cameras.main.width / 2, this.cameras.main.height / 3 + 30, "option2");
+		this.option1 = this.scene.add.image(this.cameras.main.width / 2, this.cameras.main.height / 3 - 30, "option1");
+		this.option2 = this.scene.add.image(this.cameras.main.width / 2, this.cameras.main.height / 3 + 30, "option2");
 
 		this.option1
 			.setOrigin(0.5)
