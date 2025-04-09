@@ -178,4 +178,12 @@ export class Game extends Scene {
 			console.error("Main camera not available.");
 		}
 	}
+
+	// Function to stop the background music
+	stopMusic() {
+		if (this.gameMusicPlaying) {
+			this.gameMusic.stop();
+			this.gameMusicPlaying = false;
+		}
+	}
 }
