@@ -1,3 +1,5 @@
+import {ChessPieceLite} from "./board-mockups";
+
 export class ChessPiece extends Phaser.GameObjects.Image {
 	#rank;
 	#alignment;
@@ -32,7 +34,10 @@ export class ChessPiece extends Phaser.GameObjects.Image {
 		this.#coordinate = [col, row];
 	}
 
-    getCoordinate() {
-        return this.#coordinate;
-    }
-}  
+	getCoordinate() {
+		return this.#coordinate;
+	}
+	cloneChessPieceLite() {
+		return new ChessPieceLite(this.#rank, this.#alignment, this.#coordinate, this.#moveCounter);
+	}
+}

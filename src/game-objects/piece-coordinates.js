@@ -58,8 +58,14 @@ export class PieceCoordinates {
 		}
 		return null;
 	}
-	// getter, returns #coordinates object
-	getCoordinates() {
-		return this.#coordinates;
+
+	// makes a deep clone of a PieceCoordinates object
+	clonePieceCoordinates() {
+		let cloned_coordinates = new PieceCoordinates();
+		for (let alignment of [PLAYER, COMPUTER])
+			for (let rank of [PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING])
+				for (let coordinate of this.#coordinates[alignment][rank])
+					cloned_coordinates.addCoordinate(...coordinate, rank, alignment);
+		return cloned_coordinates;
 	}
 }
