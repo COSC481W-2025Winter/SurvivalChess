@@ -32,7 +32,11 @@ describe("Settings Scene", () => {
 	});
 
 	// developer mode?? sprint 3
-	// color code non implementation here?
+	test("should create the Dev Mode button", () => {
+		const devButton = scene.add.text.mock.calls.find((call) => call[2] === "Dev Mode: OFF");
+		expect(devButton).toBeDefined();
+	});
+	
 
 	test("should create the Color Palette label", () => {
 		expect(scene.add.text).toHaveBeenCalledWith(200, 170, "Color Palette:", expect.any(Object));
