@@ -1,13 +1,61 @@
 import Phaser from "phaser";
 import {COLOR_THEMES} from "../../game-objects/constants.js";
-import {toggleDev, DEV_MODE} from "../../game-objects/dev-buttons.js";
+import {EventBus} from "../EventBus";
+import {setPieceStyle} from "./PieceStyle";
+import {toggleDev, DevButtons, DEV_MODE} from "../../game-objects/dev-buttons.js";
+import {ChessTiles} from "../../game-objects/chess-tiles";
 
 export class Settings extends Phaser.Scene {
 	constructor() {
 		super({key: "Settings"});
 	}
 
+	preload() {
+		this.load.setPath("assets");
+		this.load.image("option1", "pieceOption1.png");
+		this.load.image("option2", "pieceOption2.png");
+	}
+
 	create() {
+		this.option1 = this.add.image(this.cameras.main.width / 2, this.cameras.main.height / 3 - 30, "option1");
+		this.option2 = this.add.image(this.cameras.main.width / 2, this.cameras.main.height / 3 + 30, "option2");
+
+		this.option1
+			.setOrigin(0.5)
+			.setDepth(100)
+			.setInteractive()
+			.on("pointerover", () => {
+				this.option1.setScale(1.2); // Increase the scale
+			})
+			.on("pointerout", () => {
+				this.option1.setScale(1); // Reset to original size
+			})
+			.on(
+				"pointerdown",
+				function () {
+					setPieceStyle(1);
+				},
+				this
+			);
+
+		this.option2
+			.setOrigin(0.5)
+			.setDepth(100)
+			.setInteractive()
+			.on("pointerover", () => {
+				this.option2.setScale(1.2); // Increase the scale
+			})
+			.on("pointerout", () => {
+				this.option2.setScale(1); // Reset to original size
+			})
+			.on(
+				"pointerdown",
+				function () {
+					setPieceStyle(2);
+				},
+				this
+			);
+
 		// Semi-transparent overlay background
 		const overlay = this.add.rectangle(
 			this.cameras.main.width / 2,
@@ -28,6 +76,9 @@ export class Settings extends Phaser.Scene {
 			})
 			.setOrigin(0.5);
 
+		// Piece style selection title
+		this.add.text(this.cameras.main.width / 2.2, 170, "Piece Style:", {fontSize: "20px", fill: "#fff"});
+
 		// Color Palette Section
 		this.add.text(200, 170, "Color Palette:", {fontSize: "20px", fill: "#fff"});
 
@@ -46,7 +97,21 @@ export class Settings extends Phaser.Scene {
 				.on("pointerdown", () => {
 					localStorage.setItem("selectedPalette", palette);
 					this.applyColorTheme(palette);
-					this.scene.restart(); // Refresh scene
+
+					// Refresh the board and captured panel live
+					const gameScene = this.scene.get("Game");
+					if (gameScene?.chessTiles?.updateColorTheme) {
+						gameScene.chessTiles.updateColorTheme(palette);
+					}
+
+					// Call the change background method of the Game scene
+					if (this.scene.get("MainGame")) {
+						const maingameScene = this.scene.get("MainGame");
+						maingameScene.changeBackground();
+					}
+
+					EventBus.emit("PaletteChanged", palette);
+					this.scene.stop("Settings"); // Optional: update Settings screen UI
 				});
 
 			yOffset += 50;
