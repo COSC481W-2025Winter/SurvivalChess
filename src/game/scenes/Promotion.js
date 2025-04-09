@@ -12,19 +12,20 @@ import {
 	DOZEN_HEIGHT,
 	UNIT_WIDTH,
 } from "../../game-objects/constants";
+import {getPieceStyle} from "./PieceStyle";
 
 export class Promotion extends Scene {
 	constructor() {
 		super("Promotion");
 	}
 
-    preload() {
-        this.load.setPath("assets/ourChessPieces/");
-        this.load.image("queen", "queenW4.png");
-        this.load.image("knight", "knightW4.png");
-        this.load.image("rook", "rookW4.png");
-        this.load.image("bishop", "bishopW4.png");
-    }
+	preload() {
+		this.load.setPath("assets/ourChessPieces/");
+		this.load.image("queen", "queenW" + getPieceStyle() + ".png");
+		this.load.image("knight", "knightW4" + getPieceStyle() + ".png");
+		this.load.image("rook", "rookW4" + getPieceStyle() + ".png");
+		this.load.image("bishop", "bishopW4" + getPieceStyle() + ".png");
+	}
 
 	create() {
 		this.text = this.add
