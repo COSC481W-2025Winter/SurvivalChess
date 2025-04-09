@@ -3,6 +3,7 @@ import {EventBus} from "../EventBus";
 import {setPieceStyle} from "./PieceStyle";
 import {toggleDev, DevButtons, DEV_MODE} from "../../game-objects/dev-buttons.js";
 import {ChessTiles} from "../../game-objects/chess-tiles";
+import {Scene} from "phaser";
 
 export class Settings extends Scene {
 	constructor() {
