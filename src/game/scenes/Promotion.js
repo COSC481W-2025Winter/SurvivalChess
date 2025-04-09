@@ -22,9 +22,9 @@ export class Promotion extends Scene {
 	preload() {
 		this.load.setPath("assets/ourChessPieces/");
 		this.load.image("queen", "queenW" + getPieceStyle() + ".png");
-		this.load.image("knight", "knightW4" + getPieceStyle() + ".png");
-		this.load.image("rook", "rookW4" + getPieceStyle() + ".png");
-		this.load.image("bishop", "bishopW4" + getPieceStyle() + ".png");
+		this.load.image("knight", "knightW" + getPieceStyle() + ".png");
+		this.load.image("rook", "rookW" + getPieceStyle() + ".png");
+		this.load.image("bishop", "bishopW" + getPieceStyle() + ".png");
 	}
 
 	create() {
