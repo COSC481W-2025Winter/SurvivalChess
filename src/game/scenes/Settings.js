@@ -17,8 +17,6 @@ export class Settings extends Phaser.Scene {
 	}
 
 	create() {
-		this.add.text(this.cameras.main.width / 2.2, 170, "Piece Style:", {fontSize: "20px", fill: "#fff"}).setDepth(100);
-
 		this.option1 = this.add.image(this.cameras.main.width / 2, this.cameras.main.height / 3 - 30, "option1");
 		this.option2 = this.add.image(this.cameras.main.width / 2, this.cameras.main.height / 3 + 30, "option2");
 
@@ -77,6 +75,9 @@ export class Settings extends Phaser.Scene {
 				fontFamily: "Press Start 2P",
 			})
 			.setOrigin(0.5);
+
+		// Piece style selection title
+		this.add.text(this.cameras.main.width / 2.2, 170, "Piece Style:", {fontSize: "20px", fill: "#fff"});
 
 		// Color Palette Section
 		this.add.text(200, 170, "Color Palette:", {fontSize: "20px", fill: "#fff"});

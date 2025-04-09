@@ -18,6 +18,7 @@ import {ChessGameState} from "./computer-logic";
 import {BoardState} from "./board-state";
 import {PieceCoordinates} from "./piece-coordinates";
 import {PiecesTaken} from "./pieces-taken";
+import {DevButtons} from "./dev-buttons";
 
 import {CHECKMATE, STALEMATE} from "./global-stats";
 import {setGlobalStatus, incrementGlobalMoves, incrementGlobalPieces, incrementGlobalWaves} from "./global-stats";
