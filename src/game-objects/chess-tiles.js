@@ -23,7 +23,7 @@ import {CHECKMATE, STALEMATE} from "./global-stats";
 import {setGlobalStatus, incrementGlobalMoves, incrementGlobalPieces, incrementGlobalWaves} from "./global-stats";
 import {resetGlobalStatus, resetGlobalMoves, resetGlobalPieces, resetGlobalWaves} from "./global-stats";
 
-import {dev_alignment, dev_rank, dev_bamzap, dev_stopOn, dev_deadAI} from "./dev-buttons";
+import {dev_alignment, dev_rank, dev_bamzap, dev_stopOn, dev_deadAI, DevButtons} from "./dev-buttons";
 import {BAM, ZAP} from "./dev-buttons";
 
 import {fontsizeTexts} from "./constants";
@@ -152,6 +152,7 @@ export class ChessTiles {
 
 		this.pieceCoordinates = new PieceCoordinates();
 		this.boardState = new BoardState(this.scene, this.pieceCoordinates);
+		this.devButtons = new DevButtons(this.scene, this);
 		this.piecesTaken = new PiecesTaken(this.scene);
 		//this.devButtons = new DevButtons(this.scene, this);
 	} // constructor ends here!!
@@ -218,6 +219,7 @@ EventBus.on("PaletteChanged", (palette) => {
 				this.chessTiles[i][j].setSize(TILE_SIZE, TILE_SIZE);
 			}
 		this.boardState.resize();
+		this.devButtons.resize();
 		this.piecesTaken.resize();
 	}
 
@@ -295,11 +297,11 @@ EventBus.on("PaletteChanged", (palette) => {
 					this.boardState.destroyPiece(i, j);
 					break;
 			}
-		} else if (this.xy && isSamePoint(this.xy, [i, j])) {
 			// If the tile is the same as the selected, unselect the piece
+		} else if (this.xy && isSamePoint(this.xy, [i, j])) {
 			this.clearBoard();
-		} else if (this.boardState.isOccupied(i, j)) {
 			// If the tile is occupied, check if the selected piece is the player's piece
+		} else if (this.boardState.isOccupied(i, j)) {
 			switch (this.boardState.getAlignment(i, j)) {
 				case this.currentPlayer: // If it's the current player's piece
 					this.clearBoard();
@@ -337,8 +339,8 @@ EventBus.on("PaletteChanged", (palette) => {
 					}
 					break;
 			}
-		} else if (this.xy && this.isValidMove([i, j])) {
 			// If not occupied and move is valid, move the piece
+		} else if (this.xy && this.isValidMove([i, j])) {
 			// if en passant move, destroy enemy pawn
 			if (this.boardState.getRank(...this.xy) == PAWN && this.boardState.isEnPassant(i, j)) {
 				this.capturePiece(this.boardState.getRank(i, this.xy[1]), this.boardState.getAlignment(i, this.xy[1]));
@@ -414,8 +416,6 @@ EventBus.on("PaletteChanged", (palette) => {
 						this.makeComputerMove(); // do the computer move
 					}
 					if (!--this.turnsUntilNextWave) this.spawnNextWave();
-
-					// AI logic would go here post-merge
 				} else {
 					// No moves means we clear all pieces and instantly start the next wave
 					this.boardState.zapPieces(COMPUTER);
@@ -686,22 +686,15 @@ EventBus.on("PaletteChanged", (palette) => {
 	makeComputerMove() {
 		EventBus.once("ComputerMove", (detail) => {
 			console.log("move: " + detail[0] + " to " + detail[1], detail[2]);
-			if (detail[2] == true) {
+			if (this.boardState.isOccupied(detail[1][0], detail[1][1])) {
 				this.capturePiece(this.boardState.getRank(detail[1][0], detail[1][1]), PLAYER);
 				this.boardState.destroyPiece(detail[1][0], detail[1][1]);
 			}
 			this.boardState.movePiece(detail[0], detail[1]); // make the move given
-			this.toggleTurn(); // end computer turn
+			this.checkPromotion(detail[1]);
+			this.currentPlayer = PLAYER;
 		});
-		this.futureMoves = new ChessGameState(this.boardState);
-		// this.futureMoves.getBestMove();
-		// this.futureMoves.sendMove([0,1],[0,3]);
-
-		try {
-			this.futureMoves.getRandomMove();
-		} catch (ex) {
-			window.alert("Error while getting random move: " + ex.message);
-		}
-		this.futureMoves = null;
+		this.futureMoves = new ChessGameState(this.boardState.cloneBoardState());
+		this.futureMoves.getBestMove();
 	}
 }

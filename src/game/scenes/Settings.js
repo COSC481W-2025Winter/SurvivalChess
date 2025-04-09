@@ -1,8 +1,7 @@
 import Phaser from "phaser";
 import {COLOR_THEMES} from "../../game-objects/constants.js";
 import {EventBus} from "../EventBus";
-import {toggleDev, DevButtons, DEV_MODE} from "../../game-objects/dev-buttons.js";
-import {ChessTiles} from "../../game-objects/chess-tiles";
+import {toggleDev, DEV_MODE} from "../../game-objects/dev-buttons.js";
 
 export class Settings extends Phaser.Scene {
 	constructor() {
@@ -78,21 +77,8 @@ export class Settings extends Phaser.Scene {
 			})
 			.setInteractive()
 			.on("pointerdown", () => {
-				console.log("Dev button clicked");
-				if (toggleDev()) {
-					// DEV_MODE is on: Create and show DevButtons
-					this.devButtons = new DevButtons(this.scene.get("MainGame"), ChessTiles);
-					this.devButtons.resize();
-					this.devButton.setText("Dev Mode: " + (DEV_MODE ? "ON" : "OFF"));
-				} else {
-					if (this.devButtons) {
-						// Hide the dev buttons by making them invisible
-						this.devButtons.getNondevButtons().forEach((button) => {
-							button.visible = false;
-						});
-					}
-					this.devButton.setText("Dev Mode: " + (DEV_MODE ? "ON" : "OFF"));
-				}
+				toggleDev();
+				this.devButton.setText("Dev Mode: " + (DEV_MODE ? "ON" : "OFF"));
 			});
 
 		// Close Button (Same Style as "Close Rules")
