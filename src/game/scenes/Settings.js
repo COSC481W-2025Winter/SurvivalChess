@@ -1,6 +1,5 @@
 import Phaser from "phaser";
 import {COLOR_THEMES} from "../../game-objects/constants.js";
-import {EventBus} from "../EventBus";
 
 export class Settings extends Phaser.Scene {
 	constructor() {
@@ -46,21 +45,7 @@ export class Settings extends Phaser.Scene {
 				.on("pointerdown", () => {
 					localStorage.setItem("selectedPalette", palette);
 					this.applyColorTheme(palette);
-
-					// Refresh the board and captured panel live
-					const gameScene = this.scene.get("Game");
-					if (gameScene?.chessTiles?.updateColorTheme) {
-						gameScene.chessTiles.updateColorTheme(palette);
-					}
-
-					// Call the change background method of the Game scene
-					if (this.scene.get("MainGame")) {
-						const maingameScene = this.scene.get("MainGame");
-						maingameScene.changeBackground();
-					}
-
-					EventBus.emit("PaletteChanged", palette);
-					this.scene.stop("Settings"); // Optional: update Settings screen UI
+					this.scene.restart(); // Refresh scene
 				});
 
 			yOffset += 50;
