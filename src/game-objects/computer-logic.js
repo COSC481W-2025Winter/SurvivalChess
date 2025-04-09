@@ -52,12 +52,12 @@ export class ChessGameState {
 				if (!bestMove || currentMove[0] < bestMove[0]) {
 					bestMove = [currentMove[0], pieceDict[piece], moves[move]["xy"], moves[move]["isEnemy"]];
 
-					console.log("BEST MOVE: ", bestMove);
+					// console.log("BEST MOVE: ", bestMove);
 				}
 			}
 		}
 		// make chosen move
-		console.log("The Move: ", bestMove[1], bestMove[2], bestMove[3]);
+		// console.log("The Move: ", bestMove[1], bestMove[2], bestMove[3]);
 		this.sendMove(bestMove[1], bestMove[2], bestMove[3]);
 	}
 	// sends an event specifying the move as the computer's.
@@ -100,7 +100,10 @@ export class ChessGameState {
 				}
 			}
 		}
-
+		if (!currentMove) {
+			// if there is no legal subsequent move
+			return this.evaluateBoard(boardState);
+		}
 		// console.log("PLAYER BEST", bestMove);
 		return bestMove;
 	}
@@ -136,7 +139,10 @@ export class ChessGameState {
 				}
 			}
 		}
-
+		if (!currentMove) {
+			// if there is no legal subsequent move
+			return this.evaluateBoard(boardState);
+		}
 		// console.log("COMPUTER BEST", bestMove);
 		return bestMove;
 	}

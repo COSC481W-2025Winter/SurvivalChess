@@ -379,8 +379,7 @@ export class ChessTiles {
 					this.boardState.zapPieces(COMPUTER);
 					this.spawnNextWave();
 				}
-			}
-			this.currentPlayer = PLAYER;
+			} else this.currentPlayer = PLAYER;
 		}
 
 		// if king is checked highlight their tile
@@ -651,6 +650,7 @@ export class ChessTiles {
 			}
 			this.boardState.movePiece(detail[0], detail[1]); // make the move given
 			this.checkPromotion(detail[1]);
+			this.currentPlayer = PLAYER;
 		});
 		this.futureMoves = new ChessGameState(this.boardState.cloneBoardState());
 		this.futureMoves.getBestMove();
