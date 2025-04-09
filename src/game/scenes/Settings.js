@@ -99,10 +99,10 @@ export class Settings extends Phaser.Scene {
 		palettes.forEach((palette) => {
 			this.add
 				.text(overlay.x - overlayWidth / 2 + 20, yOffset + 300, palette, {
-					fontSize1: "90px",
+					// fontSize1: "90px",
 					fill: RULES_TEXT_TWO,
 					stroke: RULES_TEXT_ONE,
-					//  backgroundColor: "#333",
+
 					padding: {x: 15, y: 10},
 					fontFamily: "'Pixelify Sans', sans-serif",
 					//  stroke: "#f28d3e",
