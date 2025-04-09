@@ -5,6 +5,9 @@ import {CREAMHEX, ONYXHEX} from "./constants";
 import {configureButtons, paddingTexts, fontsizeTexts} from "./constants";
 import {LEFT_X_CENTER, LEFT_UNIT} from "./constants";
 
+import {setDevButtonsInitializedStatus} from "./constants";
+import {devButtons} from "./constants";
+
 const alignments = [PLAYER, COMPUTER];
 const alignment_names = ["white", "black"];
 const ranks = [PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING];
@@ -41,7 +44,13 @@ function toggleDev() {
 		prev_stopOn = dev_stopOn;
 		prev_deadAI = dev_deadAI;
 		dev_bamzap = dev_stopOn = dev_deadAI = false;
+	} else {
+		dev_bamzap = prev_bamzap;
+		dev_stopOn = prev_stopOn;
+		dev_deadAI = prev_deadAI;
 	}
+
+	if (devButtons) for (let button of devButtons.getNondevButtons()) button.visible = !button.visible;
 
 	return DEV_MODE;
 }
@@ -77,6 +86,8 @@ export class DevButtons {
 	constructor(scene, chessTiles) {
 		this.#scene = scene;
 		this.#chessTiles = chessTiles;
+
+		setDevButtonsInitializedStatus(this);
 
 		this.#devButton = this.#scene.add.text(0, 0, "", {
 			fill: CREAMHEX,

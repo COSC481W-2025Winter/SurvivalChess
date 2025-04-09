@@ -205,3 +205,9 @@ export {EN_PASSANT_TOKEN};
 
 export {PAWN_VALUE, KNIGHT_VALUE, BISHOP_VALUE, ROOK_VALUE, QUEEN_VALUE, KING_VALUE};
 export {CAPTURE_WEIGHT, LOSS_WEIGHT, THREATEN_WEIGHT, DEPTH_LIMIT};
+
+let devButtons = null;
+export function setDevButtonsInitializedStatus(arg) {
+	devButtons = arg;
+}
+export {devButtons};
