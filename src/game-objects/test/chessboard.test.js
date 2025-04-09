@@ -564,7 +564,6 @@ describe("", () => {
 	});
 
 	test("Resize", () => {
-		// resize2 is commented out due to github exclusive npm run test error (runs fine on local)
 		window.innerWidth = 42 ** 42;
 		window.innerHeight = 42;
 		resize_constants();
@@ -576,16 +575,16 @@ describe("", () => {
 
 		const resize = jest.spyOn(tiles, "resize");
 		const resize1 = jest.spyOn(tiles.boardState, "resize");
-		// const resize2 = jest.spyOn(tiles.devButtons, "resize");
+		const resize2 = jest.spyOn(tiles.devButtons, "resize");
 		const resize3 = jest.spyOn(tiles.piecesTaken, "resize");
 		expect(resize).not.toHaveBeenCalled();
 		expect(resize1).not.toHaveBeenCalled();
-		// expect(resize2).not.toHaveBeenCalled();
+		expect(resize2).not.toHaveBeenCalled();
 		expect(resize3).not.toHaveBeenCalled();
 		for (let i = 0; i < 7; i++) tiles.resize();
 		expect(resize).toHaveBeenCalledTimes(7);
 		expect(resize1).toHaveBeenCalledTimes(7);
-		// expect(resize2).toHaveBeenCalledTimes(7);
+		expect(resize2).toHaveBeenCalledTimes(7);
 		expect(resize3).toHaveBeenCalledTimes(7);
 	});
 });
