@@ -108,9 +108,7 @@ describe("GameOver Scene", () => {
 	// Test to verify the Final Score text appears
 	// Test to verify that the Waves Survived text is displayed correctly
 	test("should display 'Final Score:' text", () => {
-		const text = scene.children
-			.getChildren()
-			.find((child) => child.text === "Final Score:");
+		const text = scene.children.getChildren().find((child) => child.text === "Final Score:");
 
 		expect(text).toBeDefined();
 		expect(text.x).toBe(625);

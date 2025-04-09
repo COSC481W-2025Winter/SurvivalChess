@@ -166,8 +166,15 @@ export class GameOver extends Scene {
 
 		// Minimize button
 		this.currentButton = this.createButton(0, 0, "▼", () => {
-			for (let element of [this.bg, this.square, this.titleText, this.wordsText, this.numbersText,
-				this.menuButton, this.restartButton])
+			for (let element of [
+				this.bg,
+				this.square,
+				this.titleText,
+				this.wordsText,
+				this.numbersText,
+				this.menuButton,
+				this.restartButton,
+			])
 				element.setAlpha(0);
 
 			this.createMaximize();
@@ -183,11 +190,17 @@ export class GameOver extends Scene {
 		this.bg.setOrigin(0.5);
 		this.bg.setInteractive();
 
-
 		// Maximize button
 		this.currentButton = this.createButton(0, 0, "▲", () => {
-			for (let element of [this.bg, this.square, this.titleText, this.wordsText, this.numbersText,
-				this.menuButton, this.restartButton])
+			for (let element of [
+				this.bg,
+				this.square,
+				this.titleText,
+				this.wordsText,
+				this.numbersText,
+				this.menuButton,
+				this.restartButton,
+			])
 				element.setAlpha(1);
 
 			this.createMinimize();
@@ -217,7 +230,14 @@ export class GameOver extends Scene {
 		paddingTexts(4 * UNIT_HEIGHT, 2 * UNIT_HEIGHT, this.menuButton, this.restartButton, this.currentButton);
 		fontsizeTexts(9 * UNIT_HEIGHT, this.menuButton, this.restartButton, this.currentButton);
 
-		for (let text of [this.titleText, this.wordsText, this.numbersText, this.restartButton, this.menuButton, this.currentButton])
+		for (let text of [
+			this.titleText,
+			this.wordsText,
+			this.numbersText,
+			this.restartButton,
+			this.menuButton,
+			this.currentButton,
+		])
 			text.setStroke(GAMEOVER_TEXT_ONE, UNIT_HEIGHT);
 	}
 
