@@ -4,6 +4,7 @@ import {PLAYER, COMPUTER} from "./constants";
 import {EN_PASSANT_TOKEN} from "./constants";
 import {isSamePoint, dim2Array} from "./constants";
 import {ChessPiece} from "./chess-piece";
+import {BoardStateLite} from "./board-mockups";
 
 export class BoardState {
 	#scene;
@@ -13,7 +14,7 @@ export class BoardState {
 
 	#isChecked;
 
-	constructor(scene, pieceCoordinates) {
+	constructor(scene, pieceCoordinates, initialize = true) {
 		this.#scene = scene;
 
 		// 8x8 array of chess pieces
@@ -21,12 +22,14 @@ export class BoardState {
 		// contains coordinate info sorted by rank & alignment
 		this.#pieceCoordinates = pieceCoordinates;
 
-		// Initialize Player/Computer (white/black) pieces
-		this.initializePieces(PLAYER);
-		// this.initializePieces(COMPUTER);
+		if (initialize) {
+			// Initialize Player/Computer (white/black) pieces
+			this.initializePieces(PLAYER);
+			// this.initializePieces(COMPUTER);
 
-		// Add 4 pawns as the first generic wave
-		for (let i = 2; i < 6; i++) this.addPiece(i, 1, PAWN, COMPUTER);
+			// Add 4 pawns as the first generic wave
+			for (let i = 2; i < 6; i++) this.addPiece(i, 1, PAWN, COMPUTER);
+		}
 	}
 
 	resize() {
@@ -526,6 +529,9 @@ export class BoardState {
 			return true;
 		}
 		let coordinate = this.#pieceCoordinates.getCoordinate(KING, alignment);
+		if (!coordinate) {
+			return false;
+		}
 		coordinate = isSamePoint(input, coordinate) ? output : coordinate;
 		return !this.seekThreats(...coordinate, alignment, input, output).length;
 	}
@@ -538,6 +544,12 @@ export class BoardState {
 			return false;
 		}
 		const coordinate = this.#pieceCoordinates.getCoordinate(KING, alignment);
+		// console.log(coordinate);
+		if (!coordinate) {
+			// king captured
+			this.#isChecked = true;
+			return this.#isChecked;
+		}
 		this.#isChecked = !!this.seekThreats(...coordinate, alignment).length;
 		return this.#isChecked;
 	}
@@ -568,5 +580,39 @@ export class BoardState {
 
 	getPieceCoordinates() {
 		return this.#pieceCoordinates;
+	}
+
+	// creates a deep copy of the board state without an associated scene
+	cloneBoardState() {
+		let cloned_boardstate = new BoardStateLite(this.#pieceCoordinates.clonePieceCoordinates());
+
+		let boardarray = dim2Array(8, 8);
+		for (let i = 0; i < 8; i++)
+			for (let j = 0; j < 8; j++) {
+				if (this.#boardState[i][j]) {
+					if (this.#boardState[i][j] == EN_PASSANT_TOKEN) {
+						boardarray[i][j] = EN_PASSANT_TOKEN;
+					} else {
+						boardarray[i][j] = this.#boardState[i][j].cloneChessPieceLite();
+					}
+				}
+			}
+		// cloned_boardstate.setBoardState_for_cloning(boardarray);
+		cloned_boardstate.#boardState = boardarray;
+		cloned_boardstate.setIsEnPassantCoordinate_for_cloning(this.#enPassantCoordinate);
+		cloned_boardstate.setIsChecked_for_cloning(this.#isChecked);
+
+		// console.log("clone board state: ", cloned_boardstate);
+		return cloned_boardstate;
+	}
+
+	setBoardState_for_cloning(x) {
+		this.#boardState = x;
+	}
+	setIsEnPassantCoordinate_for_cloning(x) {
+		this.#enPassantCoordinate = x;
+	}
+	setIsChecked_for_cloning(x) {
+		this.#isChecked = x;
 	}
 }
