@@ -9,6 +9,7 @@ import {ChessTiles} from "../../game-objects/chess-tiles";
 import {RIGHT_X_CENTER} from "../../game-objects/constants";
 import {DOZEN_HEIGHT, UNIT_HEIGHT} from "../../game-objects/constants";
 import {configureButtons, paddingTexts, fontsizeTexts} from "../../game-objects/constants";
+import {getPieceStyle} from "./PieceStyle";
 
 import {
 	PAWN,
@@ -41,7 +42,7 @@ export class Game extends Scene {
 		this.load.setPath("assets/ourChessPieces");
 		for (const rank of [PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING]) {
 			for (const alignment of [PLAYER, COMPUTER]) {
-				this.load.image(rank + alignment, rank + alignment + "4.png");
+				this.load.image(rank + alignment, rank + alignment + getPieceStyle() + ".png");
 			}
 		}
 
