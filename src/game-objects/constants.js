@@ -1,22 +1,22 @@
-let WINDOW_WIDTH;
-let WINDOW_HEIGHT;
-let CENTER_WIDTH;
-let CENTER_HEIGHT;
-let DOZEN_WIDTH;
-let DOZEN_HEIGHT;
-let UNIT_WIDTH;
-let UNIT_HEIGHT;
+let WINDOW_WIDTH; // screen width
+let WINDOW_HEIGHT; // screen height
+let CENTER_WIDTH; // 1/2 of screen width
+let CENTER_HEIGHT; // 1/2 of screen height
+let DOZEN_WIDTH; // 1/12 of screen width
+let DOZEN_HEIGHT; // 1/12 of screen height
+let UNIT_WIDTH; // 1/144 of screen with
+let UNIT_HEIGHT; // 1/144 of screen height
 
-let TILE_SIZE;
-let X_CENTER;
-let Y_CENTER;
-let X_ANCHOR;
-let Y_ANCHOR;
+let TILE_SIZE; // width & height of chessboard tile
+let X_CENTER; // center width of chessboard
+let Y_CENTER; // center height of chessboard
+let X_ANCHOR; // center width of leftmost tile of chessboard
+let Y_ANCHOR; // center height of topmost tile of chessboard
 
-let LEFT_X_CENTER;
-let RIGHT_X_CENTER;
-let LEFT_UNIT;
-let RIGHT_UNIT;
+let LEFT_X_CENTER; // center width of section left to chessboard
+let RIGHT_X_CENTER; // center width of section right to chessboard
+let LEFT_UNIT; // default unit for objects left to chessboard
+let RIGHT_UNIT; // defalt unit for objects right to chessboard
 
 resize_constants();
 

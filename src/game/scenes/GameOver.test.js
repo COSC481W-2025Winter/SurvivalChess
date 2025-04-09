@@ -27,6 +27,7 @@ describe("GameOver Scene", () => {
 				{text: "Number of Waves Survived: " + globalWaves, x: 625, y: 425}, // Mocked Game Over text
 				{text: "Restart Game", input: {enabled: true}}, // Restart button
 				{text: "Main Menu", input: {enabled: true}}, // Main Menu button
+				{text: "Final Score:", x: 625, y: 330}, // Mocked Final Score text
 			]),
 		};
 
@@ -102,5 +103,15 @@ describe("GameOver Scene", () => {
 
 		expect(mainMenuButton).toBeDefined();
 		expect(mainMenuButton.input.enabled).toBe(true);
+	});
+
+	// Test to verify the Final Score text appears
+	// Test to verify that the Waves Survived text is displayed correctly
+	test("should display 'Final Score:' text", () => {
+		const text = scene.children.getChildren().find((child) => child.text === "Final Score:");
+
+		expect(text).toBeDefined();
+		expect(text.x).toBe(625);
+		expect(text.y).toBe(330);
 	});
 });

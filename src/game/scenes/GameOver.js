@@ -48,6 +48,14 @@ export class GameOver extends Scene {
 	}
 
 	create() {
+		// Access the Game scene
+		const gameScene = this.scene.get("MainGame");
+
+		// Call the stopMusic method of the Game scene
+		if (gameScene) {
+			gameScene.stopMusic();
+		}
+
 		// Play music
 		this.endMusic = this.sound.add("endMusic", {loop: false, volume: 0.5});
 		this.endMusicPlaying = false;
@@ -86,22 +94,27 @@ export class GameOver extends Scene {
 			.setDepth(101);
 
 		this.wordsText = this.add
-			.text(0, 0, "Number of Moves Made: \nNumber of Captured Pieces: \nNumber of Waves Survived: ", {
+			.text(0, 0, "Number of Moves Made: \nNumber of Captured Pieces: \nNumber of Waves Survived: \nFinal Score: ", {
 				fontFamily: "'Pixelify Sans', sans-serif",
 				color: GAMEOVER_TEXT_TWO,
 				backgroundColor: GAMEOVER_TEXT_ONE,
 				stroke: GAMEOVER_TEXT_ONE,
-				align: "center",
+				align: "left",
 			})
 			.setOrigin(0.5)
 			.setDepth(100)
 			.setLineSpacing(50);
 
+		// Calculate final score
+		// Idea #1: "efficiency" (pieces captured / moves) as a measurement of performance
+		let efficiency = globalMoves == 0 ? 0 : globalPieces / globalMoves;
+		let score = Math.ceil(efficiency * globalWaves * 1000);
+
 		this.numbersText = this.add
-			.text(0, 0, globalMoves + "\n" + globalPieces + "\n" + globalWaves, {
+			.text(0, 0, globalMoves + "\n" + globalPieces + "\n" + globalWaves + "\n" + score, {
 				color: GAMEOVER_TEXT_TWO,
 				stroke: GAMEOVER_TEXT_ONE,
-				align: "center",
+				align: "right",
 			})
 			.setOrigin(0.5)
 			.setDepth(100)
@@ -127,6 +140,9 @@ export class GameOver extends Scene {
 			this.scene.start("MainGame");
 		});
 
+		// Minimize button
+		this.createMinimize();
+
 		this.bg.setInteractive();
 		this.square.setInteractive();
 
@@ -143,6 +159,54 @@ export class GameOver extends Scene {
 		EventBus.emit("current-scene-ready", this); // notify event system
 	}
 
+	createMinimize() {
+		this.currentButton?.destroy();
+
+		// Minimize button
+		this.currentButton = this.createButton(0, 0, "▼", () => {
+			for (let element of [
+				this.bg,
+				this.square,
+				this.titleText,
+				this.wordsText,
+				this.numbersText,
+				this.menuButton,
+				this.restartButton,
+			])
+				element.setAlpha(0);
+
+			this.createMaximize();
+		});
+
+		this.resize();
+	}
+
+	createMaximize() {
+		this.currentButton?.destroy();
+		// Creates a visual background that also blocks input on the scene underneath
+		this.bg = this.add.rectangle(1, 1, 1, 1, 0x3b3b3b, 0.0001);
+		this.bg.setOrigin(0.5);
+		this.bg.setInteractive();
+
+		// Maximize button
+		this.currentButton = this.createButton(0, 0, "▲", () => {
+			for (let element of [
+				this.bg,
+				this.square,
+				this.titleText,
+				this.wordsText,
+				this.numbersText,
+				this.menuButton,
+				this.restartButton,
+			])
+				element.setAlpha(1);
+
+			this.createMinimize();
+		});
+
+		this.resize();
+	}
+
 	resize() {
 		this.bg.setPosition(CENTER_WIDTH, CENTER_HEIGHT);
 		this.bg.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -152,7 +216,7 @@ export class GameOver extends Scene {
 		fontsizeTexts(1.5 * DOZEN_HEIGHT, this.titleText);
 
 		this.wordsText.setPosition(6 * DOZEN_WIDTH, 5 * DOZEN_HEIGHT);
-		this.numbersText.setPosition(6 * DOZEN_WIDTH + 3.5 * DOZEN_HEIGHT, 5 * DOZEN_HEIGHT);
+		this.numbersText.setPosition(6 * DOZEN_WIDTH + 3.45 * DOZEN_HEIGHT, 5 * DOZEN_HEIGHT);
 		fontsizeTexts(6 * UNIT_HEIGHT, this.wordsText, this.numbersText);
 		this.wordsText.setPadding(4 * UNIT_HEIGHT, 2.5 * UNIT_HEIGHT, DOZEN_HEIGHT, 2.5 * UNIT_HEIGHT);
 		this.wordsText.setLineSpacing(6 * UNIT_HEIGHT);
@@ -160,10 +224,18 @@ export class GameOver extends Scene {
 
 		this.menuButton.setPosition(CENTER_WIDTH, 8 * DOZEN_HEIGHT);
 		this.restartButton.setPosition(CENTER_WIDTH, 10 * DOZEN_HEIGHT);
-		paddingTexts(4 * UNIT_HEIGHT, 2 * UNIT_HEIGHT, this.menuButton, this.restartButton);
-		fontsizeTexts(9 * UNIT_HEIGHT, this.menuButton, this.restartButton);
+		this.currentButton.setPosition(9 * DOZEN_WIDTH, 10 * DOZEN_HEIGHT);
+		paddingTexts(4 * UNIT_HEIGHT, 2 * UNIT_HEIGHT, this.menuButton, this.restartButton, this.currentButton);
+		fontsizeTexts(9 * UNIT_HEIGHT, this.menuButton, this.restartButton, this.currentButton);
 
-		for (let text of [this.titleText, this.wordsText, this.numbersText, this.restartButton, this.menuButton])
+		for (let text of [
+			this.titleText,
+			this.wordsText,
+			this.numbersText,
+			this.restartButton,
+			this.menuButton,
+			this.currentButton,
+		])
 			text.setStroke(GAMEOVER_TEXT_ONE, UNIT_HEIGHT);
 	}
 

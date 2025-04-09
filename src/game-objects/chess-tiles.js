@@ -25,7 +25,6 @@ import {resetGlobalStatus, resetGlobalMoves, resetGlobalPieces, resetGlobalWaves
 
 import {dev_alignment, dev_rank, dev_bamzap, dev_stopOn, dev_deadAI} from "./dev-buttons";
 import {BAM, ZAP} from "./dev-buttons";
-import {DevButtons} from "./dev-buttons";
 
 import {fontsizeTexts} from "./constants";
 
@@ -220,7 +219,6 @@ export class ChessTiles {
 				this.chessTiles[i][j].setSize(TILE_SIZE, TILE_SIZE);
 			}
 		this.boardState.resize();
-		this.devButtons.resize();
 		this.piecesTaken.resize();
 	}
 
@@ -554,6 +552,7 @@ export class ChessTiles {
 			];
 		}
 
+		// Append Pawn to the end so it is always bottom priority
 		// We wanted less pawns, so append it to the end to always be the lowest priority
 		piecePriority.push(PAWN);
 
