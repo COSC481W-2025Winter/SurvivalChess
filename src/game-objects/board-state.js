@@ -263,7 +263,12 @@ export class BoardState {
 		// 2 tiles with first move
 		if (!this.isOccupied(col, j)) {
 			j += alignment == PLAYER ? -1 : 1;
-			if (!this.getMoveCounter(col, row) && !this.isOccupied(col, j) && this.kingSaved([col, row], [col, j], alignment))
+			if (
+				this.isValid(col, j) &&
+				!this.getMoveCounter(col, row) &&
+				!this.isOccupied(col, j) &&
+				this.kingSaved([col, row], [col, j], alignment)
+			)
 				moves.push({xy: [col, j], isEnemy: false});
 		}
 
