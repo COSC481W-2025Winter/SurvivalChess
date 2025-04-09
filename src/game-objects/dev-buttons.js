@@ -36,6 +36,14 @@ function dev_setRank(rank) {
 }
 function toggleDev() {
 	DEV_MODE = !DEV_MODE;
+	if (!DEV_MODE) {
+		prev_bamzap = dev_bamzap;
+		prev_stopOn = dev_stopOn;
+		prev_deadAI = dev_deadAI;
+		dev_bamzap = dev_stopOn = dev_deadAI = false;
+	}
+
+	return DEV_MODE;
 }
 function dev_toggleFeature(feature) {
 	switch (feature) {
@@ -70,23 +78,9 @@ export class DevButtons {
 		this.#scene = scene;
 		this.#chessTiles = chessTiles;
 
-		this.#devButton = this.#scene.add.text(0, 0, "Dev Mode", {
+		this.#devButton = this.#scene.add.text(0, 0, "", {
 			fill: CREAMHEX,
 			backgroundColor: ONYXHEX,
-		});
-		this.#devButton.on("pointerdown", () => {
-			if (DEV_MODE == true) {
-				prev_bamzap = dev_bamzap;
-				prev_stopOn = dev_stopOn;
-				prev_deadAI = dev_deadAI;
-				dev_bamzap = dev_stopOn = dev_deadAI = false;
-			} else {
-				dev_bamzap = prev_bamzap;
-				dev_stopOn = prev_stopOn;
-				dev_deadAI = prev_deadAI;
-			}
-			toggleDev();
-			for (let button of this.getNondevButtons()) button.visible = !button.visible;
 		});
 
 		for (let i = 0; i < alignments.length; i++) {
@@ -210,5 +204,6 @@ export class DevButtons {
 	}
 }
 
-export {dev_alignment, dev_rank, dev_bamzap, dev_stopOn, dev_deadAI};
+export {dev_alignment, dev_rank, dev_bamzap, dev_stopOn, dev_deadAI, DEV_MODE};
+export {toggleDev};
 export {BAM, ZAP, STOP};
