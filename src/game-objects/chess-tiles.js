@@ -24,7 +24,7 @@ import {CHECKMATE, STALEMATE} from "./global-stats";
 import {setGlobalStatus, incrementGlobalMoves, incrementGlobalPieces, incrementGlobalWaves} from "./global-stats";
 import {resetGlobalStatus, resetGlobalMoves, resetGlobalPieces, resetGlobalWaves} from "./global-stats";
 
-import {dev_alignment, dev_rank, dev_bamzap, dev_stopOn, dev_deadAI} from "./dev-buttons";
+import {dev_alignment, dev_rank, dev_bamzap, dev_stopOn, dev_deadAI, DevButtons} from "./dev-buttons";
 import {BAM, ZAP} from "./dev-buttons";
 
 import {fontsizeTexts} from "./constants";
@@ -148,6 +148,7 @@ export class ChessTiles {
 
 		this.pieceCoordinates = new PieceCoordinates();
 		this.boardState = new BoardState(this.scene, this.pieceCoordinates);
+		this.devButtons = new DevButtons(this.scene, this);
 		this.piecesTaken = new PiecesTaken(this.scene);
 	}
 
@@ -178,6 +179,7 @@ export class ChessTiles {
 				this.chessTiles[i][j].setSize(TILE_SIZE, TILE_SIZE);
 			}
 		this.boardState.resize();
+		this.devButtons.resize();
 		this.piecesTaken.resize();
 	}
 
