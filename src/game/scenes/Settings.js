@@ -62,7 +62,6 @@ export class Settings extends Phaser.Scene {
 			})
 			.setInteractive()
 			.on("pointerdown", () => {
-				console.log("Dev button clicked");
 				toggleDev();
 				this.devButton.setText("Dev Mode: " + (DEV_MODE ? "ON" : "OFF"));
 			});
