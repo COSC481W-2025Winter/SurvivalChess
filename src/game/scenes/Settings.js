@@ -1,5 +1,17 @@
 import Phaser from "phaser";
 import {COLOR_THEMES} from "../../game-objects/constants.js";
+import {toggleDev, DevButtons, DEV_MODE} from "../../game-objects/dev-buttons.js";
+import {ChessTiles} from "../../game-objects/chess-tiles";
+import WebFont from "webfontloader";
+// import { ChessPiece } from "../../game-objects/chess-piece";
+
+import {
+	RULES_BACKGROUND_COLOR,
+	RULES_TEXT_ONE,
+	RULES_TEXT_TWO,
+	RULES_BACKGROUND_COLOR_TWO,
+	RULES_TEXT_THREE,
+} from "../../game-objects/constants";
 
 export class Settings extends Phaser.Scene {
 	constructor() {
@@ -8,9 +20,6 @@ export class Settings extends Phaser.Scene {
 
 	preload() {
 		this.load.setPath("assets");
-		this.load.image("star", "star.png");
-		this.load.image("background", "bg.png");
-
 		WebFont.load({
 			google: {
 				families: ["Pixelify Sans"],
@@ -27,114 +36,157 @@ export class Settings extends Phaser.Scene {
 			return;
 		}
 
-		const centerX = this.cameras.main.width / 2;
-		const centerY = this.cameras.main.height / 2;
+		this.scene.moveAbove("MainGame", "Settings");
 
-		// Dimmed background overlay
-		const bg = this.add.rectangle(centerX, centerY, 1250, 768, 0x000000, 0.5);
-		bg.setDepth(50);
+		// Background blocker
+		this.bg = this.add.rectangle(1, 1, 1, 1, RULES_BACKGROUND_COLOR, 0.5).setDepth(50);
 
-		// Settings box
-		const square = this.add.rectangle(centerX, centerY, 800, 400, 0x333333, 0.9);
-		square.setDepth(51);
+		// Semi-transparent overlay
+		const overlayWidth = this.cameras.main.width * 0.8;
+		const overlayHeight = this.cameras.main.height * 0.7;
+		const overlay = this.add
+			.rectangle(
+				this.cameras.main.width / 2,
+				this.cameras.main.height / 2,
+				overlayWidth,
+				overlayHeight,
+				RULES_BACKGROUND_COLOR_TWO,
+				0.9
+			)
+			.setOrigin(0.5)
+			.setDepth(50);
 
-		// Title text
-		this.add
-			.text(centerX, centerY - 140, "Settings", {
+		// Transparent blocker to prevent interaction with scenes underneath
+		const blocker = this.add
+			.rectangle(
+				this.cameras.main.width / 2,
+				this.cameras.main.height / 2,
+				this.cameras.main.width,
+				this.cameras.main.height,
+				0x000000,
+				0
+			)
+			.setDepth(50)
+			.setInteractive();
+
+		blocker.on("pointerdown", () => {});
+
+		// Title
+		this.titleText = this.add
+			.text(this.cameras.main.width / 2, this.cameras.main.height / 2 - 400, "Settings", {
 				fontFamily: "'Pixelify Sans', sans-serif",
-				fontSize: "38px",
-				color: "#f28d3e",
-				stroke: "#000000",
-				strokeThickness: 5,
+				color: RULES_TEXT_TWO,
+				stroke: RULES_TEXT_ONE,
+				fontSize: "80px",
+				strokeThickness: 6,
 				align: "center",
 			})
 			.setOrigin(0.5)
 			.setDepth(100);
 
-		// Section label (further moved left)
+		// Color Palette Section
 		this.add
-			.text(centerX - 350, centerY - 60, "Color Palette:", {
-				fontSize: "20px",
-				fill: TEXT_COLOR, // Use TEXT_COLOR constant
-				fontFamily: "Pixelify Sans",
+			.text(overlay.x - overlayWidth / 2 + 20, overlay.y - overlayHeight / 2 + 200, "Color Palette:", {
+				fontSize: "90px",
+				fill: RULES_TEXT_TWO,
+				fontFamily: "'Pixelify Sans', sans-serif",
 			})
 			.setDepth(100);
 
-		// Palette options (further moved left)
 		const palettes = ["default", "dark", "light"];
-		let yOffset = centerY - 10;
+		let yOffset = overlay.y - overlayHeight / 2 + 200;
 
 		palettes.forEach((palette) => {
 			this.add
-				.text(centerX - 350, yOffset, palette, {
+				.text(overlay.x - overlayWidth / 2 + 20, yOffset + 300, palette, {
+					fontSize1: "90px",
+					fill: RULES_TEXT_TWO,
+					stroke: RULES_TEXT_ONE,
+					//  backgroundColor: "#333",
+					padding: {x: 15, y: 10},
 					fontFamily: "'Pixelify Sans', sans-serif",
-					fontSize: "18px",
-					color: "#f28d3e", // White text color
-					backgroundColor: BACKGROUND_COLOR, // Use BACKGROUND_COLOR constant
-
-					stroke: STROKE_COLOR, // Use STROKE_COLOR constant
-
-					align: "center",
+					//  stroke: "#f28d3e",
+					fontSize: "70px",
+					strokeThickness: 2,
 				})
 				.setDepth(100)
 				.setInteractive()
 				.on("pointerdown", () => {
 					localStorage.setItem("selectedPalette", palette);
 					this.applyColorTheme(palette);
-					this.updateChessPieceMode(palette);
 					this.scene.restart();
 				});
 
-			yOffset += 50;
+			yOffset += 60;
 		});
 
-		// Dev Mode Toggle Button
-		// this.add
-		//   .text(200, yOffset, "Toggle Dev Mode", {
-		//     fontSize: "18px",
-		//     fill: "#f28d3e",
-		//     backgroundColor: "#333",
-		//     padding: { x: 10, y: 5 },
-		//   })
-		//   .setInteractive()
-		//   .on("pointerdown", () => {
-		//     toggleDev();
-		//   });
+		// Dev Mode Toggle
+		this.devButton = this.add
+			.text(overlay.x - overlayWidth / 2 + 20, yOffset + 50, "Dev Mode: " + (DEV_MODE ? "ON" : "OFF"), {
+				fontFamily: "'Pixelify Sans', sans-serif",
+				color: RULES_TEXT_TWO,
+				stroke: RULES_TEXT_ONE,
+				fontSize: "70px",
+				strokeThickness: 2,
+			})
+			.setDepth(100)
+			.setInteractive()
+			.on("pointerdown", () => {
+				const mainGameScene = this.scene.get("MainGame");
 
-		// yOffset += 50;
+				if (!mainGameScene) {
+					console.warn("MainGame scene not found.");
+					return;
+				}
 
-		// Close Button (Same Style as "Close Rules")
-		this.add
-			.text(this.cameras.main.width / 2, this.cameras.main.height - 100, "Close Settings", {
-				fontSize: "20px",
-				fill: "#fff",
-				backgroundColor: "#f28d3e",
-				padding: {x: 20, y: 10},
+				const newDevState = toggleDev();
+
+				if (newDevState) {
+					console.log("DEV_MODE is ON");
+					if (!this.devButtons) {
+						this.devButtons = new DevButtons(mainGameScene, ChessTiles);
+						this.devButtons.getNondevButtons().forEach((button) => {
+							button.setDepth(110); // Put above everything
+							button.visible = true;
+						});
+					}
+				} else {
+					console.log("DEV_MODE is OFF");
+					if (this.devButtons) {
+						this.devButtons.getNondevButtons().forEach((button) => {
+							button.visible = false;
+						});
+					}
+				}
+
+				this.devButton.setText("Dev Mode: " + (newDevState ? "ON" : "OFF"));
+			});
+
+		yOffset += 50;
+
+		// Close Button: Stops the Settings Scene
+		this.closeButton = this.add
+			.text(this.cameras.main.width / 2, this.cameras.main.height - 30, "Close Settings", {
+				fontFamily: "'Pixelify Sans', sans-serif",
+				backgroundColor: RULES_TEXT_THREE,
+				color: RULES_TEXT_TWO,
+				stroke: RULES_TEXT_ONE,
+				strokeThickness: 2,
+				fontSize: "50px", // Increased font size
+				padding: {x: 50, y: 20}, // Increased padding
 			})
 			.setOrigin(0.5)
 			.setInteractive()
-			.on(
-				"pointerdown",
-				() => {
-					this.scene.stop("Settings");
-				},
-				this
-			);
-		closeButton.setDepth(100);
+			.setDepth(9999) // Ensure it's on top
+			.setAlpha(1); // Ensure visibility
 
-		// Close settings by clicking background or box
-		bg.setInteractive();
-		square.setInteractive();
-
-		bg.on("pointerdown", () => {
+		this.closeButton.on("pointerdown", () => {
+			console.log("Closing Settings scene...");
 			this.scene.stop("Settings");
+			this.scene.start("MainGame");
 		});
 
-		square.on("pointerdown", (pointer) => {
-			pointer.event.stopPropagation(); // Prevent background click through
-		});
-
-		// Apply previously selected color palette
+		// Optional: Apply saved theme
 		const savedPalette = localStorage.getItem("selectedPalette") || "default";
 		this.applyColorTheme(savedPalette);
 	}
@@ -145,10 +197,5 @@ export class Settings extends Phaser.Scene {
 
 		document.documentElement.style.setProperty("--primary-chess-color", colors.primary);
 		document.documentElement.style.setProperty("--secondary-chess-color", colors.secondary);
-	}
-
-	updateChessPieceMode(selectedPalette) {
-		localStorage.setItem("mode", selectedPalette);
-		window.dispatchEvent(new Event("storage"));
 	}
 }
