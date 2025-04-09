@@ -1,11 +1,11 @@
+import Phaser from "phaser";
 import {COLOR_THEMES} from "../../game-objects/constants.js";
 import {EventBus} from "../EventBus";
 import {setPieceStyle} from "./PieceStyle";
 import {toggleDev, DevButtons, DEV_MODE} from "../../game-objects/dev-buttons.js";
 import {ChessTiles} from "../../game-objects/chess-tiles";
-import {Scene} from "phaser";
 
-export class Settings extends Scene {
+export class Settings extends Phaser.Scene {
 	constructor() {
 		super({key: "Settings"});
 	}
@@ -17,8 +17,8 @@ export class Settings extends Scene {
 	}
 
 	create() {
-		this.option1 = this.scene.add.image(this.cameras.main.width / 2, this.cameras.main.height / 3 - 30, "option1");
-		this.option2 = this.scene.add.image(this.cameras.main.width / 2, this.cameras.main.height / 3 + 30, "option2");
+		this.option1 = this.add.image(this.cameras.main.width / 2, this.cameras.main.height / 3 - 30, "option1");
+		this.option2 = this.add.image(this.cameras.main.width / 2, this.cameras.main.height / 3 + 30, "option2");
 
 		this.option1
 			.setOrigin(0.5)
