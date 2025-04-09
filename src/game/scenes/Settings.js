@@ -1,9 +1,7 @@
 import Phaser from "phaser";
 import {COLOR_THEMES} from "../../game-objects/constants.js";
-import {toggleDev, DevButtons, DEV_MODE} from "../../game-objects/dev-buttons.js";
-import {ChessTiles} from "../../game-objects/chess-tiles";
+import {toggleDev, DEV_MODE} from "../../game-objects/dev-buttons.js";
 import WebFont from "webfontloader";
-// import { ChessPiece } from "../../game-objects/chess-piece";
 
 import {
 	RULES_BACKGROUND_COLOR,
@@ -132,34 +130,8 @@ export class Settings extends Phaser.Scene {
 			.setDepth(100)
 			.setInteractive()
 			.on("pointerdown", () => {
-				const mainGameScene = this.scene.get("MainGame");
-
-				if (!mainGameScene) {
-					console.warn("MainGame scene not found.");
-					return;
-				}
-
-				const newDevState = toggleDev();
-
-				if (newDevState) {
-					console.log("DEV_MODE is ON");
-					if (!this.devButtons) {
-						this.devButtons = new DevButtons(mainGameScene, ChessTiles);
-						this.devButtons.getNondevButtons().forEach((button) => {
-							button.setDepth(110); // Put above everything
-							button.visible = true;
-						});
-					}
-				} else {
-					console.log("DEV_MODE is OFF");
-					if (this.devButtons) {
-						this.devButtons.getNondevButtons().forEach((button) => {
-							button.visible = false;
-						});
-					}
-				}
-
-				this.devButton.setText("Dev Mode: " + (newDevState ? "ON" : "OFF"));
+				toggleDev();
+				this.devButton.setText("Dev Mode: " + (DEV_MODE ? "ON" : "OFF"));
 			});
 
 		yOffset += 50;
@@ -183,7 +155,6 @@ export class Settings extends Phaser.Scene {
 		this.closeButton.on("pointerdown", () => {
 			console.log("Closing Settings scene...");
 			this.scene.stop("Settings");
-			this.scene.start("MainGame");
 		});
 
 		// Optional: Apply saved theme
