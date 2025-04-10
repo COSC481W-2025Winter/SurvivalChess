@@ -2,8 +2,7 @@ import Phaser from "phaser";
 import {COLOR_THEMES} from "../../game-objects/constants.js";
 import {EventBus} from "../EventBus";
 import {setPieceStyle} from "./PieceStyle";
-import {toggleDev, DevButtons, DEV_MODE} from "../../game-objects/dev-buttons.js";
-import {ChessTiles} from "../../game-objects/chess-tiles";
+import {toggleDev, DEV_MODE} from "../../game-objects/dev-buttons.js";
 
 export class Settings extends Phaser.Scene {
 	constructor() {

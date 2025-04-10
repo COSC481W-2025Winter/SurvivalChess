@@ -44,11 +44,6 @@ export class ChessTiles {
 			},
 		});
 
-		// Register theme change listener
-		EventBus.on("PaletteChanged", (palette) => {
-			this.updateColorTheme(palette);
-		});
-
 		this.currentTheme = {
 			light: 0xe5aa70, // default light
 			dark: 0xc04000, // default dark
@@ -187,6 +182,10 @@ export class ChessTiles {
 				this.chessTiles[i][j].setFillStyle(isLight ? themeColors.light : themeColors.dark);
 			}
 		}
+		// NOW add the EventBus listener:
+		EventBus.on("PaletteChanged", (palette) => {
+			this.updateColorTheme(palette);
+		});
 
 		// Update captured panel
 		if (this.piecesTaken?.updatePanelColor) {
