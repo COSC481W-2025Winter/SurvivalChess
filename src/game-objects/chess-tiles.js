@@ -1,13 +1,12 @@
 import {TILE_SIZE, X_ANCHOR, Y_ANCHOR} from "./constants";
 import {
 	HOVER_COLOR,
-	WHITE_TILE_COLOR,
-	BLACK_TILE_COLOR,
 	NON_LETHAL_COLOR,
 	LETHAL_COLOR,
 	THREAT_COLOR,
 	CHECKED_COLOR,
 	STAGE_COLOR,
+	BACKGROUND_COLOR,
 } from "./constants";
 import WebFont from "webfontloader"; // Correctly import WebFont
 import {SIDE_BASE_COLOR, SIDE_HIGHLIGHT_COLOR} from "./constants";
@@ -19,6 +18,7 @@ import {ChessGameState} from "./computer-logic";
 import {BoardState} from "./board-state";
 import {PieceCoordinates} from "./piece-coordinates";
 import {PiecesTaken} from "./pieces-taken";
+import {DevButtons} from "./dev-buttons";
 
 import {CHECKMATE, STALEMATE} from "./global-stats";
 import {setGlobalStatus, incrementGlobalMoves, incrementGlobalPieces, incrementGlobalWaves} from "./global-stats";
@@ -33,6 +33,7 @@ import {EventBus} from "../game/EventBus";
 
 export class ChessTiles {
 	constructor(scene) {
+		this.scene = scene;
 		// Load the pixel font
 		WebFont.load({
 			google: {
@@ -43,7 +44,16 @@ export class ChessTiles {
 			},
 		});
 
-		this.scene = scene;
+		// Register theme change listener
+		EventBus.on("PaletteChanged", (palette) => {
+			this.updateColorTheme(palette);
+		});
+
+		this.currentTheme = {
+			light: 0xe5aa70, // default light
+			dark: 0xc04000, // default dark
+		};
+
 		this.chessTiles; // 8x8 array of chess tiles
 		this.boardState; // contains BoardState object that manages an 8x8 array of chess pieces
 		this.pieceCoordinates; // contains PieceCoordinates object that manages coordinate info sorted by rank & alignment
@@ -150,6 +160,38 @@ export class ChessTiles {
 		this.boardState = new BoardState(this.scene, this.pieceCoordinates);
 		this.devButtons = new DevButtons(this.scene, this);
 		this.piecesTaken = new PiecesTaken(this.scene);
+		this.devButtons = new DevButtons(this.scene, this);
+	} // constructor ends here!!
+
+	// modified this
+	updateColorTheme(palette) {
+		const themeColors = {
+			default: {light: 0xe5aa70, dark: 0xc04000},
+			dark: {light: 0xbbb8b1, dark: 0x222222},
+			light: {light: 0xffffff, dark: 0x3b3b3b},
+		}[palette] || {light: 0xe5aa70, dark: 0xc04000};
+
+		this.currentTheme = themeColors;
+
+		// Update stage color
+		if (palette == "default") {
+			this.stage.setFillStyle(STAGE_COLOR); // BROWN
+		} else {
+			this.stage.setFillStyle(BACKGROUND_COLOR); // ONYX
+		}
+
+		// Update board tiles
+		for (let i = 0; i < 8; i++) {
+			for (let j = 0; j < 8; j++) {
+				const isLight = (i + j) % 2 === 0;
+				this.chessTiles[i][j].setFillStyle(isLight ? themeColors.light : themeColors.dark);
+			}
+		}
+
+		// Update captured panel
+		if (this.piecesTaken?.updatePanelColor) {
+			this.piecesTaken.updatePanelColor(themeColors.dark, themeColors.light, palette);
+		}
 	}
 
 	resize() {
@@ -257,11 +299,11 @@ export class ChessTiles {
 					this.boardState.destroyPiece(i, j);
 					break;
 			}
-		} else if (this.xy && isSamePoint(this.xy, [i, j])) {
 			// If the tile is the same as the selected, unselect the piece
+		} else if (this.xy && isSamePoint(this.xy, [i, j])) {
 			this.clearBoard();
-		} else if (this.boardState.isOccupied(i, j)) {
 			// If the tile is occupied, check if the selected piece is the player's piece
+		} else if (this.boardState.isOccupied(i, j)) {
 			switch (this.boardState.getAlignment(i, j)) {
 				case this.currentPlayer: // If it's the current player's piece
 					this.clearBoard();
@@ -299,8 +341,8 @@ export class ChessTiles {
 					}
 					break;
 			}
-		} else if (this.xy && this.isValidMove([i, j])) {
 			// If not occupied and move is valid, move the piece
+		} else if (this.xy && this.isValidMove([i, j])) {
 			// if en passant move, destroy enemy pawn
 			if (this.boardState.getRank(...this.xy) == PAWN && this.boardState.isEnPassant(i, j)) {
 				this.capturePiece(this.boardState.getRank(i, this.xy[1]), this.boardState.getAlignment(i, this.xy[1]));
@@ -376,8 +418,6 @@ export class ChessTiles {
 						this.makeComputerMove(); // do the computer move
 					}
 					if (!--this.turnsUntilNextWave) this.spawnNextWave();
-
-					// AI logic would go here post-merge
 				} else {
 					// No moves means we clear all pieces and instantly start the next wave
 					this.boardState.zapPieces(COMPUTER);
@@ -568,7 +608,7 @@ export class ChessTiles {
 
 	// Get original tile color
 	getTileColor([col, row]) {
-		return (col + row) % 2 == 0 ? WHITE_TILE_COLOR : BLACK_TILE_COLOR;
+		return (col + row) % 2 === 0 ? this.currentTheme.light : this.currentTheme.dark;
 	}
 
 	// Restore original tile color
@@ -648,22 +688,15 @@ export class ChessTiles {
 	makeComputerMove() {
 		EventBus.once("ComputerMove", (detail) => {
 			console.log("move: " + detail[0] + " to " + detail[1], detail[2]);
-			if (detail[2] == true) {
+			if (this.boardState.isOccupied(detail[1][0], detail[1][1])) {
 				this.capturePiece(this.boardState.getRank(detail[1][0], detail[1][1]), PLAYER);
 				this.boardState.destroyPiece(detail[1][0], detail[1][1]);
 			}
 			this.boardState.movePiece(detail[0], detail[1]); // make the move given
-			this.toggleTurn(); // end computer turn
+			this.checkPromotion(detail[1]);
+			this.currentPlayer = PLAYER;
 		});
-		this.futureMoves = new ChessGameState(this.boardState);
-		// this.futureMoves.getBestMove();
-		// this.futureMoves.sendMove([0,1],[0,3]);
-
-		try {
-			this.futureMoves.getRandomMove();
-		} catch (ex) {
-			window.alert("Error while getting random move: " + ex.message);
-		}
-		this.futureMoves = null;
+		this.futureMoves = new ChessGameState(this.boardState.cloneBoardState());
+		this.futureMoves.getBestMove();
 	}
 }

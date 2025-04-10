@@ -12,6 +12,7 @@ import {
 	DOZEN_HEIGHT,
 	UNIT_WIDTH,
 } from "../../game-objects/constants";
+import {getPieceStyle} from "./PieceStyle";
 
 export class Promotion extends Scene {
 	constructor() {
@@ -19,17 +20,26 @@ export class Promotion extends Scene {
 	}
 
 	preload() {
-		this.load.setPath("assets/drummyfish chess/");
-		this.load.image("queen", "queenW.png");
-		this.load.image("knight", "knightW.png");
-		this.load.image("rook", "rookW.png");
-		this.load.image("bishop", "bishopW.png");
+		this.load.setPath("assets/ourChessPieces/");
+		this.load.image("queen", "queenW" + getPieceStyle() + ".png");
+		this.load.image("knight", "knightW" + getPieceStyle() + ".png");
+		this.load.image("rook", "rookW" + getPieceStyle() + ".png");
+		this.load.image("bishop", "bishopW" + getPieceStyle() + ".png");
+
+		WebFont.load({
+			google: {
+				families: ["Pixelify Sans"],
+			},
+			active: () => {
+				this.fontLoaded = true;
+			},
+		});
 	}
 
 	create() {
 		this.text = this.add
 			.text(0, 0, "Select what piece to promote your pawn into", {
-				fontFamily: "Arial Black",
+				fontFamily: "Pixelify Sans",
 				color: "#ffffff",
 				stroke: "#000000",
 				align: "center",

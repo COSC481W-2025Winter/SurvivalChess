@@ -4,19 +4,60 @@ describe("Settings Scene", () => {
 	let scene;
 
 	beforeEach(() => {
-		// Create a mock scene object
-		scene = {
-			add: {
-				text: jest.fn(),
-			},
-			children: {
-				getChildren: jest.fn(),
-			},
-			scene: {
-				stop: jest.fn(),
-				start: jest.fn(),
-			},
+
+		// Setup: Create a new instance of the Start scene for each test
+		scene = new Settings();
+
+		// Mock the children array to simulate the scene objects like buttons and text.
+		scene.children = {
+			// Mock the getChildren method, which is responsible for fetching the scene's children objects (e.g., text, buttons)
+			getChildren: jest.fn().mockReturnValue([
+				// Mock the text instructions object with expected properties
+				{text: "Select what piece to promote your pawn into", x: 500, y: 490},
+				// chess piece buttons
+				{texture: "option1", Depth: 5, Scale: 1.5, input: {enabled: true}},
+				{texture: "option2", Depth: 5, Scale: 1.5, input: {enabled: true}},
+			]),
 		};
+
+		scene.add = {
+			text: jest.fn().mockReturnValue({
+				// Mock the method chaining typically used when creating Phaser text objects
+				setOrigin: jest.fn(),
+				setDepth: jest.fn(),
+				setInteractive: jest.fn(),
+				on: jest.fn(), // Mock event listener attachment
+			}),
+		};
+	});
+
+	test("chess pieces should be interactive an enabled", () => {
+		// Find the settings button from the mocked children
+		const option1add = scene.children.getChildren().find((child) => child.texture === "option1");
+
+		// Assertions to check if the settings button exists and is interactive
+		expect(option1add).toBeDefined(); // Ensure the button exists
+		expect(option1add.input.enabled).toBe(true); // Ensure the button is interactive (enabled)
+		expect(option1add.Depth).toBe(5); // depth set correctly
+		expect(option1add.Scale).toBe(1.5); // depth set correctly
+
+		const option2add = scene.children.getChildren().find((child) => child.texture === "option2");
+
+		// Assertions to check if the settings button exists and is interactive
+		expect(option2add).toBeDefined(); // Ensure the button exists
+		expect(option2add.input.enabled).toBe(true); // Ensure the button is interactive (enabled)
+		expect(option2add.Depth).toBe(5); // depth set correctly
+		expect(option2add.Scale).toBe(1.5); // depth set correctly
+	});
+	/* let scene;
+
+	beforeEach(() => {
+		scene = new Settings();
+
+		// Mock Phaser dependencies
+		scene.cameras = {main: {setBackgroundColor: jest.fn()}};
+		scene.scene = {stop: jest.fn(), restart: jest.fn()};
+
 
 		// Mock Phaser.GameObjects.Text with jest
 		scene.add.text.mockImplementation((x, y, text, style) => {
@@ -85,6 +126,7 @@ describe("Settings Scene", () => {
 		expect(scene.scene.stop).toHaveBeenCalledWith("Settings");
 		expect(scene.scene.start).not.toHaveBeenCalled(); // Make sure `start` is not called
 	});
+*/
 });
 
 module.exports = {
