@@ -1,10 +1,10 @@
 /* global describe, beforeEach, test, expect, jest */
+import {Settings} from "./Settings";
 
 describe("Settings Scene", () => {
 	let scene;
 
 	beforeEach(() => {
-
 		// Setup: Create a new instance of the Start scene for each test
 		scene = new Settings();
 
