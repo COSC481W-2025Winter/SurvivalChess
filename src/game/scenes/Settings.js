@@ -1,7 +1,6 @@
 import Phaser from "phaser";
 import {COLOR_THEMES} from "../../game-objects/constants.js";
 
-
 import WebFont from "webfontloader";
 
 import {
@@ -14,9 +13,7 @@ import {
 
 import {EventBus} from "../EventBus";
 import {setPieceStyle} from "./PieceStyle";
-import {toggleDev, DevButtons, DEV_MODE} from "../../game-objects/dev-buttons.js";
-import {ChessTiles} from "../../game-objects/chess-tiles";
-
+import {toggleDev, DEV_MODE} from "../../game-objects/dev-buttons.js";
 
 export class Settings extends Phaser.Scene {
 	constructor() {
@@ -34,7 +31,7 @@ export class Settings extends Phaser.Scene {
 				this.fontLoaded = true;
 			},
 		});
-    this.load.image("option1", "pieceOption1.png");
+		this.load.image("option1", "pieceOption1.png");
 		this.load.image("option2", "pieceOption2.png");
 	}
 
@@ -45,8 +42,7 @@ export class Settings extends Phaser.Scene {
 		}
 
 		this.scene.moveAbove("MainGame", "Settings");
-    
-    
+
 		this.option1 = this.add.image(this.cameras.main.width / 2, this.cameras.main.height / 3 - 30, "option1");
 		this.option2 = this.add.image(this.cameras.main.width / 2, this.cameras.main.height / 3 + 30, "option2");
 
@@ -85,7 +81,6 @@ export class Settings extends Phaser.Scene {
 				},
 				this
 			);
-
 
 		// Background blocker
 		this.bg = this.add.rectangle(1, 1, 1, 1, RULES_BACKGROUND_COLOR, 0.5).setDepth(50);
@@ -129,9 +124,8 @@ export class Settings extends Phaser.Scene {
 				fontSize: "80px",
 				strokeThickness: 6,
 				align: "center",
-      ));
-    
-	
+			})
+
 			.setOrigin(0.5)
 			.setDepth(100);
 
@@ -183,7 +177,6 @@ export class Settings extends Phaser.Scene {
 
 					EventBus.emit("PaletteChanged", palette);
 					this.scene.stop("Settings"); // Optional: update Settings screen UI
-
 				});
 
 			yOffset += 60;
