@@ -1,9 +1,8 @@
-import { Scene } from "phaser";
-import { EventBus } from "../EventBus";
-import { RulesButton } from "./RulesButton";
+import {Scene} from "phaser";
+import {EventBus} from "../EventBus";
 
-import { configureButtons, paddingTexts, fontsizeTexts } from "../../game-objects/constants";
-import { resize_constants } from "../../game-objects/constants";
+import {configureButtons, paddingTexts, fontsizeTexts} from "../../game-objects/constants";
+import {resize_constants} from "../../game-objects/constants";
 import {
 	WINDOW_WIDTH,
 	CENTER_WIDTH,
@@ -33,7 +32,7 @@ export class Start extends Scene {
 				this.fontLoaded = true;
 
 				// === Play Music ===
-				this.backgroundMusic = this.sound.add("backgroundMusic", { loop: true, volume: 0.5 });
+				this.backgroundMusic = this.sound.add("backgroundMusic", {loop: true, volume: 0.5});
 				if (!this.backgroundMusic.isPlaying) {
 					this.backgroundMusic.play();
 					this.backgroundMusicPlaying = true;
@@ -49,9 +48,9 @@ export class Start extends Scene {
 				// === Color Themes ===
 				const selectedPalette = localStorage.getItem("selectedPalette") || "default";
 				const themeColors = {
-					default: { background: 0xe5aa70, panel: 0xc04000, stroke: 0xc04000 },
-					dark: { background: 0x222222, panel: 0xbbb8b1, stroke: 0x222222 },
-					light: { background: 0xffffff, panel: 0x3b3b3b, stroke: 0x3b3b3b },
+					default: {background: 0xe5aa70, panel: 0xc04000, stroke: 0xc04000},
+					dark: {background: 0x222222, panel: 0xbbb8b1, stroke: 0x222222},
+					light: {background: 0xffffff, panel: 0x3b3b3b, stroke: 0x3b3b3b},
 				}[selectedPalette];
 
 				this.themeColors = themeColors;
@@ -59,46 +58,60 @@ export class Start extends Scene {
 				this.cameras.main.setBackgroundColor(themeColors.background);
 
 				// === Title ===
-				this.titleText = this.add.text(0, 0, "Survival Chess", {
-					fontFamily: "'Pixelify Sans', sans-serif",
-					fontSize: 130,
-					color: "#FFFFFF",
-					stroke: Phaser.Display.Color.IntegerToColor(themeColors.stroke).rgba,
-					strokeThickness: 8,
-					align: "center",
-				}).setOrigin(0.5);
+				this.titleText = this.add
+					.text(0, 0, "Survival Chess", {
+						fontFamily: "'Pixelify Sans', sans-serif",
+						fontSize: 130,
+						color: "#FFFFFF",
+						stroke: Phaser.Display.Color.IntegerToColor(themeColors.stroke).rgba,
+						strokeThickness: 8,
+						align: "center",
+					})
+					.setOrigin(0.5);
 
 				// === Intro ===
-				this.introText = this.add.text(0, 0,
-					"Survival Chess is an arcade style chess game. In this game, you play chess against a computer while trying to survive waves of incoming pieces. Capture as many pieces as you can while avoiding checkmate. Good Luck!", {
-					fontFamily: "'Pixelify Sans', sans-serif",
-					color: Phaser.Display.Color.IntegerToColor(themeColors.stroke).rgba,
-					backgroundColor: "#FFFFFF",
-					stroke: Phaser.Display.Color.IntegerToColor(themeColors.stroke).rgba,
-					strokeThickness: 0,
-					align: "center",
-					padding: 15,
-					wordWrap: { width: 4 * DOZEN_WIDTH },
-				}).setOrigin(0.5);
+				this.introText = this.add
+					.text(
+						0,
+						0,
+						"Survival Chess is an arcade style chess game. In this game, you play chess against a computer while trying to survive waves of incoming pieces. Capture as many pieces as you can while avoiding checkmate. Good Luck!",
+						{
+							fontFamily: "'Pixelify Sans', sans-serif",
+							color: Phaser.Display.Color.IntegerToColor(themeColors.stroke).rgba,
+							backgroundColor: "#FFFFFF",
+							stroke: Phaser.Display.Color.IntegerToColor(themeColors.stroke).rgba,
+							strokeThickness: 0,
+							align: "center",
+							padding: 15,
+							wordWrap: {width: 4 * DOZEN_WIDTH},
+						}
+					)
+					.setOrigin(0.5);
 
 				// === Credits ===
-				this.creditText = this.add.text(0, 0,
-					"Credits: Riana Therrien, Marley Higbee, David Goh, Kaydee Ferrel, Hope Heck, Durva Kadam, Mohamad Tiba, Ritu Ghosh", {
-					fontFamily: "'Pixelify Sans', sans-serif",
-					color: Phaser.Display.Color.IntegerToColor(themeColors.stroke).rgba,
-					backgroundColor: "#FFFFFF",
-					stroke: Phaser.Display.Color.IntegerToColor(themeColors.stroke).rgba,
-					strokeThickness: 0,
-					align: "center",
-					fixedWidth: WINDOW_WIDTH,
-				}).setOrigin(0.5);
+				this.creditText = this.add
+					.text(
+						0,
+						0,
+						"Credits: Riana Therrien, Marley Higbee, David Goh, Kaydee Ferrel, Hope Heck, Durva Kadam, Mohamad Tiba, Ritu Ghosh",
+						{
+							fontFamily: "'Pixelify Sans', sans-serif",
+							color: Phaser.Display.Color.IntegerToColor(themeColors.stroke).rgba,
+							backgroundColor: "#FFFFFF",
+							stroke: Phaser.Display.Color.IntegerToColor(themeColors.stroke).rgba,
+							strokeThickness: 0,
+							align: "center",
+							fixedWidth: WINDOW_WIDTH,
+						}
+					)
+					.setOrigin(0.5);
 
 				// === Start Button ===
 				this.startButton = this.add.text(0, 0, "Start Game", {
 					fontFamily: "'Pixelify Sans', sans-serif",
 					fill: "#FFFFFF",
 					backgroundColor: Phaser.Display.Color.IntegerToColor(themeColors.panel).rgba,
-					padding: { left: 20, right: 20, top: 10, bottom: 10 },
+					padding: {left: 20, right: 20, top: 10, bottom: 10},
 				});
 				this.startButton.setInteractive().on("pointerdown", () => {
 					import("./Game").then((module) => {
@@ -133,10 +146,23 @@ export class Start extends Scene {
 					fill: "#FFFFFF",
 					backgroundColor: Phaser.Display.Color.IntegerToColor(themeColors.panel).rgba,
 				});
-				this.rulesButton.setInteractive();
-				this.rulesButton.on("pointerdown", new RulesButton(this).click, this);
-				this.rulesButton.on("pointerover", () => this.rulesButton.setScale(1.2));
-				this.rulesButton.on("pointerout", () => this.rulesButton.setScale(1));
+				this.rulesButton.on(
+					"pointerdown",
+					function () {
+						import("./Rules") // Dynamically import the Rules scene
+							.then((module) => {
+								// Only add the scene if it's not already registered
+								if (!this.scene.get("Rules")) {
+									this.scene.add("Rules", module.Rules); // Add the scene dynamically
+								}
+
+								// Start the scene
+								this.scene.launch("Rules");
+								this.scene.moveAbove("MainGame", "Rules");
+							});
+					},
+					this
+				);
 
 				// === Final Setup ===
 				configureButtons(this.startButton, this.settingsButton, this.rulesButton);
@@ -160,7 +186,7 @@ export class Start extends Scene {
 	}
 
 	resize() {
-		const { themeColors } = this;
+		const {themeColors} = this;
 
 		resize_constants(this);
 
@@ -171,10 +197,7 @@ export class Start extends Scene {
 		this.settingsButton.setPosition(10.5 * DOZEN_WIDTH, 1.5 * DOZEN_HEIGHT);
 		this.rulesButton.setPosition(10.5 * DOZEN_WIDTH, 9.5 * DOZEN_HEIGHT);
 
-		this.titleText.setStroke(
-			Phaser.Display.Color.IntegerToColor(themeColors.stroke).rgba,
-			2 * UNIT_HEIGHT
-		);
+		this.titleText.setStroke(Phaser.Display.Color.IntegerToColor(themeColors.stroke).rgba, 2 * UNIT_HEIGHT);
 
 		this.introText.setColor(Phaser.Display.Color.IntegerToColor(themeColors.stroke).rgba);
 		this.introText.setStroke(themeColors.stroke, 0);

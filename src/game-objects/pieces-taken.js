@@ -101,7 +101,7 @@ export class PiecesTaken {
 	updatePanelColor(darkHex, lightHex, palette = "default") {
 		if (this.box2) this.box2.setFillStyle(darkHex);
 		if (this.box1) this.box1.setFillStyle(lightHex);
-	
+
 		// Safely update title text color
 		if (this.titleText && this.titleText.setColor && this.titleText.visible) {
 			try {

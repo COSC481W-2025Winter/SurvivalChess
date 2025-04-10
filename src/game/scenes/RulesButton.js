@@ -12,6 +12,7 @@ export class RulesButton {
 
 			// Use launch to run scene in parallel to current
 			this.scene.launch("Rules");
+			this.scene.moveAbove("MainGame", "Rules");
 		});
 	}
 

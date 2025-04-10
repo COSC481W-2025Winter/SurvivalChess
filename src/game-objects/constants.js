@@ -68,6 +68,16 @@ export function resize_constants(scene = null) {
 	if (scene != null) scene.scale.resize(WINDOW_WIDTH, WINDOW_HEIGHT);
 }
 
+export {WINDOW_WIDTH, WINDOW_HEIGHT, CENTER_WIDTH, CENTER_HEIGHT, DOZEN_WIDTH, DOZEN_HEIGHT, UNIT_WIDTH, UNIT_HEIGHT};
+export {LEFT_X_CENTER, RIGHT_X_CENTER, LEFT_UNIT, RIGHT_UNIT};
+/* // === TILE & BOARD POSITIONING ===
+const TILE_SIZE = 80;
+const X_CENTER = 500;
+const Y_CENTER = 360;
+const X_ANCHOR = X_CENTER - 3.5 * TILE_SIZE;
+const Y_ANCHOR = Y_CENTER - 3.5 * TILE_SIZE;*/
+
+// === COLOR HEX CODES ===
 const GRAY = "7D7F7C";
 const FAWN = "E5AA70";
 const MAHOGANY = "C04000";
@@ -197,9 +207,8 @@ export function zip(...arrays) {
 	return Array.from({length}, (_, i) => arrays.map((arr) => arr[i]));
 }
 
-export {WINDOW_WIDTH, WINDOW_HEIGHT, CENTER_WIDTH, CENTER_HEIGHT, DOZEN_WIDTH, DOZEN_HEIGHT, UNIT_WIDTH, UNIT_HEIGHT};
+// === EXPORTS ===
 export {TILE_SIZE, X_CENTER, Y_CENTER, X_ANCHOR, Y_ANCHOR};
-export {LEFT_X_CENTER, RIGHT_X_CENTER, LEFT_UNIT, RIGHT_UNIT};
 
 export {
 	HOVER_COLOR,

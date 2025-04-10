@@ -1,5 +1,5 @@
-import { Scene } from "phaser";
-import { EventBus } from "../EventBus";
+import {Scene} from "phaser";
+import {EventBus} from "../EventBus";
 import {
 	configureButtons,
 	paddingTexts,
@@ -73,40 +73,59 @@ export class Rules extends Scene {
 
 		this.scene.moveAbove("MainGame", "Rules");
 
-		this.bg = this.add.rectangle(CENTER_WIDTH, CENTER_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT, themeColors.stroke, themeColors.bgOpacity);
+		this.bg = this.add.rectangle(
+			CENTER_WIDTH,
+			CENTER_HEIGHT,
+			WINDOW_WIDTH,
+			WINDOW_HEIGHT,
+			themeColors.stroke,
+			themeColors.bgOpacity
+		);
 		this.bg.setDepth(50);
 
-		this.square = this.add.rectangle(CENTER_WIDTH, 5.5 * DOZEN_HEIGHT, 10 * DOZEN_WIDTH, 9 * DOZEN_HEIGHT, 0xffffff, themeColors.panelOpacity);
+		this.square = this.add.rectangle(
+			CENTER_WIDTH,
+			5.5 * DOZEN_HEIGHT,
+			10 * DOZEN_WIDTH,
+			9 * DOZEN_HEIGHT,
+			0xffffff,
+			themeColors.panelOpacity
+		);
 		this.square.setDepth(50);
 
-		this.titleText = this.add.text(CENTER_WIDTH, 1.75 * DOZEN_HEIGHT, "RULES", {
-			fontFamily: "'Pixelify Sans', sans-serif",
-			fontSize: 38,
-			color: fillColor,
-			stroke: strokeColor,
-			strokeThickness: 5,
-			align: "center",
-		})
+		this.titleText = this.add
+			.text(CENTER_WIDTH, 1.75 * DOZEN_HEIGHT, "RULES", {
+				fontFamily: "'Pixelify Sans', sans-serif",
+				fontSize: 38,
+				color: fillColor,
+				stroke: strokeColor,
+				strokeThickness: 5,
+				align: "center",
+			})
 			.setOrigin(0.5)
 			.setDepth(100);
 
-		this.rulesText = this.add.text(CENTER_WIDTH, 6 * DOZEN_HEIGHT,
-			"- Pieces move the same as in regular chess\n\n" +
-			"- To move, click on the piece you want to move, and then click on the square you want to move it to\n\n" +
-			"- Enemy pieces spawn in waves that will increase in difficulty in later rounds\n\n" +
-			"- Enemy pieces spawn in the top two rows (rows 7 & 8)\n\n" +
-			"- Your goal is to capture enemy pieces while avoiding checkmate\n\n" +
-			"- The more pieces you capture the more points you will gain\n\n" +
-			"- A new wave of pieces will spawn every 13 rounds\n\n" +
-			"- Capturing all the enemy pieces will progress you to the next round early",
-			{
-				fontFamily: "'Pixelify Sans', sans-serif",
-				fontSize: 20,
-				color: fillColor,
-				stroke: strokeColor,
-				strokeThickness: 0,
-				align: "left",
-			})
+		this.rulesText = this.add
+			.text(
+				CENTER_WIDTH,
+				6 * DOZEN_HEIGHT,
+				"- Pieces move the same as in regular chess\n\n" +
+					"- To move, click on the piece you want to move, and then click on the square you want to move it to\n\n" +
+					"- Enemy pieces spawn in waves that will increase in difficulty in later rounds\n\n" +
+					"- Enemy pieces spawn in the top two rows (rows 7 & 8)\n\n" +
+					"- Your goal is to capture enemy pieces while avoiding checkmate\n\n" +
+					"- The more pieces you capture the more points you will gain\n\n" +
+					"- A new wave of pieces will spawn every 13 rounds\n\n" +
+					"- Capturing all the enemy pieces will progress you to the next round early",
+				{
+					fontFamily: "'Pixelify Sans', sans-serif",
+					fontSize: 20,
+					color: fillColor,
+					stroke: strokeColor,
+					strokeThickness: 0,
+					align: "left",
+				}
+			)
 			.setOrigin(0.5)
 			.setDepth(100);
 
@@ -117,7 +136,7 @@ export class Rules extends Scene {
 			color: fillColor,
 			stroke: strokeColor,
 			strokeThickness: 5,
-			padding: { left: 20, right: 20, top: 10, bottom: 10 },
+			padding: {left: 20, right: 20, top: 10, bottom: 10},
 		});
 		this.closeButton.setOrigin(0.5);
 		this.closeButton.setInteractive();

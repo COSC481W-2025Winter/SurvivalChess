@@ -18,12 +18,13 @@ import {ChessGameState} from "./computer-logic";
 import {BoardState} from "./board-state";
 import {PieceCoordinates} from "./piece-coordinates";
 import {PiecesTaken} from "./pieces-taken";
+import {DevButtons} from "./dev-buttons";
 
 import {CHECKMATE, STALEMATE} from "./global-stats";
 import {setGlobalStatus, incrementGlobalMoves, incrementGlobalPieces, incrementGlobalWaves} from "./global-stats";
 import {resetGlobalStatus, resetGlobalMoves, resetGlobalPieces, resetGlobalWaves} from "./global-stats";
 
-import {dev_alignment, dev_rank, dev_bamzap, dev_stopOn, dev_deadAI, DevButtons} from "./dev-buttons";
+import {dev_alignment, dev_rank, dev_bamzap, dev_stopOn, dev_deadAI} from "./dev-buttons";
 import {BAM, ZAP} from "./dev-buttons";
 
 import {fontsizeTexts} from "./constants";
@@ -154,7 +155,7 @@ export class ChessTiles {
 		this.boardState = new BoardState(this.scene, this.pieceCoordinates);
 		this.devButtons = new DevButtons(this.scene, this);
 		this.piecesTaken = new PiecesTaken(this.scene);
-		//this.devButtons = new DevButtons(this.scene, this);
+		this.devButtons = new DevButtons(this.scene, this);
 	} // constructor ends here!!
 
 	// modified this
@@ -182,9 +183,9 @@ export class ChessTiles {
 			}
 		}
 		// NOW add the EventBus listener:
-EventBus.on("PaletteChanged", (palette) => {
-	this.updateColorTheme(palette);
-});
+		EventBus.on("PaletteChanged", (palette) => {
+			this.updateColorTheme(palette);
+		});
 
 		// Update captured panel
 		if (this.piecesTaken?.updatePanelColor) {

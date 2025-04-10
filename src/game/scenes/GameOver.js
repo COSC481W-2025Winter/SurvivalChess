@@ -1,14 +1,8 @@
-import { Scene } from "phaser";
-import { EventBus } from "../EventBus";
-// import {
-//     GAMEOVER_BACKGROUND_COLOR,
-//     GAMEOVER_TEXT_ONE,
-//     GAMEOVER_TEXT_TWO,
-//     GAMEOVER_BACKGROUND_COLOR_TWO,
-// } from "../../game-objects/constants";
-import { globalMoves, globalPieces, globalWaves } from "../../game-objects/global-stats";
+import {Scene} from "phaser";
+import {EventBus} from "../EventBus";
+import {globalMoves, globalPieces, globalWaves} from "../../game-objects/global-stats";
 
-import { paddingTexts, fontsizeTexts } from "../../game-objects/constants";
+import {paddingTexts, fontsizeTexts} from "../../game-objects/constants";
 import {
 	WINDOW_WIDTH,
 	WINDOW_HEIGHT,
@@ -21,8 +15,16 @@ import {
 
 export class GameOver extends Scene {
 	GAMEOVER_TEXT_ONE;
+	bg;
+	square;
+	titleText;
+	wordsText;
+	numbersText;
+	restartButton;
+	menuButton;
+
 	constructor() {
-		super({ key: "GameOver" });
+		super("GameOver");
 	}
 
 	preload() {
@@ -43,10 +45,11 @@ export class GameOver extends Scene {
 		// Theme logic
 		const selectedPalette = localStorage.getItem("selectedPalette") || "default";
 		const themeColors = {
-			default: { text: 0xe5aa70, background: 0xc04000 },
-			dark: { text: 0xbbb8b1, background: 0x222222 },
-			light: { text: 0x3b3b3b, background: 0xffffff },
+			default: {text: 0xe5aa70, background: 0xc04000},
+			dark: {text: 0xbbb8b1, background: 0x222222},
+			light: {text: 0x3b3b3b, background: 0xffffff},
 		}[selectedPalette];
+
 		// Access the Game scene
 		const gameScene = this.scene.get("MainGame");
 		this.buttonTextColor = themeColors.text;
@@ -54,7 +57,7 @@ export class GameOver extends Scene {
 		let GAMEOVER_BACKGROUND_COLOR = Phaser.Display.Color.IntegerToColor(this.buttonTextColor).rgba;
 		this.GAMEOVER_TEXT_ONE = Phaser.Display.Color.IntegerToColor(this.buttonBgColor).rgba;
 		let GAMEOVER_TEXT_TWO = Phaser.Display.Color.IntegerToColor(this.buttonTextColor).rgba;
-		let GAMEOVER_BACKGROUND_COLOR_TWO = Phaser.Display.Color.IntegerToColor(this.buttonTextColor).rgba;
+		// let GAMEOVER_BACKGROUND_COLOR_TWO = Phaser.Display.Color.IntegerToColor(this.buttonTextColor).rgba;
 		// Call the stopMusic method of the Game scene
 		if (gameScene) {
 			gameScene.stopMusic();
@@ -64,37 +67,49 @@ export class GameOver extends Scene {
 		this.endMusic = this.sound.add("endMusic", {loop: false, volume: 0.5});
 		this.endMusicPlaying = false;
 
-
 		// Music
-		this.endMusic = this.sound.add("endMusic", { loop: false, volume: 0.5 });
+		this.endMusic = this.sound.add("endMusic", {loop: false, volume: 0.5});
+		// Try to play music without user click
 		this.endMusic.play();
+		if (this.endMusic.isPlaying) {
+			this.endMusicPlaying = true;
+		}
 
-		// Scene layering
+		// put GAMEOVER over game screen
 		this.scene.moveAbove("MainGame", "GameOver");
+		// Creates an invisible background that also blocks input on the scene underneath
+		this.bg = this.add.rectangle(1, 1, 1, 1, GAMEOVER_BACKGROUND_COLOR, 0);
 
-		// Background layers
-		this.bg = this.add.rectangle(CENTER_WIDTH, CENTER_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT, 0xffffff, 0);
-		this.bg.setDepth(50);
-
-		this.square = this.add.rectangle(CENTER_WIDTH, CENTER_HEIGHT, 800, 600, 0xffffff, 0.95);
+		// Creates a visual background that also blocks input on the scene underneath
+		this.square = this.add.rectangle(
+			0,
+			0,
+			0,
+			0,
+			0xffffff,
+			0.95 // Opacity
+		);
 		this.square.setDepth(50);
 
 		// Title
-		this.titleText = this.add.text(CENTER_WIDTH, 2 * DOZEN_HEIGHT, "Game Over!", {
-			fontFamily: "'Pixelify Sans', sans-serif",
-			fontSize: 50,
-			color: Phaser.Display.Color.IntegerToColor(this.buttonTextColor).rgba,
-			//stroke: Phaser.Display.Color.IntegerToColor(this.buttonBgColor).rgba,
-			//strokeThickness: 5,
-			align: "center",
-		}).setOrigin(0.5).setDepth(100);
+		this.titleText = this.add
+			.text(CENTER_WIDTH, 2 * DOZEN_HEIGHT, "Game Over!", {
+				fontFamily: "'Pixelify Sans', sans-serif",
+				fontSize: 50,
+				color: Phaser.Display.Color.IntegerToColor(this.buttonTextColor).rgba,
+				// stroke: Phaser.Display.Color.IntegerToColor(this.buttonBgColor).rgba,
+				// strokeThickness: 5,
+				align: "center",
+			})
+			.setOrigin(0.5)
+			.setDepth(100);
 
 		this.wordsText = this.add
 			.text(0, 0, "Number of Moves Made: \nNumber of Captured Pieces: \nNumber of Waves Survived: \nFinal Score: ", {
 				fontFamily: "'Pixelify Sans', sans-serif",
 				color: GAMEOVER_TEXT_TWO,
 				backgroundColor: this.GAMEOVER_TEXT_ONE,
-				//stroke: GAMEOVER_TEXT_ONE,
+				// stroke: GAMEOVER_TEXT_ONE,
 				align: "left",
 			})
 			.setOrigin(0.5)
@@ -109,7 +124,7 @@ export class GameOver extends Scene {
 		this.numbersText = this.add
 			.text(0, 0, globalMoves + "\n" + globalPieces + "\n" + globalWaves + "\n" + score, {
 				color: GAMEOVER_TEXT_TWO,
-				//stroke: GAMEOVER_TEXT_ONE,
+				// stroke: GAMEOVER_TEXT_ONE,
 				align: "right",
 			})
 			.setOrigin(0.5)
@@ -118,17 +133,21 @@ export class GameOver extends Scene {
 
 		this.menuButton = this.createButton(0, 0, "Main Menu", () => {
 			console.log("Returning to main menu...");
+			// Stop background music
 			this.endMusic.stop();
+			this.endMusicPlaying = false;
 			this.scene.stop("GameOver");
 			this.scene.stop("MainGame");
-			this.scene.start("Game"); // ← Go to Start screen
+			this.scene.start("Game");
 		});
 
-		this.restartButton = this.createButton(CENTER_WIDTH, 600, "Restart Game", () => {
+		this.restartButton = this.createButton(0, 0, "Restart Game", () => {
 			console.log("Restarting game...");
+			// Stop background music
 			this.endMusic.stop();
+			this.endMusicPlaying = false;
 			this.scene.stop("GameOver");
-			this.scene.stop("MainGame");
+			this.scene.stop("MainGame"); // Reset game state
 			this.scene.start("MainGame");
 		});
 
@@ -138,37 +157,42 @@ export class GameOver extends Scene {
 		this.bg.setInteractive();
 		this.square.setInteractive();
 
-		const scene =this;
-		window.addEventListener(
-			"resize",
-			function(event) {
-				scene.resize();
-			}
-		);
+		const scene = this;
+		window.addEventListener("resize", function (event) {
+			scene.resize();
+		});
 
 		this.resize();
-
 
 		EventBus.emit("current-scene-ready", this);
 	}
 
 	createStatText(x, y, label, value) {
-		const labelText = this.add.text(x, y, label, {
-			fontFamily: "'Pixelify Sans', sans-serif",
-			fontSize: 25,
-			color: Phaser.Display.Color.IntegerToColor(this.buttonTextColor).rgba,
-			//stroke: Phaser.Display.Color.IntegerToColor(this.buttonBgColor).rgba,
-			//strokeThickness: 4,
-			align: "center",
-		}).setOrigin(0.5).setDepth(100);
+		const labelText = this.add
+			.text(x, y, label, {
+				fontFamily: "'Pixelify Sans', sans-serif",
+				fontSize: 25,
+				color: Phaser.Display.Color.IntegerToColor(this.buttonTextColor).rgba,
+				// stroke: Phaser.Display.Color.IntegerToColor(this.buttonBgColor).rgba,
+				// strokeThickness: 4,
+				align: "center",
+			})
+			.setOrigin(0.5)
+			.setDepth(100);
 
-		const valueText = this.add.text(x + 200, y, value.toString(), {
-			fontSize: 25,
-			color: Phaser.Display.Color.IntegerToColor(this.buttonTextColor).rgba,
-			//stroke: Phaser.Display.Color.IntegerToColor(this.buttonBgColor).rgba,
-			//strokeThickness: 4,
-			align: "center",
-		}).setOrigin(0.5).setDepth(100);
+		const valueText = this.add
+			.text(x + 200, y, value.toString(), {
+				fontSize: 25,
+				color: Phaser.Display.Color.IntegerToColor(this.buttonTextColor).rgba,
+				// stroke: Phaser.Display.Color.IntegerToColor(this.buttonBgColor).rgba,
+				// strokeThickness: 4,
+				align: "center",
+			})
+			.setOrigin(0.5)
+			.setDepth(100);
+
+		labelText;
+		valueText;
 	}
 
 	createMinimize() {
@@ -176,8 +200,15 @@ export class GameOver extends Scene {
 
 		// Minimize button
 		this.currentButton = this.createButton(0, 0, "▼", () => {
-			for (let element of [this.bg, this.square, this.titleText, this.wordsText, this.numbersText,
-				this.menuButton, this.restartButton])
+			for (let element of [
+				this.bg,
+				this.square,
+				this.titleText,
+				this.wordsText,
+				this.numbersText,
+				this.menuButton,
+				this.restartButton,
+			])
 				element.setAlpha(0);
 
 			this.createMaximize();
@@ -193,11 +224,17 @@ export class GameOver extends Scene {
 		this.bg.setOrigin(0.5);
 		this.bg.setInteractive();
 
-
 		// Maximize button
 		this.currentButton = this.createButton(0, 0, "▲", () => {
-			for (let element of [this.bg, this.square, this.titleText, this.wordsText, this.numbersText,
-				this.menuButton, this.restartButton])
+			for (let element of [
+				this.bg,
+				this.square,
+				this.titleText,
+				this.wordsText,
+				this.numbersText,
+				this.menuButton,
+				this.restartButton,
+			])
 				element.setAlpha(1);
 
 			this.createMinimize();
@@ -228,35 +265,36 @@ export class GameOver extends Scene {
 		fontsizeTexts(9 * UNIT_HEIGHT, this.menuButton, this.restartButton, this.currentButton);
 
 		for (let text of [
-            this.titleText,
-            this.wordsText,
-            this.numbersText,
-            this.restartButton,
-            this.menuButton,
-            this.currentButton,
-        ])
-            text.setStroke(this.GAMEOVER_TEXT_ONE, UNIT_HEIGHT);
-﻿
-
+			this.titleText,
+			this.wordsText,
+			this.numbersText,
+			this.restartButton,
+			this.menuButton,
+			this.currentButton,
+		])
+			text.setStroke(this.GAMEOVER_TEXT_ONE, UNIT_HEIGHT);
 	}
-	
-	createButton(x, y, text, callback) {
-		const button = this.add.text(x, y, text, {
-			fontFamily: "'Pixelify Sans', sans-serif",
-			fontSize: 20,
-			backgroundColor: Phaser.Display.Color.IntegerToColor(this.buttonBgColor).rgba,
-			color: Phaser.Display.Color.IntegerToColor(this.buttonTextColor).rgba,
-			//stroke: Phaser.Display.Color.IntegerToColor(this.buttonBgColor).rgba,
-			//strokeThickness: 5,
-			padding: { left: 20, right: 20, top: 10, bottom: 10 },
-		})
-		.setOrigin(0.5)
-		.setDepth(150)
-		.setInteractive();
 
-		button.on("pointerdown", callback);
-		button.on("pointerover", () => button.setScale(1.1));
-		button.on("pointerout", () => button.setScale(1));
+	createButton(x, y, text, callback) {
+		const button = this.add
+			.text(x, y, text, {
+				fontFamily: "'Pixelify Sans', sans-serif",
+				fontSize: 20,
+				backgroundColor: Phaser.Display.Color.IntegerToColor(this.buttonBgColor).rgba,
+				color: Phaser.Display.Color.IntegerToColor(this.buttonTextColor).rgba,
+				// stroke: Phaser.Display.Color.IntegerToColor(this.buttonBgColor).rgba,
+				// strokeThickness: 5,
+				padding: {left: 20, right: 20, top: 10, bottom: 10},
+			})
+			.setOrigin(0.5)
+			.setDepth(150)
+			.setInteractive();
+
+		// Set up button interactions
+		button.on("pointerdown", callback); // Execute the callback on click
+		button.on("pointerover", () => button.setScale(1.1)); // Slightly enlarge on hover
+		button.on("pointerout", () => button.setScale(1)); // Reset scale when not hovered
+
 		return button;
 	}
 }
