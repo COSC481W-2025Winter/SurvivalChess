@@ -1,5 +1,5 @@
 // turn-counter.js
-// import {globalMoves, globalWaves} from "./global-stats";
+import {globalMoves, globalWaves} from "./global-stats";
 
 export class TurnCounter {
 	constructor(scene) {
@@ -22,7 +22,7 @@ export class TurnCounter {
 
 	updateTurnCounter() {
 		if (this.turnCounterText && this.turnCounterText.setText) {
-			this.turnCount++;
+			this.turnCount = globalMoves;
 			this.turnCounterText.setText(`Turn: ${this.turnCount}`);
 		} else {
 			console.error("turnCounterText is not a valid Phaser Text object");
@@ -31,7 +31,7 @@ export class TurnCounter {
 
 	updateWaveCounterText() {
 		if (this.waveCounterText && this.waveCounterText.setText) {
-			this.waveCount++;
+			this.waveCount = globalWaves;
 			this.waveCounterText.setText(`Wave: ${this.waveCount}`);
 		} else {
 			console.error("waveCounterText is not a valid Phaser Text object");
