@@ -13,10 +13,11 @@ export class TurnCounter {
 			color: "#ffffff",
 		});
 
-		// this.waveCounterText = this.scene.add.text(1000, 450, `Wave: ${this.waveCount}`, {
-		// 	fontSize: 28,
-		// 	color: "#ffffff",
-		// });
+		this.waveCounterText = this.scene.add.text(1000, 450, `Wave: ${this.waveCount}`, {
+			fontFamily: "'Pixelify Sans', sans-serif",
+			fontSize: 28,
+			color: "#ffffff",
+		});
 	}
 
 	updateTurnCounter() {
@@ -31,7 +32,7 @@ export class TurnCounter {
 	updateWaveCounterText() {
 		if (this.waveCounterText && this.waveCounterText.setText) {
 			this.waveCount++;
-			this.waveCounterText.setText(`Turn: ${this.waveCount}`);
+			this.waveCounterText.setText(`Wave: ${this.waveCount}`);
 		} else {
 			console.error("waveCounterText is not a valid Phaser Text object");
 		}
