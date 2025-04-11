@@ -1,22 +1,39 @@
 // turn-counter.js
-import {globalMoves} from "./global-stats";
+// import {globalMoves, globalWaves} from "./global-stats";
 
 export class TurnCounter {
 	constructor(scene) {
 		this.scene = scene;
 		this.turnCount = 0;
+		this.waveCount = 0;
 
 		this.turnCounterText = this.scene.add.text(1000, 375, `Turn: ${this.turnCount}`, {
+			fontFamily: "'Pixelify Sans', sans-serif",
 			fontSize: 28,
 			color: "#ffffff",
 		});
+
+		// this.waveCounterText = this.scene.add.text(1000, 450, `Wave: ${this.waveCount}`, {
+		// 	fontSize: 28,
+		// 	color: "#ffffff",
+		// });
 	}
 
 	updateTurnCounter() {
 		if (this.turnCounterText && this.turnCounterText.setText) {
-			this.turnCounterText.setText(`Turn: ${globalMoves}`);
+			this.turnCount++;
+			this.turnCounterText.setText(`Turn: ${this.turnCount}`);
 		} else {
 			console.error("turnCounterText is not a valid Phaser Text object");
+		}
+	}
+
+	updateWaveCounterText() {
+		if (this.waveCounterText && this.waveCounterText.setText) {
+			this.waveCount++;
+			this.waveCounterText.setText(`Turn: ${this.waveCount}`);
+		} else {
+			console.error("waveCounterText is not a valid Phaser Text object");
 		}
 	}
 }

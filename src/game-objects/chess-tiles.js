@@ -19,6 +19,7 @@ import {ChessGameState} from "./computer-logic";
 import {BoardState} from "./board-state";
 import {PieceCoordinates} from "./piece-coordinates";
 import {PiecesTaken} from "./pieces-taken";
+import {TurnCounter} from "./turn-counter";
 
 import {CHECKMATE, STALEMATE} from "./global-stats";
 import {setGlobalStatus, incrementGlobalMoves, incrementGlobalPieces, incrementGlobalWaves} from "./global-stats";
@@ -51,6 +52,7 @@ export class ChessTiles {
 		this.piecesTaken; // contains PiecesTaken object that logs captured pieces
 		this.devButtons; // contains DevButtons object that configures development mode buttons
 		this.sideLights; // numbers & letters on edge of chessboard that highlight in response to cursorZ
+		this.turnCounter;
 
 		this.xy; // coordinate of selected chess piece; list of [i,j]
 		this.moves; // possible moves of selected chess piece; list of dictionaries of {'xy':[#,#],'isEnemy':boolean}
@@ -151,6 +153,7 @@ export class ChessTiles {
 		this.boardState = new BoardState(this.scene, this.pieceCoordinates);
 		this.piecesTaken = new PiecesTaken(this.scene);
 		this.devButtons = new DevButtons(this.scene, this);
+		this.turnCounter = new TurnCounter(this.scene);
 	}
 
 	resize() {
@@ -467,6 +470,7 @@ export class ChessTiles {
 
 		this.waveSpawnBudget += 2;
 		incrementGlobalWaves();
+		this.turnCounter.updateWaveCounterText();
 	}
 
 	// Centering procedure
