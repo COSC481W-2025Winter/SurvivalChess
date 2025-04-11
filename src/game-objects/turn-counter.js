@@ -2,6 +2,10 @@
 import {globalMoves, globalWaves} from "./global-stats";
 
 export class TurnCounter {
+	scene;
+	turnCount;
+	waveCount;
+
 	constructor(scene) {
 		this.scene = scene;
 		this.turnCount = 0;
