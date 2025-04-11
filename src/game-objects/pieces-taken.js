@@ -98,6 +98,29 @@ export class PiecesTaken {
 			}
 		}
 	}
+	updatePanelColor(darkHex, lightHex, palette = "default") {
+		if (this.box2) this.box2.setFillStyle(darkHex);
+		if (this.box1) this.box1.setFillStyle(lightHex);
+
+		// Safely update title text color
+		if (this.titleText && this.titleText.setColor && this.titleText.visible) {
+			try {
+				this.titleText.setColor(palette === "light" ? "#3B3B3B" : "#FFFFFF");
+			} catch (err) {
+				console.warn("setColor failed on titleText:", err);
+			}
+		}
+	}
+
+	addPiece(i, j, rank, alignment) {
+		this.piecesTaken[i][j] = new ChessPiece(this.scene, X_ANCHOR + i * 72, Y_ANCHOR + j * TILE_SIZE, rank, alignment);
+		this.scene.add.existing(this.piecesTaken[i][j]);
+		this.scene.add.text(X_ANCHOR + 15 + i * 72, Y_ANCHOR - 7 + j * TILE_SIZE, "x ", {
+			fontFamily: "'Pixelify Sans', sans-serif",
+			fontSize: 16,
+			color: START_TEXT_ONE,
+		});
+	}
 
 	takePiece(rank, alignment) {
 		this.scores[alignment][rank] += 1;

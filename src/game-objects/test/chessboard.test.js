@@ -6,6 +6,8 @@ import {ChessTiles} from "../chess-tiles.js";
 jest.spyOn(ChessTiles.prototype, "checkPromotion").mockImplementation(([col, row]) => {
 	return false;
 });
+import {resize_constants, WINDOW_WIDTH, WINDOW_HEIGHT} from "../constants.js";
+
 // Mock ChessPiece class
 class MockChessPiece {
 	constructor(scene, x, y, rank, alignment) {
@@ -112,18 +114,24 @@ describe("", () => {
 			this.width = width;
 			this.height = height;
 			this.fillColor = color;
+			this.origin = 0;
 		}
 
-		setOrigin() {
+		setOrigin(origin) {
+			this.origin = origin;
 			return this;
 		}
 		setInteractive() {
 			return this;
 		}
-		setPosition() {
+		setPosition(x, y) {
+			this.x = x;
+			this.y = y;
 			return this;
 		}
-		setSize() {
+		setSize(width, height) {
+			this.width = width;
+			this.height = height;
 			return this;
 		}
 		on() {
@@ -144,18 +152,26 @@ describe("", () => {
 			this.text = text;
 			this.style = style;
 			this.origin = 0;
+			this.padding = null;
+			this.fontSize = null;
 		}
 
 		setInteractive() {
 			return this;
 		}
-		setPosition() {
+		setPosition(x, y) {
+			this.x = x;
+			this.y = y;
 			return this;
 		}
 		on() {
 			return this;
 		}
-		setFontSize() {
+		setFontSize(fontSize) {
+			this.fontSize = fontSize;
+			return this;
+		}
+		setPadding() {
 			return this;
 		}
 
@@ -545,5 +561,30 @@ describe("", () => {
 		}
 
 		expect(allPiecesUnique).toBe(true);
+	});
+
+	test("Resize", () => {
+		window.innerWidth = 42 ** 42;
+		window.innerHeight = 42;
+		resize_constants();
+		expect(WINDOW_WIDTH).toBe((window.innerHeight * 21) / 9);
+		window.innerWidth = 42;
+		window.innerHeight = 42 ** 42;
+		resize_constants();
+		expect(WINDOW_HEIGHT).toBe((window.innerWidth * 10) / 16);
+
+		const resize = jest.spyOn(tiles, "resize");
+		const resize1 = jest.spyOn(tiles.boardState, "resize");
+		const resize2 = jest.spyOn(tiles.devButtons, "resize");
+		const resize3 = jest.spyOn(tiles.piecesTaken, "resize");
+		expect(resize).not.toHaveBeenCalled();
+		expect(resize1).not.toHaveBeenCalled();
+		expect(resize2).not.toHaveBeenCalled();
+		expect(resize3).not.toHaveBeenCalled();
+		for (let i = 0; i < 7; i++) tiles.resize();
+		expect(resize).toHaveBeenCalledTimes(7);
+		expect(resize1).toHaveBeenCalledTimes(7);
+		expect(resize2).toHaveBeenCalledTimes(7);
+		expect(resize3).toHaveBeenCalledTimes(7);
 	});
 });
