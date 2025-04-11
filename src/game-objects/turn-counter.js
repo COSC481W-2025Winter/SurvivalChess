@@ -7,17 +7,21 @@ export class TurnCounter {
 		this.turnCount = 0;
 		this.waveCount = 0;
 
-		this.turnCounterText = this.scene.add.text(1000, 375, `Turn: ${this.turnCount}`, {
-			fontFamily: "'Pixelify Sans', sans-serif",
-			fontSize: 28,
-			color: "#ffffff",
-		});
+		if (this.scene?.add?.text) {
+			this.turnCounterText = this.scene.add.text(1000, 375, `Turn: ${this.turnCount}`, {
+				fontFamily: "'Pixelify Sans', sans-serif",
+				fontSize: 28,
+				color: "#ffffff",
+			});
 
-		this.waveCounterText = this.scene.add.text(1000, 450, `Wave: ${this.waveCount}`, {
-			fontFamily: "'Pixelify Sans', sans-serif",
-			fontSize: 28,
-			color: "#ffffff",
-		});
+			this.waveCounterText = this.scene.add.text(1000, 450, `Wave: ${this.waveCount}`, {
+				fontFamily: "'Pixelify Sans', sans-serif",
+				fontSize: 28,
+				color: "#ffffff",
+			});
+		} else {
+			console.warn("TurnCounter initialized without valid scene — skipping text setup");
+		}
 	}
 
 	updateTurnCounter() {
