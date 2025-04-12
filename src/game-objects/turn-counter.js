@@ -1,5 +1,14 @@
 // turn-counter.js
 import {globalMoves, globalWaves} from "./global-stats";
+import {
+	RIGHT_X_CENTER,
+	RIGHT_UNIT,
+	CENTER_HEIGHT,
+	fontsizeTexts,
+	paddingTexts,
+	START_TEXT_ONE,
+	START_TEXT_TWO,
+} from "./constants";
 
 export class TurnCounter {
 	scene;
@@ -12,20 +21,34 @@ export class TurnCounter {
 		this.waveCount = 0;
 
 		if (this.scene?.add?.text) {
-			this.turnCounterText = this.scene.add.text(1000, 375, `Turn: ${this.turnCount}`, {
-				fontFamily: "'Pixelify Sans', sans-serif",
-				fontSize: 28,
-				color: "#ffffff",
-			});
+			this.turnCounterText = this.scene.add
+				.text(0, 0, `Turn: ${this.turnCount}`, {
+					fontFamily: "'Pixelify Sans', sans-serif",
+					color: START_TEXT_ONE,
+				})
+				.setOrigin(0.5);
 
-			this.waveCounterText = this.scene.add.text(1000, 450, `Wave: ${this.waveCount}`, {
-				fontFamily: "'Pixelify Sans', sans-serif",
-				fontSize: 28,
-				color: "#ffffff",
-			});
+			this.waveCounterText = this.scene.add
+				.text(0, 0, `Wave: ${this.waveCount}`, {
+					fontFamily: "'Pixelify Sans', sans-serif",
+					color: START_TEXT_TWO,
+				})
+				.setOrigin(0.5);
+
+			this.resize();
 		} else {
 			console.warn("TurnCounter initialized without valid scene — skipping text setup");
 		}
+	}
+
+	resize() {
+		const yOffset = RIGHT_UNIT * 0.75;
+
+		this.turnCounterText.setPosition(RIGHT_X_CENTER, CENTER_HEIGHT - yOffset);
+		this.waveCounterText.setPosition(RIGHT_X_CENTER, CENTER_HEIGHT + yOffset);
+
+		fontsizeTexts(RIGHT_UNIT * 0.75, this.turnCounterText, this.waveCounterText);
+		paddingTexts(RIGHT_UNIT / 3, RIGHT_UNIT / 6, this.turnCounterText, this.waveCounterText);
 	}
 
 	updateTurnCounter() {
