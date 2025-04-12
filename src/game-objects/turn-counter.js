@@ -36,6 +36,7 @@ export class TurnCounter {
 				.setOrigin(0.5);
 
 			this.resize();
+			this.scene.scale.on("resize", this.resize, this);
 		} else {
 			console.warn("TurnCounter initialized without valid scene — skipping text setup");
 		}
