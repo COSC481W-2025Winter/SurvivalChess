@@ -3,6 +3,7 @@ import {COLOR_THEMES} from "../../game-objects/constants.js";
 import {EventBus} from "../EventBus";
 import {setPieceStyle} from "./PieceStyle";
 import {toggleDev, DEV_MODE} from "../../game-objects/dev-buttons.js";
+import {globalMuteSound, toggleGlobalMute} from "../../game-objects/global-stats.js";
 
 const palettes = ["default", "dark", "light"];
 
@@ -133,6 +134,20 @@ export class Settings extends Phaser.Scene {
 			.on("pointerdown", () => {
 				toggleDev();
 				this.devButton.setText("Dev Mode: " + (DEV_MODE ? "ON" : "OFF"));
+			});
+
+		// Music Toggle Button
+		this.muteButton = this.add
+			.text(400, yOffset, globalMuteSound ? "Unmute Music" : "Mute Music", {
+				fontSize: "18px",
+				fill: "#f28d3e",
+				backgroundColor: "#333",
+				padding: {x: 10, y: 5},
+			})
+			.setInteractive()
+			.on("pointerdown", () => {
+				toggleGlobalMute(this);
+				this.muteButton.setText(globalMuteSound ? "Unmute Music" : "Mute Music");
 			});
 
 		// Close Button (Same Style as "Close Rules")

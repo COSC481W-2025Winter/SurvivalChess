@@ -1,6 +1,6 @@
 import {Scene} from "phaser";
 import {EventBus} from "../EventBus";
-import {globalMoves, globalPieces, globalWaves} from "../../game-objects/global-stats";
+import {globalMoves, globalPieces, globalWaves, globalMuteSound} from "../../game-objects/global-stats";
 
 import {paddingTexts, fontsizeTexts} from "../../game-objects/constants";
 import {
@@ -63,17 +63,11 @@ export class GameOver extends Scene {
 			gameScene.stopMusic();
 		}
 
-		// Play music
+		// Register music
 		this.endMusic = this.sound.add("endMusic", {loop: false, volume: 0.5});
 		this.endMusicPlaying = false;
 
-		// Music
-		this.endMusic = this.sound.add("endMusic", {loop: false, volume: 0.5});
-		// Try to play music without user click
-		this.endMusic.play();
-		if (this.endMusic.isPlaying) {
-			this.endMusicPlaying = true;
-		}
+		this.startMusic();
 
 		// put GAMEOVER over game screen
 		this.scene.moveAbove("MainGame", "GameOver");
@@ -134,8 +128,7 @@ export class GameOver extends Scene {
 		this.menuButton = this.createButton(0, 0, "Main Menu", () => {
 			console.log("Returning to main menu...");
 			// Stop background music
-			this.endMusic.stop();
-			this.endMusicPlaying = false;
+			this.stopMusic();
 			this.scene.stop("GameOver");
 			this.scene.stop("MainGame");
 			this.scene.start("Game");
@@ -143,9 +136,7 @@ export class GameOver extends Scene {
 
 		this.restartButton = this.createButton(0, 0, "Restart Game", () => {
 			console.log("Restarting game...");
-			// Stop background music
-			this.endMusic.stop();
-			this.endMusicPlaying = false;
+			this.stopMusic();
 			this.scene.stop("GameOver");
 			this.scene.stop("MainGame"); // Reset game state
 			this.scene.start("MainGame");
@@ -165,6 +156,20 @@ export class GameOver extends Scene {
 		this.resize();
 
 		EventBus.emit("current-scene-ready", this);
+	}
+
+	startMusic() {
+		// Try to play music without user click (if not muted)
+		if (globalMuteSound == false) this.endMusic.play();
+		if (this.endMusic.isPlaying) {
+			this.endMusicPlaying = true;
+		}
+	}
+
+	stopMusic() {
+		// Stop background music
+		this.endMusic.stop();
+		this.endMusicPlaying = false;
 	}
 
 	createStatText(x, y, label, value) {

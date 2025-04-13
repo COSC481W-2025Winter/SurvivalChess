@@ -26,24 +26,9 @@ export class Rules extends Scene {
 
 	preload() {
 		this.load.setPath("assets");
-
-		WebFont.load({
-			google: {
-				families: ["Pixelify Sans"],
-			},
-			active: () => {
-				this.fontLoaded = true;
-			},
-		});
 	}
 
 	create() {
-		if (this.fontLoaded) {
-			this.createContent();
-		}
-	}
-
-	createContent() {
 		const selectedPalette = localStorage.getItem("selectedPalette") || "default";
 
 		const themeColors = {

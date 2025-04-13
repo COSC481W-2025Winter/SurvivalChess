@@ -10,6 +10,7 @@ import {RIGHT_X_CENTER} from "../../game-objects/constants";
 import {DOZEN_HEIGHT, UNIT_HEIGHT} from "../../game-objects/constants";
 import {configureButtons, paddingTexts, fontsizeTexts} from "../../game-objects/constants";
 import {getPieceStyle} from "./PieceStyle";
+import {globalMuteSound} from "../../game-objects/global-stats";
 
 import {
 	PAWN,
@@ -59,15 +60,11 @@ export class Game extends Scene {
 	}
 
 	create() {
-		// Play music
-		this.gameMusic = this.sound.add("gameMusic", {loop: false, volume: 1});
+		// Setup music
+		this.gameMusic = this.sound.add("gameMusic", {loop: false, volume: 0.5});
 		this.gameMusicPlaying = false;
 
-		// Play the music
-		this.gameMusic.play();
-		if (this.gameMusic.isPlaying) {
-			this.gameMusicPlaying = true;
-		}
+		this.startMusic();
 
 		// Manually loop specific part of the song
 		const loopStartTime = 44; // in seconds
@@ -113,8 +110,7 @@ export class Game extends Scene {
 				import("./GameOver") //
 					.then((module) => {
 						// Stop background music
-						this.gameMusic.stop();
-						this.gameMusicPlaying = false;
+						this.stopMusic();
 
 						// Only add the scene if it's not already registered
 						if (!this.scene.get("GameOver")) {
@@ -184,6 +180,16 @@ export class Game extends Scene {
 		if (this.gameMusicPlaying) {
 			this.gameMusic.stop();
 			this.gameMusicPlaying = false;
+		}
+	}
+
+	startMusic() {
+		// Play the music (if not muted)
+		if (globalMuteSound == false) {
+			this.gameMusic.play();
+			if (this.gameMusic.isPlaying) {
+				this.gameMusicPlaying = true;
+			}
 		}
 	}
 }

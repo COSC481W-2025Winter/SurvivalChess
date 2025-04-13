@@ -1,5 +1,6 @@
 import {Scene} from "phaser";
 import {EventBus} from "../EventBus";
+import {globalMuteSound} from "../../game-objects/global-stats";
 
 import {configureButtons, paddingTexts, fontsizeTexts} from "../../game-objects/constants";
 import {resize_constants} from "../../game-objects/constants";
@@ -31,18 +32,12 @@ export class Start extends Scene {
 			active: () => {
 				this.fontLoaded = true;
 
-				// === Play Music ===
+				// Register music
 				this.backgroundMusic = this.sound.add("backgroundMusic", {loop: true, volume: 0.5});
-				if (!this.backgroundMusic.isPlaying) {
-					this.backgroundMusic.play();
-					this.backgroundMusicPlaying = true;
-				}
+				this.startMusic();
 
 				this.input.on("pointerdown", () => {
-					if (!this.backgroundMusic.isPlaying) {
-						this.backgroundMusic.play();
-						this.backgroundMusicPlaying = true;
-					}
+					this.startMusic();
 				});
 
 				// === Color Themes ===
@@ -115,8 +110,7 @@ export class Start extends Scene {
 				});
 				this.startButton.setInteractive().on("pointerdown", () => {
 					import("./Game").then((module) => {
-						this.backgroundMusic.stop();
-						this.backgroundMusicPlaying = false;
+						this.stopMusic();
 						if (!this.scene.get("MainGame")) {
 							this.scene.add("MainGame", module.Game);
 						}
@@ -174,8 +168,7 @@ export class Start extends Scene {
 				// === Handle Theme Change ===
 				EventBus.on("PaletteChanged", () => {
 					if (this.backgroundMusic && this.backgroundMusic.isPlaying) {
-						this.backgroundMusic.stop();
-						this.backgroundMusicPlaying = false;
+						this.stopMusic();
 					}
 					if (this.scene.isVisible("Game")) {
 						this.scene.restart();
@@ -183,6 +176,18 @@ export class Start extends Scene {
 				});
 			},
 		});
+	}
+
+	startMusic() {
+		if (!this.backgroundMusic.isPlaying && globalMuteSound == false) {
+			this.backgroundMusic.play();
+			this.backgroundMusicPlaying = true;
+		}
+	}
+
+	stopMusic() {
+		this.backgroundMusic.stop();
+		this.backgroundMusicPlaying = false;
 	}
 
 	resize() {
