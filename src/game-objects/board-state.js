@@ -135,8 +135,21 @@ export class BoardState {
 		return true;
 	}
 
+	animatePieceMove(piece, [outcol, outrow]) {
+		const targetX = X_ANCHOR + outcol * TILE_SIZE;
+		const targetY = Y_ANCHOR + outrow * TILE_SIZE;
+
+		this.#scene.tweens.add({
+			targets: piece,
+			x: targetX,
+			y: targetY,
+			duration: 300,
+			ease: "Power2",
+		});
+	}
+
 	// Move piece in input coordinate to output coordinate
-	movePiece(input, output) {
+	async movePiece(input, output) {
 		const incol = input[0];
 		const inrow = input[1];
 		const outcol = output[0];
@@ -148,7 +161,8 @@ export class BoardState {
 		if (this.getRank(incol, inrow) == PAWN && Math.abs(inrow - outrow) == 2)
 			this.addEnPassantToken(incol, (inrow + outrow) / 2);
 
-		this.#boardState[incol][inrow].setPosition(X_ANCHOR + outcol * TILE_SIZE, Y_ANCHOR + outrow * TILE_SIZE);
+		// this.#boardState[incol][inrow].setPosition(X_ANCHOR + outcol * TILE_SIZE, Y_ANCHOR + outrow * TILE_SIZE);
+		this.animatePieceMove(this.#boardState[incol][inrow], output);
 		this.#boardState[outcol][outrow] = this.#boardState[incol][inrow];
 		this.#boardState[incol][inrow] = null;
 

@@ -685,13 +685,16 @@ export class ChessTiles {
 	}
 
 	makeComputerMove() {
-		EventBus.once("ComputerMove", (detail) => {
+		EventBus.once("ComputerMove", async (detail) => {
 			console.log("move: " + detail[0] + " to " + detail[1], detail[2]);
 			if (this.boardState.isOccupied(detail[1][0], detail[1][1])) {
 				this.capturePiece(this.boardState.getRank(detail[1][0], detail[1][1]), PLAYER);
 				this.boardState.destroyPiece(detail[1][0], detail[1][1]);
 			}
-			this.boardState.movePiece(detail[0], detail[1]); // make the move given
+			console.log("await computer move piece");
+			await this.boardState.movePiece(detail[0], detail[1]);
+			console.log("piece moved");
+			// this.boardState.movePiece(detail[0], detail[1]); // make the move given
 			this.checkPromotion(detail[1]);
 			this.currentPlayer = PLAYER;
 		});
