@@ -437,13 +437,18 @@ export class ChessTiles {
 		if (this.boardState.isCheckmated(this.currentPlayer)) status = CHECKMATE;
 		if (this.boardState.isStalemated(this.currentPlayer)) status = STALEMATE;
 		setGlobalStatus(status);
-		if (status)
+		if (status) {
+			const gameScene = this.scene.scene.get("MainGame");
+			if (gameScene) {
+				gameScene.destroyButtons();
+			}
 			import("../game/scenes/GameOver").then((module) => {
 				// Only add the scene if it's not already registered
 				if (!this.scene.scene.get("GameOver")) this.scene.scene.add("GameOver", module.GameOver);
 				// Start the GameOver scene
 				this.scene.scene.launch("GameOver");
 			});
+		}
 	}
 
 	// ================================================================

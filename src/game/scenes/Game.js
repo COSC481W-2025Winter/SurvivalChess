@@ -112,10 +112,7 @@ export class Game extends Scene {
 						// Stop background music
 						this.stopMusic();
 
-						// Make buttons invisible
-						this.rulesButton.destroy();
-						this.settingsButton.destroy();
-						this.endButton.destroy();
+						this.destroyButtons();
 
 						// Only add the scene if it's not already registered
 						if (!this.scene.get("GameOver")) {
@@ -196,5 +193,12 @@ export class Game extends Scene {
 				this.gameMusicPlaying = true;
 			}
 		}
+	}
+
+	destroyButtons() {
+		// Make buttons invisible
+		this.rulesButton.destroy();
+		this.settingsButton.destroy();
+		this.endButton.destroy();
 	}
 }
