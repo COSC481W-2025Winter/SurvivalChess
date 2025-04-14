@@ -680,7 +680,7 @@ export class ChessTiles {
 	}
 
 	setPromotion(rank, alignment) {
-		if (this.boardState.getRank(this.promotionCol, this.promotionRow) == rank) {
+		if (this.boardState.getAlignment(this.promotionCol, this.promotionRow) == alignment) {
 			this.boardState.destroyPiece(this.promotionCol, this.promotionRow); // might need update with capture
 			this.boardState.addPiece(this.promotionCol, this.promotionRow, rank, alignment);
 		}
