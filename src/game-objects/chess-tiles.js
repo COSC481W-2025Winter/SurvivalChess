@@ -155,7 +155,6 @@ export class ChessTiles {
 		this.boardState = new BoardState(this.scene, this.pieceCoordinates);
 		this.devButtons = new DevButtons(this.scene, this);
 		this.piecesTaken = new PiecesTaken(this.scene);
-		this.devButtons = new DevButtons(this.scene, this);
 	} // constructor ends here!!
 
 	// modified this
