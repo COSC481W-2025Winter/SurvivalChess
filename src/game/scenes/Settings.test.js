@@ -84,6 +84,12 @@ describe("Settings Scene", () => {
 			const paletteText = scene.add.text(100, 100 + index * 40, palette, {font: "16px Arial", fill: "#fff"});
 			paletteText.setInteractive();
 		});
+	// developer mode?? sprint 3
+	test("should create the Dev Mode button", () => {
+		const devButton = scene.add.text.mock.calls.find((call) => call[2] === "Dev Mode: OFF");
+		expect(devButton).toBeDefined();
+	});
+	
 
 		// Get children in the scene
 		const children = [
