@@ -680,8 +680,10 @@ export class ChessTiles {
 	}
 
 	setPromotion(rank, alignment) {
-		this.boardState.destroyPiece(this.promotionCol, this.promotionRow); // might need update with capture
-		this.boardState.addPiece(this.promotionCol, this.promotionRow, rank, alignment);
+		if (this.boardState.getAlignment(this.promotionCol, this.promotionRow) == alignment) {
+			this.boardState.destroyPiece(this.promotionCol, this.promotionRow); // might need update with capture
+			this.boardState.addPiece(this.promotionCol, this.promotionRow, rank, alignment);
+		}
 	}
 
 	makeComputerMove() {
