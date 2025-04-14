@@ -504,7 +504,7 @@ export class ChessTiles {
 			window.alert("Error with new wave: " + ex.message);
 		}
 
-		this.waveSpawnBudget += 1;
+		this.waveSpawnBudget += 2;
 		incrementGlobalWaves();
 		this.boardState.turnCounter.updateWaveCounterText();
 	}
