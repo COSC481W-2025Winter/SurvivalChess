@@ -15,7 +15,8 @@ export class BoardState {
 	#isChecked;
 
 	constructor(scene, pieceCoordinates, initialize = true) {
-		this.#scene = scene;
+		// Adds tweens if scene does not initilize (was getting error before)
+		this.#scene = scene || {tweens: {add: () => {}}};
 
 		// 8x8 array of chess pieces
 		this.#boardState = dim2Array(8, 8);
@@ -135,6 +136,7 @@ export class BoardState {
 		return true;
 	}
 
+	// Animate pieces
 	animatePieceMove(piece, [outcol, outrow]) {
 		const targetX = X_ANCHOR + outcol * TILE_SIZE;
 		const targetY = Y_ANCHOR + outrow * TILE_SIZE;
@@ -162,7 +164,7 @@ export class BoardState {
 			this.addEnPassantToken(incol, (inrow + outrow) / 2);
 
 		// this.#boardState[incol][inrow].setPosition(X_ANCHOR + outcol * TILE_SIZE, Y_ANCHOR + outrow * TILE_SIZE);
-		this.animatePieceMove(this.#boardState[incol][inrow], output);
+		this.animatePieceMove(this.#boardState[incol][inrow], output); // Move with animation
 		this.#boardState[outcol][outrow] = this.#boardState[incol][inrow];
 		this.#boardState[incol][inrow] = null;
 
