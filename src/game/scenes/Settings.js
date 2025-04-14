@@ -2,8 +2,8 @@ import Phaser from "phaser";
 import {COLOR_THEMES} from "../../game-objects/constants.js";
 import {EventBus} from "../EventBus";
 import {setPieceStyle} from "./PieceStyle";
-import {toggleDev, DevButtons, DEV_MODE} from "../../game-objects/dev-buttons.js";
-import {ChessTiles} from "../../game-objects/chess-tiles";
+import {toggleDev, DEV_MODE} from "../../game-objects/dev-buttons.js";
+// import {ChessTiles} from "../../game-objects/chess-tiles";
 
 export class Settings extends Phaser.Scene {
 	constructor() {
@@ -83,11 +83,11 @@ export class Settings extends Phaser.Scene {
 		this.add.text(200, 170, "Color Palette:", {fontSize: "20px", fill: "#fff"});
 
 		const palettes = ["default", "dark", "light"];
-		let yOffset = 220;
+		let yOffset = 0;
 
 		palettes.forEach((palette) => {
 			this.add
-				.text(220, yOffset, palette, {
+				.text(this.cameras.main.width / 8, this.cameras.main.height / 4 + yOffset, palette, {
 					fontSize: "18px",
 					fill: "#f28d3e",
 					backgroundColor: "#333",
@@ -119,12 +119,17 @@ export class Settings extends Phaser.Scene {
 
 		// Dev Mode Toggle Button
 		this.devButton = this.add
-			.text(200, yOffset, "Dev Mode: " + (DEV_MODE ? "ON" : "OFF"), {
-				fontSize: "18px",
-				fill: "#f28d3e",
-				backgroundColor: "#333",
-				padding: {x: 10, y: 5},
-			})
+			.text(
+				this.cameras.main.width / 8,
+				this.cameras.main.height / 4 + yOffset,
+				"Dev Mode: " + (DEV_MODE ? "ON" : "OFF"),
+				{
+					fontSize: "18px",
+					fill: "#f28d3e",
+					backgroundColor: "#333",
+					padding: {x: 10, y: 5},
+				}
+			)
 			.setInteractive()
 			.on("pointerdown", () => {
 				toggleDev();
