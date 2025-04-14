@@ -112,6 +112,11 @@ export class Game extends Scene {
 						// Stop background music
 						this.stopMusic();
 
+						// Make buttons invisible
+						this.rulesButton.destroy();
+						this.settingsButton.destroy();
+						this.endButton.destroy();
+
 						// Only add the scene if it's not already registered
 						if (!this.scene.get("GameOver")) {
 							this.scene.add("GameOver", module.GameOver); // Add the MainGame scene dynamically
