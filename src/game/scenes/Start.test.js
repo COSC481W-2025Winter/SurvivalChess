@@ -31,6 +31,7 @@ describe("Start Scene", () => {
 				{text: "Settings", input: {enabled: true}},
 				// Mock the rules button, ensuring it has a text and is interactable
 				{text: "See Rules", input: {enabled: true}},
+				{text: "GitHub", input: {enabled: true}},
 			]),
 		};
 
@@ -90,5 +91,15 @@ describe("Start Scene", () => {
 		// Assertions to check if the rules button exists and is interactive
 		expect(rulesButton).toBeDefined(); // Ensure the button exists
 		expect(rulesButton.input.enabled).toBe(true); // Ensure the button is interactive (enabled)
+	});
+
+	// Test to verify that the github button is created and is interactive
+	test("github button should be created and interactive", () => {
+		// Find the start button from the mocked children
+		const githubButton = scene.children.getChildren().find((child) => child.text === "GitHub");
+
+		// Assertions to check if the github button exists and is interactive
+		expect(githubButton).toBeDefined(); // Ensure the button exists
+		expect(githubButton.input.enabled).toBe(true); // Ensure the button is interactive (enabled)
 	});
 });
