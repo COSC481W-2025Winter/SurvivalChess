@@ -155,7 +155,6 @@ export class ChessTiles {
 		this.boardState = new BoardState(this.scene, this.pieceCoordinates);
 		this.devButtons = new DevButtons(this.scene, this);
 		this.piecesTaken = new PiecesTaken(this.scene);
-		this.devButtons = new DevButtons(this.scene, this);
 	} // constructor ends here!!
 
 	// modified this
@@ -437,6 +436,7 @@ export class ChessTiles {
 		if (this.boardState.isCheckmated(this.currentPlayer)) status = CHECKMATE;
 		if (this.boardState.isStalemated(this.currentPlayer)) status = STALEMATE;
 		setGlobalStatus(status);
+    console.log(status, this.currentPlayer);
 		if (status) {
 			const gameScene = this.scene.scene.get("MainGame");
 			if (gameScene) {
@@ -685,20 +685,26 @@ export class ChessTiles {
 	}
 
 	setPromotion(rank, alignment) {
-		this.boardState.destroyPiece(this.promotionCol, this.promotionRow); // might need update with capture
-		this.boardState.addPiece(this.promotionCol, this.promotionRow, rank, alignment);
+		if (this.boardState.getAlignment(this.promotionCol, this.promotionRow) == alignment) {
+			this.boardState.destroyPiece(this.promotionCol, this.promotionRow); // might need update with capture
+			this.boardState.addPiece(this.promotionCol, this.promotionRow, rank, alignment);
+		}
 	}
 
 	makeComputerMove() {
-		EventBus.once("ComputerMove", (detail) => {
-			console.log("move: " + detail[0] + " to " + detail[1], detail[2]);
-			if (this.boardState.isOccupied(detail[1][0], detail[1][1])) {
-				this.capturePiece(this.boardState.getRank(detail[1][0], detail[1][1]), PLAYER);
-				this.boardState.destroyPiece(detail[1][0], detail[1][1]);
-			}
-			this.boardState.movePiece(detail[0], detail[1]); // make the move given
-			this.checkPromotion(detail[1]);
-			this.currentPlayer = PLAYER;
+		EventBus.once("ComputerMove", async (detail) => {
+			// Set a timeout to create a delay (allows for animation of white piece to finish)
+			setTimeout(async () => {
+				console.log("move: " + detail[0] + " to " + detail[1], detail[2]);
+				if (this.boardState.isOccupied(detail[1][0], detail[1][1])) {
+					this.capturePiece(this.boardState.getRank(detail[1][0], detail[1][1]), PLAYER);
+					this.boardState.destroyPiece(detail[1][0], detail[1][1]);
+				}
+				this.boardState.movePiece(detail[0], detail[1]); // make the move given
+				this.checkPromotion(detail[1]);
+				// this.currentPlayer = PLAYER;
+				this.toggleTurn();
+			}, 300); // 300 milliseconds delay
 		});
 		this.futureMoves = new ChessGameState(this.boardState.cloneBoardState());
 		this.futureMoves.getBestMove();

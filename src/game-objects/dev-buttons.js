@@ -72,7 +72,7 @@ export function dev_toggleAI() {
 export class DevButtons {
 	#scene;
 	#chessTiles;
-	#devButton;
+	// #devButton;
 	#alignmentButtons = {};
 	#rankButtons = {};
 	#bamButton;
@@ -89,10 +89,10 @@ export class DevButtons {
 
 		setDevButtonsInitializedStatus(this);
 
-		this.#devButton = this.#scene.add.text(0, 0, "", {
-			fill: CREAMHEX,
-			backgroundColor: ONYXHEX,
-		});
+		// this.#devButton = this.#scene.add.text(0, 0, "", {
+		// 	fill: CREAMHEX,
+		// 	backgroundColor: ONYXHEX,
+		// });
 
 		for (let i = 0; i < alignments.length; i++) {
 			this.#alignmentButtons[alignments[i]] = this.#scene.add.text(0, 0, alignment_names[i], STYLE_OFF);
@@ -160,7 +160,8 @@ export class DevButtons {
 			else this.#aiButton.setText("Disable AI");
 		});
 
-		configureButtons(this.#devButton, ...this.getNondevButtons());
+		// configureButtons(this.#devButton, ...this.getNondevButtons());
+		configureButtons(...this.getNondevButtons());
 
 		// Restore dev mode settings
 		let toggled_buttons = [];
@@ -175,7 +176,7 @@ export class DevButtons {
 	}
 
 	resize() {
-		this.#devButton.setPosition(LEFT_X_CENTER, LEFT_UNIT);
+		// this.#devButton.setPosition(LEFT_X_CENTER, LEFT_UNIT);
 		for (let i = 0; i < alignments.length; i++)
 			this.#alignmentButtons[alignments[i]].setPosition((0.5 + i) * LEFT_X_CENTER, 2.5 * LEFT_UNIT);
 		for (let i = 0; i < ranks.length; i++)
@@ -188,8 +189,10 @@ export class DevButtons {
 		this.#stopButton.setPosition(1.5 * LEFT_X_CENTER, 7.5 * LEFT_UNIT);
 		this.#aiButton.setPosition(1.0 * LEFT_X_CENTER, 9.5 * LEFT_UNIT);
 
-		paddingTexts(LEFT_UNIT / 12, LEFT_UNIT / 12, this.#devButton, ...this.getNondevButtons());
-		fontsizeTexts((LEFT_UNIT / 12) * 9, this.#devButton, ...this.getNondevButtons());
+		// paddingTexts(LEFT_UNIT / 12, LEFT_UNIT / 12, this.#devButton, ...this.getNondevButtons());
+		// fontsizeTexts((LEFT_UNIT / 12) * 9, this.#devButton, ...this.getNondevButtons());
+		paddingTexts(LEFT_UNIT / 12, LEFT_UNIT / 12, ...this.getNondevButtons());
+		fontsizeTexts((LEFT_UNIT / 12) * 9, ...this.getNondevButtons());
 	}
 
 	// Return list of all dev buttons excluding the dev mode button
