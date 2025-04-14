@@ -44,11 +44,6 @@ export class ChessTiles {
 			},
 		});
 
-		// Register theme change listener
-		EventBus.on("PaletteChanged", (palette) => {
-			this.updateColorTheme(palette);
-		});
-
 		this.currentTheme = {
 			light: 0xe5aa70, // default light
 			dark: 0xc04000, // default dark
@@ -187,6 +182,10 @@ export class ChessTiles {
 				this.chessTiles[i][j].setFillStyle(isLight ? themeColors.light : themeColors.dark);
 			}
 		}
+		// NOW add the EventBus listener:
+		EventBus.on("PaletteChanged", (palette) => {
+			this.updateColorTheme(palette);
+		});
 
 		// Update captured panel
 		if (this.piecesTaken?.updatePanelColor) {
@@ -506,6 +505,7 @@ export class ChessTiles {
 
 		this.waveSpawnBudget += 2;
 		incrementGlobalWaves();
+		this.boardState.turnCounter.updateWaveCounterText();
 	}
 
 	// Centering procedure
@@ -686,15 +686,18 @@ export class ChessTiles {
 	}
 
 	makeComputerMove() {
-		EventBus.once("ComputerMove", (detail) => {
-			console.log("move: " + detail[0] + " to " + detail[1], detail[2]);
-			if (this.boardState.isOccupied(detail[1][0], detail[1][1])) {
-				this.capturePiece(this.boardState.getRank(detail[1][0], detail[1][1]), PLAYER);
-				this.boardState.destroyPiece(detail[1][0], detail[1][1]);
-			}
-			this.boardState.movePiece(detail[0], detail[1]); // make the move given
-			this.checkPromotion(detail[1]);
-			this.currentPlayer = PLAYER;
+		EventBus.once("ComputerMove", async (detail) => {
+			// Set a timeout to create a delay (allows for animation of white piece to finish)
+			setTimeout(async () => {
+				console.log("move: " + detail[0] + " to " + detail[1], detail[2]);
+				if (this.boardState.isOccupied(detail[1][0], detail[1][1])) {
+					this.capturePiece(this.boardState.getRank(detail[1][0], detail[1][1]), PLAYER);
+					this.boardState.destroyPiece(detail[1][0], detail[1][1]);
+				}
+				this.boardState.movePiece(detail[0], detail[1]); // make the move given
+				this.checkPromotion(detail[1]);
+				this.currentPlayer = PLAYER;
+			}, 300); // 300 milliseconds delay
 		});
 		this.futureMoves = new ChessGameState(this.boardState.cloneBoardState());
 		this.futureMoves.getBestMove();

@@ -159,7 +159,6 @@ const ROOK_VALUE = 5;
 const QUEEN_VALUE = 9;
 const KING_VALUE = 100;
 
-
 const CAPTURE_WEIGHT = 100;
 const LOSS_WEIGHT = 1;
 const THREATEN_WEIGHT = 0.001;

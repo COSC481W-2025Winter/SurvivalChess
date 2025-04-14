@@ -26,25 +26,9 @@ export class Rules extends Scene {
 
 	preload() {
 		this.load.setPath("assets");
-
-		WebFont.load({
-			google: {
-				families: ["Pixelify Sans"],
-			},
-			active: () => {
-				this.fontLoaded = true;
-				this.createContent();
-			},
-		});
 	}
 
 	create() {
-		if (this.fontLoaded) {
-			this.createContent();
-		}
-	}
-
-	createContent() {
 		const selectedPalette = localStorage.getItem("selectedPalette") || "default";
 
 		const themeColors = {
@@ -73,33 +57,17 @@ export class Rules extends Scene {
 
 		this.scene.moveAbove("MainGame", "Rules");
 
-		this.bg = this.add.rectangle(
-			CENTER_WIDTH,
-			CENTER_HEIGHT,
-			WINDOW_WIDTH,
-			WINDOW_HEIGHT,
-			themeColors.stroke,
-			themeColors.bgOpacity
-		);
+		this.bg = this.add.rectangle(0, 0, 0, 0, themeColors.stroke, themeColors.bgOpacity);
 		this.bg.setDepth(50);
 
-		this.square = this.add.rectangle(
-			CENTER_WIDTH,
-			5.5 * DOZEN_HEIGHT,
-			10 * DOZEN_WIDTH,
-			9 * DOZEN_HEIGHT,
-			0xffffff,
-			themeColors.panelOpacity
-		);
+		this.square = this.add.rectangle(0, 0, 0, 0, 0xffffff, themeColors.panelOpacity);
 		this.square.setDepth(50);
 
 		this.titleText = this.add
-			.text(CENTER_WIDTH, 1.75 * DOZEN_HEIGHT, "RULES", {
+			.text(0, 0, "RULES", {
 				fontFamily: "'Pixelify Sans', sans-serif",
-				fontSize: 38,
 				color: fillColor,
 				stroke: strokeColor,
-				strokeThickness: 5,
 				align: "center",
 			})
 			.setOrigin(0.5)
@@ -107,8 +75,8 @@ export class Rules extends Scene {
 
 		this.rulesText = this.add
 			.text(
-				CENTER_WIDTH,
-				6 * DOZEN_HEIGHT,
+				0,
+				0,
 				"- Pieces move the same as in regular chess\n\n" +
 					"- To move, click on the piece you want to move, and then click on the square you want to move it to\n\n" +
 					"- Enemy pieces spawn in waves that will increase in difficulty in later rounds\n\n" +
@@ -119,24 +87,19 @@ export class Rules extends Scene {
 					"- Capturing all the enemy pieces will progress you to the next round early",
 				{
 					fontFamily: "'Pixelify Sans', sans-serif",
-					fontSize: 20,
 					color: fillColor,
 					stroke: strokeColor,
-					strokeThickness: 0,
 					align: "left",
 				}
 			)
 			.setOrigin(0.5)
 			.setDepth(100);
 
-		this.closeButton = this.add.text(CENTER_WIDTH, 11 * DOZEN_HEIGHT, "Close Rules", {
+		this.closeButton = this.add.text(0, 0, "Close Rules", {
 			fontFamily: "'Pixelify Sans', sans-serif",
-			fontSize: 25,
 			backgroundColor: "#ffffff", // always white panel
 			color: fillColor,
 			stroke: strokeColor,
-			strokeThickness: 5,
-			padding: {left: 20, right: 20, top: 10, bottom: 10},
 		});
 		this.closeButton.setOrigin(0.5);
 		this.closeButton.setInteractive();
@@ -145,17 +108,35 @@ export class Rules extends Scene {
 		this.closeButton.on("pointerout", () => this.closeButton.setScale(1));
 		this.closeButton.setDepth(100);
 
-		this.rulesText.setWordWrapWidth(9.5 * DOZEN_WIDTH);
+		this.bg.setInteractive();
+		this.square.setInteractive();
 
+		const scene = this;
 		configureButtons(this.closeButton);
+		window.addEventListener(
+			"resize",
+			function (event) {
+				scene.resize();
+			},
+			false
+		);
+
+		this.resize();
+		EventBus.emit("current-scene-ready", this);
+	}
+
+	resize() {
+		this.bg.setPosition(CENTER_WIDTH, CENTER_HEIGHT);
+		this.bg.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
+		this.square.setPosition(CENTER_WIDTH, 5.5 * DOZEN_HEIGHT);
+		this.square.setSize(10 * DOZEN_WIDTH, 9 * DOZEN_HEIGHT);
+		this.titleText.setPosition(CENTER_WIDTH, 1.75 * DOZEN_HEIGHT);
+		this.rulesText.setPosition(CENTER_WIDTH, 6 * DOZEN_HEIGHT);
+		this.closeButton.setPosition(CENTER_WIDTH, 11 * DOZEN_HEIGHT);
+		this.rulesText.setWordWrapWidth(9.5 * DOZEN_WIDTH);
 		paddingTexts(4 * UNIT_HEIGHT, 2 * UNIT_HEIGHT, this.closeButton);
 		fontsizeTexts(DOZEN_HEIGHT, this.titleText);
 		fontsizeTexts(5 * UNIT_HEIGHT, this.rulesText);
 		fontsizeTexts(9 * UNIT_HEIGHT, this.closeButton);
-
-		this.bg.setInteractive();
-		this.square.setInteractive();
-
-		EventBus.emit("current-scene-ready", this);
 	}
 }

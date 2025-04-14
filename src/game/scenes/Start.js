@@ -1,5 +1,6 @@
 import {Scene} from "phaser";
 import {EventBus} from "../EventBus";
+import {globalMuteSound} from "../../game-objects/global-stats";
 
 import {configureButtons, paddingTexts, fontsizeTexts} from "../../game-objects/constants";
 import {resize_constants} from "../../game-objects/constants";
@@ -31,18 +32,12 @@ export class Start extends Scene {
 			active: () => {
 				this.fontLoaded = true;
 
-				// === Play Music ===
+				// Register music
 				this.backgroundMusic = this.sound.add("backgroundMusic", {loop: true, volume: 0.5});
-				if (!this.backgroundMusic.isPlaying) {
-					this.backgroundMusic.play();
-					this.backgroundMusicPlaying = true;
-				}
+				this.startMusic();
 
 				this.input.on("pointerdown", () => {
-					if (!this.backgroundMusic.isPlaying) {
-						this.backgroundMusic.play();
-						this.backgroundMusicPlaying = true;
-					}
+					this.startMusic();
 				});
 
 				// === Color Themes ===
@@ -115,8 +110,7 @@ export class Start extends Scene {
 				});
 				this.startButton.setInteractive().on("pointerdown", () => {
 					import("./Game").then((module) => {
-						this.backgroundMusic.stop();
-						this.backgroundMusicPlaying = false;
+						this.stopMusic();
 						if (!this.scene.get("MainGame")) {
 							this.scene.add("MainGame", module.Game);
 						}
@@ -164,8 +158,19 @@ export class Start extends Scene {
 					this
 				);
 
+				// Github Button
+				this.githubButton = this.add.text(0, 0, "GitHub", {
+					fontFamily: "'Pixelify Sans', sans-serif",
+					fill: "#FFFFFF",
+					backgroundColor: Phaser.Display.Color.IntegerToColor(themeColors.panel).rgba,
+				});
+				this.githubButton.setInteractive().on("pointerdown", () => {
+					// Open link in a new tab
+					window.open("https://github.com/COSC481W-2025Winter/SurvivalChess", "_blank");
+				});
+
 				// === Final Setup ===
-				configureButtons(this.startButton, this.settingsButton, this.rulesButton);
+				configureButtons(this.startButton, this.settingsButton, this.rulesButton, this.githubButton);
 				window.addEventListener("resize", () => this.resize(), false);
 
 				this.resize();
@@ -174,8 +179,7 @@ export class Start extends Scene {
 				// === Handle Theme Change ===
 				EventBus.on("PaletteChanged", () => {
 					if (this.backgroundMusic && this.backgroundMusic.isPlaying) {
-						this.backgroundMusic.stop();
-						this.backgroundMusicPlaying = false;
+						this.stopMusic();
 					}
 					if (this.scene.isVisible("Game")) {
 						this.scene.restart();
@@ -183,6 +187,18 @@ export class Start extends Scene {
 				});
 			},
 		});
+	}
+
+	startMusic() {
+		if (!this.backgroundMusic.isPlaying && globalMuteSound == false) {
+			this.backgroundMusic.play();
+			this.backgroundMusicPlaying = true;
+		}
+	}
+
+	stopMusic() {
+		this.backgroundMusic.stop();
+		this.backgroundMusicPlaying = false;
 	}
 
 	resize() {
@@ -196,6 +212,7 @@ export class Start extends Scene {
 		this.startButton.setPosition(CENTER_WIDTH, 5 * DOZEN_HEIGHT);
 		this.settingsButton.setPosition(10.5 * DOZEN_WIDTH, 1.5 * DOZEN_HEIGHT);
 		this.rulesButton.setPosition(10.5 * DOZEN_WIDTH, 9.5 * DOZEN_HEIGHT);
+		this.githubButton.setPosition(10.5 * DOZEN_WIDTH, 2.5 * DOZEN_HEIGHT);
 
 		this.titleText.setStroke(Phaser.Display.Color.IntegerToColor(themeColors.stroke).rgba, 2 * UNIT_HEIGHT);
 
@@ -214,11 +231,13 @@ export class Start extends Scene {
 			this.creditText,
 			this.startButton,
 			this.settingsButton,
-			this.rulesButton
+			this.rulesButton,
+			this.githubButton
 		);
 
 		fontsizeTexts(2 * DOZEN_HEIGHT, this.titleText);
 		fontsizeTexts(2.5 * UNIT_WIDTH, this.creditText);
 		fontsizeTexts(6 * UNIT_HEIGHT, this.introText, this.startButton, this.settingsButton, this.rulesButton);
+		fontsizeTexts(2.5 * UNIT_HEIGHT, this.githubButton);
 	}
 }

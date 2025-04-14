@@ -4,6 +4,7 @@ import {PLAYER, COMPUTER} from "./constants";
 import {EN_PASSANT_TOKEN} from "./constants";
 import {isSamePoint, dim2Array} from "./constants";
 import {ChessPiece} from "./chess-piece";
+import {TurnCounter} from "./turn-counter";
 import {BoardStateLite} from "./board-mockups";
 
 export class BoardState {
@@ -13,9 +14,11 @@ export class BoardState {
 	#enPassantCoordinate;
 
 	#isChecked;
+	turnCounter;
 
 	constructor(scene, pieceCoordinates, initialize = true) {
-		this.#scene = scene;
+		// Adds tweens if scene does not initilize (was getting error before)
+		this.#scene = scene || {tweens: {add: () => {}}};
 
 		// 8x8 array of chess pieces
 		this.#boardState = dim2Array(8, 8);
@@ -30,6 +33,9 @@ export class BoardState {
 			// Add 4 pawns as the first generic wave
 			for (let i = 2; i < 6; i++) this.addPiece(i, 1, PAWN, COMPUTER);
 		}
+
+		// contains simple counter ui for all turns count till present
+		this.turnCounter = new TurnCounter(this.#scene);
 	}
 
 	resize() {
@@ -135,8 +141,22 @@ export class BoardState {
 		return true;
 	}
 
+	// Animate pieces
+	animatePieceMove(piece, [outcol, outrow]) {
+		const targetX = X_ANCHOR + outcol * TILE_SIZE;
+		const targetY = Y_ANCHOR + outrow * TILE_SIZE;
+
+		this.#scene.tweens.add({
+			targets: piece,
+			x: targetX,
+			y: targetY,
+			duration: 300,
+			ease: "Power2",
+		});
+	}
+
 	// Move piece in input coordinate to output coordinate
-	movePiece(input, output) {
+	async movePiece(input, output) {
 		const incol = input[0];
 		const inrow = input[1];
 		const outcol = output[0];
@@ -148,7 +168,8 @@ export class BoardState {
 		if (this.getRank(incol, inrow) == PAWN && Math.abs(inrow - outrow) == 2)
 			this.addEnPassantToken(incol, (inrow + outrow) / 2);
 
-		this.#boardState[incol][inrow].setPosition(X_ANCHOR + outcol * TILE_SIZE, Y_ANCHOR + outrow * TILE_SIZE);
+		// this.#boardState[incol][inrow].setPosition(X_ANCHOR + outcol * TILE_SIZE, Y_ANCHOR + outrow * TILE_SIZE);
+		this.animatePieceMove(this.#boardState[incol][inrow], output); // Move with animation
 		this.#boardState[outcol][outrow] = this.#boardState[incol][inrow];
 		this.#boardState[incol][inrow] = null;
 
@@ -205,6 +226,7 @@ export class BoardState {
 	// Increment move counter of piece
 	incrementMoveCounter(col, row) {
 		this.#boardState[col][row].incrementMoveCounter();
+		this.turnCounter.updateTurnCounter();
 	}
 
 	// Check whether coordinate has different alignment

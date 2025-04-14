@@ -104,6 +104,15 @@ describe("", () => {
 			}),
 			existing: jest.fn(),
 		};
+
+		// Mock the tweens
+		tweens = {
+			add: jest.fn(() => {
+				return {
+					on: jest.fn(),
+				};
+			}),
+		};
 	}
 
 	// Mock Rectangle class
