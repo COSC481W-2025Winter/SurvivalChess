@@ -63,7 +63,7 @@ export class ChessTiles {
 
 		this.baseTurnsUntilNextWave = 13;
 		this.turnsUntilNextWave = this.baseTurnsUntilNextWave;
-		this.waveSpawnBudget = 4;
+		this.waveSpawnBudget = 10;
 
 		this.promotionCol; // temporary storage of column of piece to promote
 		this.promotionRow; // temporary storage of row of piece to promote
@@ -322,11 +322,12 @@ export class ChessTiles {
 				case this.currentPlayer === PLAYER ? COMPUTER : PLAYER: // If it's the opponent's piece
 					// If previously selected piece exists and move is valid, destroy and move the piece
 					if (this.xy && this.isValidMove([i, j])) {
+						let pieceValue = this.getValueOfPiece(this.boardState.getRank(i, j));
 						this.capturePiece(this.boardState.getRank(i, j), this.boardState.getAlignment(i, j));
 						this.boardState.destroyPiece(i, j);
 						this.boardState.movePiece(this.xy, [i, j]);
 						if (this.currentPlayer == PLAYER) {
-							incrementGlobalPieces();
+							incrementGlobalPieces(pieceValue);
 							incrementGlobalMoves();
 						}
 
