@@ -437,6 +437,7 @@ export class ChessTiles {
 		if (this.boardState.isCheckmated(this.currentPlayer)) status = CHECKMATE;
 		if (this.boardState.isStalemated(this.currentPlayer)) status = STALEMATE;
 		setGlobalStatus(status);
+		console.log(status, this.currentPlayer);
 		if (status)
 			import("../game/scenes/GameOver").then((module) => {
 				// Only add the scene if it's not already registered
@@ -697,7 +698,8 @@ export class ChessTiles {
 				}
 				this.boardState.movePiece(detail[0], detail[1]); // make the move given
 				this.checkPromotion(detail[1]);
-				this.currentPlayer = PLAYER;
+				// this.currentPlayer = PLAYER;
+				this.toggleTurn();
 			}, 300); // 300 milliseconds delay
 		});
 		this.futureMoves = new ChessGameState(this.boardState.cloneBoardState());
