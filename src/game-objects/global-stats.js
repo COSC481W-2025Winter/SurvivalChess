@@ -3,6 +3,10 @@ let globalMoves = 0;
 let globalPieces = 0;
 let globalWaves = 0;
 
+let globalMuteSound = false;
+let globalPieceTakenTally = 0;
+
+
 const CHECKMATE = "Checkmate!";
 const STALEMATE = "Stalemate!";
 
@@ -12,12 +16,14 @@ export function setGlobalStatus(status) {
 export function incrementGlobalMoves() {
 	globalMoves++;
 }
-export function incrementGlobalPieces() {
+export function incrementGlobalPieces(added) {
 	globalPieces++;
+	globalPieceTakenTally += added;
 }
 export function incrementGlobalWaves() {
 	globalWaves++;
 }
+
 export function resetGlobalStatus() {
 	globalStatus = null;
 }
@@ -26,10 +32,13 @@ export function resetGlobalMoves() {
 }
 export function resetGlobalPieces() {
 	globalPieces = 0;
+	globalPieceTakenTally = 0;
 }
 export function resetGlobalWaves() {
 	globalWaves = 0;
 }
 
-export {globalStatus, globalMoves, globalPieces, globalWaves};
+
+export {globalStatus, globalMoves, globalPieces, globalWaves, globalMuteSound, globalPieceTakenTally};
+
 export {CHECKMATE, STALEMATE};

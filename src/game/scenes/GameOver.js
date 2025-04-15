@@ -1,6 +1,6 @@
 import {Scene} from "phaser";
 import {EventBus} from "../EventBus";
-import {globalMoves, globalPieces, globalWaves, globalMuteSound} from "../../game-objects/global-stats";
+import {globalMoves, globalPieces, globalWaves, globalMuteSound, globalPieceTakenTally} from "../../game-objects/global-stats";
 
 import {paddingTexts, fontsizeTexts} from "../../game-objects/constants";
 import {
@@ -122,6 +122,9 @@ export class GameOver extends Scene {
 		// Idea #1: "efficiency" (pieces captured / moves) as a measurement of performance
 		let efficiency = globalMoves == 0 ? 0 : globalPieces / globalMoves;
 		let score = Math.ceil(efficiency * globalWaves * 1000);
+
+		// Idea #2: also add the value of pieces taken (x1000 because big numbers are fun)
+		score += globalPieceTakenTally * 1000;
 
 		this.numbersText = this.add
 			.text(0, 0, globalMoves + "\n" + globalPieces + "\n" + globalWaves + "\n" + score, {
@@ -267,7 +270,7 @@ export class GameOver extends Scene {
 		fontsizeTexts(1.5 * DOZEN_HEIGHT, this.titleText);
 
 		this.wordsText.setPosition(6 * DOZEN_WIDTH, 5 * DOZEN_HEIGHT);
-		this.numbersText.setPosition(6 * DOZEN_WIDTH + 3.45 * DOZEN_HEIGHT, 5 * DOZEN_HEIGHT);
+		this.numbersText.setPosition(6 * DOZEN_WIDTH + 3.2 * DOZEN_HEIGHT, 5 * DOZEN_HEIGHT);
 		fontsizeTexts(6 * UNIT_HEIGHT, this.wordsText, this.numbersText);
 		this.wordsText.setPadding(4 * UNIT_HEIGHT, 2.5 * UNIT_HEIGHT, DOZEN_HEIGHT, 2.5 * UNIT_HEIGHT);
 		this.wordsText.setLineSpacing(6 * UNIT_HEIGHT);
