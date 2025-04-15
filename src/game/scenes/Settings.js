@@ -218,11 +218,13 @@ export class Settings extends Scene {
 			});
 
 		this.closeButton = this.add
-			.text(0, 0, "Close Settings", {
+			.text(CENTER_WIDTH, 11 * DOZEN_HEIGHT, "Close Settings", {
 				fontFamily: "'Pixelify Sans', sans-serif",
 				backgroundColor: "#ffffff", // always white panel
 				color: fillColor,
 				stroke: strokeColor,
+				strokeThickness: 5,
+				padding: {left: 20, right: 20, top: 10, bottom: 10},
 			})
 			.setDepth(100);
 		this.closeButton.setOrigin(0.5);
@@ -306,7 +308,9 @@ export class Settings extends Scene {
 		this.closeButton.setPosition(CENTER_WIDTH, 11 * DOZEN_HEIGHT);
 		paddingTexts(4 * UNIT_HEIGHT, 2 * UNIT_HEIGHT, this.closeButton);
 		fontsizeTexts(DOZEN_HEIGHT, this.titleText);
-		fontsizeTexts(5 * UNIT_HEIGHT, this.rulesText);
-		fontsizeTexts(9 * UNIT_HEIGHT, this.closeButton);
+		fontsizeTexts(5 * UNIT_HEIGHT, this.colorPaletteSectionText);
+		fontsizeTexts(5 * UNIT_HEIGHT, this.pieceStyleSelectionTileText);
+		// fontsizeTexts(5 * UNIT_HEIGHT, this.settingsText);
+		fontsizeTexts(9 * UNIT_HEIGHT, this.closeButton); // colose button check the padding size and chack the initialization up above
 	}
 }
