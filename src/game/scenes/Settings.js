@@ -310,7 +310,7 @@ export class Settings extends Scene {
 		fontsizeTexts(DOZEN_HEIGHT, this.titleText);
 		fontsizeTexts(5 * UNIT_HEIGHT, this.colorPaletteSectionText);
 		fontsizeTexts(5 * UNIT_HEIGHT, this.pieceStyleSelectionTileText);
-		// fontsizeTexts(5 * UNIT_HEIGHT, this.settingsText);
+
 		fontsizeTexts(9 * UNIT_HEIGHT, this.closeButton); // colose button check the padding size and chack the initialization up above
 	}
 }
