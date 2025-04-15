@@ -4,7 +4,6 @@ import {PLAYER, COMPUTER} from "./constants";
 import {EN_PASSANT_TOKEN} from "./constants";
 import {isSamePoint, dim2Array} from "./constants";
 import {ChessPiece} from "./chess-piece";
-import {TurnCounter} from "./turn-counter";
 import {BoardStateLite} from "./board-mockups";
 
 export class BoardState {
@@ -14,7 +13,6 @@ export class BoardState {
 	#enPassantCoordinate;
 
 	#isChecked;
-	turnCounter;
 
 	constructor(scene, pieceCoordinates, initialize = true) {
 		// Adds tweens if scene does not initilize (was getting error before)
@@ -33,9 +31,6 @@ export class BoardState {
 			// Add 4 pawns as the first generic wave
 			for (let i = 2; i < 6; i++) this.addPiece(i, 1, PAWN, COMPUTER);
 		}
-
-		// contains simple counter ui for all turns count till present
-		this.turnCounter = new TurnCounter(this.#scene);
 	}
 
 	resize() {
@@ -226,7 +221,6 @@ export class BoardState {
 	// Increment move counter of piece
 	incrementMoveCounter(col, row) {
 		this.#boardState[col][row].incrementMoveCounter();
-		this.turnCounter.updateTurnCounter();
 	}
 
 	// Check whether coordinate has different alignment
@@ -588,6 +582,7 @@ export class BoardState {
 		const coordinates = this.#pieceCoordinates.getAllCoordinates(alignment);
 		for (const xy of coordinates) if (this.searchMoves(...xy).length) return false;
 
+		console.log("checkmated");
 		return true;
 	}
 
@@ -598,6 +593,7 @@ export class BoardState {
 		const coordinates = this.#pieceCoordinates.getAllCoordinates(alignment);
 		for (const xy of coordinates) if (this.searchMoves(...xy).length) return false;
 
+		console.log("stalemated");
 		return true;
 	}
 
