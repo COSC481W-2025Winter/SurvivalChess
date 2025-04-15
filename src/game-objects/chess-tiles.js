@@ -420,7 +420,6 @@ export class ChessTiles {
 							if (!--this.turnsUntilNextWave) this.spawnNextWave();
 						}, 300);
 					}
-					if (!--this.turnsUntilNextWave) this.spawnNextWave();
 				} else {
 					// No moves means we clear all pieces and instantly start the next wave
 					this.boardState.zapPieces(COMPUTER);
