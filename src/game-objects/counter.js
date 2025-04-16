@@ -1,14 +1,6 @@
 // counter.js
 import {globalMoves, globalWaves} from "./global-stats";
-import {
-	RIGHT_X_CENTER,
-	RIGHT_UNIT,
-	CENTER_HEIGHT,
-	fontsizeTexts,
-	paddingTexts,
-	START_TEXT_ONE,
-	START_TEXT_TWO,
-} from "./constants";
+import {RIGHT_X_CENTER, RIGHT_UNIT, fontsizeTexts, paddingTexts, START_TEXT_ONE, START_TEXT_TWO} from "./constants";
 
 export class Counter {
 	scene;
@@ -45,14 +37,24 @@ export class Counter {
 	}
 
 	resize() {
-		const yOffset = RIGHT_UNIT * 0.75;
-
 		if (this.turnCounterText?.active && this.waveCounterText?.active) {
-			this.turnCounterText.setPosition(RIGHT_X_CENTER, CENTER_HEIGHT - yOffset);
-			this.waveCounterText.setPosition(RIGHT_X_CENTER, CENTER_HEIGHT + yOffset);
+			const HEIGHT = this.scene.scale.height;
+			// ensure counter ui respects bounds imposed by pieces taken box above it and game buttons below
+			const capturedBottomY = 3.875 * RIGHT_UNIT;
+			const buttonTopY = this.scene.buttonTopY || HEIGHT - 3 * RIGHT_UNIT;
 
-			fontsizeTexts(RIGHT_UNIT * 0.75, this.turnCounterText, this.waveCounterText);
-			paddingTexts(RIGHT_UNIT / 3, RIGHT_UNIT / 6, this.turnCounterText, this.waveCounterText);
+			const availableHeight = buttonTopY - capturedBottomY;
+			const yOffset = availableHeight / 4;
+
+			const maxFontSize = availableHeight / 4;
+			const desiredFontSize = RIGHT_UNIT * 0.75;
+			const finalFontSize = Math.min(desiredFontSize, maxFontSize);
+
+			this.turnCounterText.setPosition(RIGHT_X_CENTER, capturedBottomY + yOffset);
+			this.waveCounterText.setPosition(RIGHT_X_CENTER, buttonTopY - yOffset);
+
+			fontsizeTexts(finalFontSize, this.turnCounterText, this.waveCounterText);
+			paddingTexts(finalFontSize * 0.5, finalFontSize / 3, this.turnCounterText, this.waveCounterText);
 		}
 	}
 
