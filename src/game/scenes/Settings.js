@@ -36,11 +36,7 @@ export class Settings extends Scene {
 		this.load.setPath("assets");
 		this.load.image("option1", "pieceOption1.png");
 		this.load.image("option2", "pieceOption2.png");
-		if (this.cameras.main.height < this.cameras.main.width) {
-			this.originalSizing = this.cameras.main.height;
-		} else {
-			this.originalSizing = this.cameras.main.width;
-		}
+		this.originalSizing = 750;
 	}
 
 	create() {
