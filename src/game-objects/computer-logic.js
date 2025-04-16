@@ -57,6 +57,7 @@ export class ChessGameState {
 		// if there is a capture move, make it
 		if (bestMove) {
 			this.sendMove(bestMove[1], bestMove[2], bestMove[3]);
+			return;
 		}
 
 		// otherwise examine all moves
