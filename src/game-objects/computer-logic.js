@@ -41,6 +41,26 @@ export class ChessGameState {
 
 		// all computer coordinates
 		const pieceDict = this.boardState.getPieceCoordinates().getAllCoordinates(COMPUTER);
+		// see if there is legal capture move first, if so, take one of them
+		for (const piece in pieceDict) {
+			const moves = this.boardState.searchMoves(pieceDict[piece][0], pieceDict[piece][1]);
+			// all possible moves for a piece
+			for (const move in moves) {
+				if (moves[move]["isEnemy"]) {
+					currentMove = this.computerMove(this.boardState.cloneBoardState(), pieceDict[piece], moves[move], 0); // get score for board
+					if (!bestMove || currentMove[0] < bestMove[0]) {
+						bestMove = [currentMove[0], pieceDict[piece], moves[move]["xy"], moves[move]["isEnemy"]];
+					}
+				}
+			}
+		}
+		// if there is a capture move, make it
+		if (bestMove) {
+			this.sendMove(bestMove[1], bestMove[2], bestMove[3]);
+		}
+
+		// otherwise examine all moves
+
 		// for each piece
 		for (const piece in pieceDict) {
 			// find all moves
@@ -82,8 +102,10 @@ export class ChessGameState {
 			// all possible moves for a piece
 			for (const move in moves) {
 				if (depth < DEPTH_LIMIT) {
+					// if not at depth limit, make every possible move and have computer make every possible move for each
 					this.computerMove(boardState.cloneBoardState(), pieceDict[piece], moves[move], depth + 1); // calculate possible computer moves
 				} else {
+					// evaluate all possible moves
 					currentMove = this.evaluateBoard(boardState.cloneBoardState()); // get score for board
 				}
 				if (!bestMove || currentMove > bestMove[0]) {
@@ -92,8 +114,9 @@ export class ChessGameState {
 			}
 		}
 		if (!currentMove) {
-			// if there is no legal subsequent move
-			return this.evaluateBoard(boardState);
+			// if there is no legal subsequent move for the computer
+			return [this.evaluateBoard(boardState)];
+			// return 9999999;
 		}
 		return bestMove;
 	}
@@ -127,7 +150,8 @@ export class ChessGameState {
 		}
 		if (!currentMove) {
 			// if there is no legal subsequent move
-			return this.evaluateBoard(boardState);
+			// return this.evaluateBoard(boardState);
+			return [-1]; // if it leaves the player with no legal moves its a win
 		}
 		return bestMove;
 	}
@@ -137,9 +161,9 @@ export class ChessGameState {
 		let score = 0; // initialize score
 		let threatenedPlayer;
 		let threatenedComputer;
-		if (boardState.isCheckmated(PLAYER) || boardState.isStalemated(PLAYER)) {
-			return -999999;
-		}
+		// if (boardState.isCheckmated(PLAYER) || boardState.isStalemated(PLAYER)) {
+		// 	return -999999;
+		// }
 		// get total value of player material - 0.01*value of player material threatened
 		let coordinates = boardState.getPieceCoordinates().getAllCoordinates(PLAYER);
 		coordinates.forEach((piece) => {
@@ -173,12 +197,12 @@ export class ChessGameState {
 					break;
 				case KING:
 					score += KING_VALUE * CAPTURE_WEIGHT;
-					// friendly pieces threatening the king don't matter
-					// score += KING_VALUE * THREATEN_WEIGHT * threatenedComputer.length;
-					if (threatenedPlayer.length > 0) {
-						// doesn't matter if multiple pieces threaten king, its in check or not in check
-						score -= KING_VALUE * THREATEN_WEIGHT * 0.5; // make less likely to suicide-check player
-					} // * threatenedPlayer.length; // each piece threatening it
+					// friendly pieces threatening the king doesn't matter
+					score -= KING_VALUE * THREATEN_WEIGHT * threatenedPlayer.length;
+					// if (threatenedPlayer.length > 0) {
+					// 	// doesn't matter if multiple pieces threaten king, its in check or not in check
+					// 	score -= KING_VALUE * THREATEN_WEIGHT;
+					// } // * threatenedPlayer.length; // each piece threatening it
 					break;
 			}
 		});
