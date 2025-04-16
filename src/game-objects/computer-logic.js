@@ -115,7 +115,7 @@ export class ChessGameState {
 		}
 		if (!currentMove) {
 			// if there is no legal subsequent move for the computer
-			return this.evaluateBoard(boardState);
+			return [this.evaluateBoard(boardState)];
 			// return 9999999;
 		}
 		return bestMove;
@@ -151,7 +151,7 @@ export class ChessGameState {
 		if (!currentMove) {
 			// if there is no legal subsequent move
 			// return this.evaluateBoard(boardState);
-			return -1; // if it leaves the player with no legal moves its a win
+			return [-1]; // if it leaves the player with no legal moves its a win
 		}
 		return bestMove;
 	}
