@@ -50,12 +50,6 @@ export class GameOver extends Scene {
 			light: {text: 0x3b3b3b, background: 0xffffff},
 		}[selectedPalette];
 
-		const backgroundColor = {
-			default: {background: 0x3b3b3b},
-			dark: {background: 0x222222},
-			light: {background: 0xffffff},
-		}[selectedPalette];
-
 		// Access the Game scene
 		const gameScene = this.scene.get("MainGame");
 		this.buttonTextColor = themeColors.text;
@@ -79,8 +73,6 @@ export class GameOver extends Scene {
 		this.scene.moveAbove("MainGame", "GameOver");
 		// Creates an invisible background that also blocks input on the scene underneath
 		this.bg = this.add.rectangle(1, 1, 1, 1, GAMEOVER_BACKGROUND_COLOR, 0);
-		// Creates a rectangle that covers the buttons on the game scene
-		this.buttonCover = this.add.rectangle(1, 1, 1, 1, backgroundColor.background, 1.0);
 
 		// Creates a visual background that also blocks input on the scene underneath
 		this.square = this.add.rectangle(
@@ -262,8 +254,6 @@ export class GameOver extends Scene {
 	resize() {
 		this.bg.setPosition(CENTER_WIDTH, CENTER_HEIGHT);
 		this.bg.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
-		this.buttonCover.setPosition(10 * DOZEN_WIDTH, 10 * DOZEN_HEIGHT);
-		this.buttonCover.setSize(10 * DOZEN_HEIGHT, 6 * DOZEN_HEIGHT);
 		this.square.setPosition(CENTER_WIDTH, CENTER_HEIGHT);
 		this.square.setSize(10 * DOZEN_HEIGHT, 10 * DOZEN_HEIGHT);
 		this.titleText.setPosition(CENTER_WIDTH, 2 * DOZEN_HEIGHT);
