@@ -516,6 +516,7 @@ export class ChessTiles {
 
 		this.waveSpawnBudget += 2;
 		incrementGlobalWaves();
+		this.boardState.counter.updateWaveCounterText();
 	}
 
 	// Centering procedure
