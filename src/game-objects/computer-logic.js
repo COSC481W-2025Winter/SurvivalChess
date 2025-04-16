@@ -57,7 +57,7 @@ export class ChessGameState {
 			}
 		}
 		// make chosen move
-		// console.log("The Move: ", bestMove[1], bestMove[2], bestMove[3]);
+		// console.log("The Move: ", bestMove);
 		this.sendMove(bestMove[1], bestMove[2], bestMove[3]);
 	}
 	// sends an event specifying the move as the computer's.
@@ -189,8 +189,12 @@ export class ChessGameState {
 					break;
 				case KING:
 					score += KING_VALUE * CAPTURE_WEIGHT;
-					// score += KING_VALUE * THREATEN_WEIGHT * threatenedComputer.length; // friendly pieces threatening the king don't matter
-					score -= KING_VALUE * THREATEN_WEIGHT * threatenedPlayer.length; // each piece threatening it
+					// friendly pieces threatening the king don't matter
+					// score += KING_VALUE * THREATEN_WEIGHT * threatenedComputer.length;
+					if (threatenedPlayer.length > 0) {
+						// doesn't matter if multiple pieces threaten king, its in check or not in check
+						score -= KING_VALUE * THREATEN_WEIGHT * 0.1; // make less likely to suicide-check player
+					} // * threatenedPlayer.length; // each piece threatening it
 					break;
 			}
 		});
@@ -204,25 +208,25 @@ export class ChessGameState {
 				case PAWN:
 					score -= PAWN_VALUE * LOSS_WEIGHT;
 					score += PAWN_VALUE * THREATEN_WEIGHT * threatenedComputer.length;
-					score -= PAWN_VALUE * THREATEN_WEIGHT * threatenedPlayer.length; // enemy each threatening it
+					score -= PAWN_VALUE * THREATEN_WEIGHT * threatenedPlayer.length; // each piece threatening it
 					break;
 				case ROOK:
-					score += ROOK_VALUE * LOSS_WEIGHT;
+					score -= ROOK_VALUE * LOSS_WEIGHT;
 					score += ROOK_VALUE * THREATEN_WEIGHT * threatenedComputer.length;
 					score -= ROOK_VALUE * THREATEN_WEIGHT * threatenedPlayer.length; // each piece threatening it
 					break;
 				case BISHOP:
-					score += BISHOP_VALUE * LOSS_WEIGHT;
+					score -= BISHOP_VALUE * LOSS_WEIGHT;
 					score += BISHOP_VALUE * THREATEN_WEIGHT * threatenedComputer.length;
 					score -= BISHOP_VALUE * THREATEN_WEIGHT * threatenedPlayer.length; // each piece threatening it
 					break;
 				case KNIGHT:
-					score += KNIGHT_VALUE * LOSS_WEIGHT;
+					score -= KNIGHT_VALUE * LOSS_WEIGHT;
 					score += KNIGHT_VALUE * THREATEN_WEIGHT * threatenedComputer.length;
 					score -= KNIGHT_VALUE * THREATEN_WEIGHT * threatenedPlayer.length; // each piece threatening it
 					break;
 				case QUEEN:
-					score += QUEEN_VALUE * LOSS_WEIGHT;
+					score -= QUEEN_VALUE * LOSS_WEIGHT;
 					score += QUEEN_VALUE * THREATEN_WEIGHT * threatenedComputer.length;
 					score -= QUEEN_VALUE * THREATEN_WEIGHT * threatenedPlayer.length; // each piece threatening it
 					break;
