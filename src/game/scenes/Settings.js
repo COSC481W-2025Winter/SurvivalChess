@@ -7,7 +7,6 @@ import {toggleDev, DEV_MODE} from "../../game-objects/dev-buttons.js";
 // import {ChessTiles} from "../../game-objects/chess-tiles";
 import {globalMuteSound, toggleGlobalMute} from "../../game-objects/global-stats.js";
 import {
-	configureButtons,
 	paddingTexts,
 	fontsizeTexts,
 	WINDOW_WIDTH,
@@ -26,6 +25,8 @@ export class Settings extends Scene {
 	square;
 	titleText;
 	closeButton;
+	originalHeight;
+	scaleChange;
 
 	constructor() {
 		super("Settings");
@@ -35,6 +36,7 @@ export class Settings extends Scene {
 		this.load.setPath("assets");
 		this.load.image("option1", "pieceOption1.png");
 		this.load.image("option2", "pieceOption2.png");
+		this.originalHeight = this.cameras.main.height;
 	}
 
 	create() {
@@ -82,23 +84,24 @@ export class Settings extends Scene {
 			.setOrigin(0.5)
 			.setDepth(100);
 
-		this.option1 = this.add.image(this.cameras.main.width / 2, this.cameras.main.height / 3 - 30, "option1");
-		this.option2 = this.add.image(this.cameras.main.width / 2, this.cameras.main.height / 3 + 30, "option2");
+		this.option1 = this.add.image(this.cameras.main.width / 2, this.cameras.main.height / 3.3, "option1");
+		this.option2 = this.add.image(this.cameras.main.width / 2, this.cameras.main.height / 2.7, "option2");
 
 		this.option1
 			.setOrigin(0.5)
 			.setDepth(100)
 			.setInteractive()
 			.on("pointerover", () => {
-				this.option1.setScale(1.2); // Increase the scale
+				this.option1.setScale(this.cameras.main.height / this.originalHeight + 0.2); // Increase the scale
 			})
 			.on("pointerout", () => {
-				this.option1.setScale(1); // Reset to original size
+				this.option1.setScale(this.cameras.main.height / this.originalHeight - 0.1); // Reset to original size
 			})
 			.on(
 				"pointerdown",
 				function () {
 					setPieceStyle(1);
+					this.scene.stop("Settings");
 				},
 				this
 			);
@@ -108,15 +111,16 @@ export class Settings extends Scene {
 			.setDepth(100)
 			.setInteractive()
 			.on("pointerover", () => {
-				this.option2.setScale(1.2); // Increase the scale
+				this.option2.setScale(this.cameras.main.height / this.originalHeight + 0.2); // Increase the scale
 			})
 			.on("pointerout", () => {
-				this.option2.setScale(1); // Reset to original size
+				this.option2.setScale(this.cameras.main.height / this.originalHeight - 0.1); // Reset to original size
 			})
 			.on(
 				"pointerdown",
 				function () {
 					setPieceStyle(2);
+					this.scene.stop("Settings");
 				},
 				this
 			);
@@ -146,7 +150,7 @@ export class Settings extends Scene {
 					fontFamily: "'Pixelify Sans', sans-serif",
 					color: fillColor,
 					fontSize: "18px",
-					backgroundColor: "#333",
+					backgroundColor: strokeColor,
 					padding: {x: 10, y: 5},
 				})
 				.setDepth(100)
@@ -163,12 +167,6 @@ export class Settings extends Scene {
 						gameScene.chessTiles.updateColorTheme(palette);
 					}
 
-					// Call the change background method of the Game scene
-					if (this.scene.get("MainGame")) {
-						const maingameScene = this.scene.get("MainGame");
-						maingameScene.changeBackground();
-					}
-
 					EventBus.emit("PaletteChanged", palette);
 					this.scene.stop("Settings"); // Optional: update Settings screen UI
 				});
@@ -182,7 +180,7 @@ export class Settings extends Scene {
 				fontFamily: "'Pixelify Sans', sans-serif",
 				color: fillColor,
 				fontSize: "18px",
-				backgroundColor: "#333",
+				backgroundColor: strokeColor,
 				padding: {x: 10, y: 5},
 			})
 			.setDepth(100)
@@ -204,7 +202,7 @@ export class Settings extends Scene {
 					fontFamily: "'Pixelify Sans', sans-serif",
 					color: fillColor,
 					fontSize: "18px",
-					backgroundColor: "#333",
+					backgroundColor: strokeColor,
 					padding: {x: 10, y: 5},
 				}
 			)
@@ -237,18 +235,10 @@ export class Settings extends Scene {
 		this.applyColorTheme(savedPalette);
 
 		const scene = this;
-		window.addEventListener(
-			"resize",
-			function (event) {
-				scene.resize();
-			},
-			false
-		);
 
 		this.bg.setInteractive();
 		this.square.setInteractive();
 
-		configureButtons(this.closeButton);
 		window.addEventListener(
 			"resize",
 			function (event) {
@@ -273,30 +263,40 @@ export class Settings extends Scene {
 	}
 
 	resize() {
-		this.option1.setPosition(this.cameras.main.width / 2 - 4, this.cameras.main.height / 3.3);
-		this.option2.setPosition(this.cameras.main.width / 2 - 4, this.cameras.main.height / 2.65);
-		this.pieceStyleSelectionTileText.setPosition(this.cameras.main.width / 2.15, this.cameras.main.height / 4.5);
+		var width = this.cameras.main.width;
+		var height = this.cameras.main.height;
+
+		this.option1.setPosition(width / 2.15, height / 3.3);
+		this.option2.setPosition(width / 2.15, height / 2.65);
+		this.option1.setScale(height / this.originalHeight - 0.1);
+		this.option2.setScale(height / this.originalHeight - 0.1);
+
+		this.pieceStyleSelectionTileText.setPosition(width / 2.25, height / 4.5);
 		this.pieceStyleSelectionTileText.setFontSize(20);
 
-		this.colorPaletteSectionText.setPosition(this.cameras.main.width / 8, this.cameras.main.height / 4.5);
+		this.colorPaletteSectionText.setPosition(width / 8, height / 4.5);
 		this.colorPaletteSectionText.setFontSize(20);
 
 		let yOffset = 0;
 
 		for (let palette of palettes) {
-			this.paletteButtons[palette].setPosition(this.cameras.main.width / 8, this.cameras.main.height / 3.75 + yOffset);
+			this.paletteButtons[palette].setPosition(width / 8, height / 3.75 + yOffset);
 			this.paletteButtons[palette].setFontSize(18);
 			this.paletteButtons[palette].setPadding({x: 10, y: 5});
-			yOffset += 50;
+			fontsizeTexts(3 * UNIT_HEIGHT, this.paletteButtons[palette]);
+
+			yOffset += height / 18;
 		}
 
 		this.devButton.setFontSize(18);
 		this.devButton.setPadding({x: 10, y: 5});
-		this.devButton.setPosition(this.cameras.main.width / 1.5, this.cameras.main.height / 3.75);
+		this.devButton.setPosition(width / 1.5, height / 3.75);
+		fontsizeTexts(3 * UNIT_HEIGHT, this.devButton);
 
 		this.muteButton.setFontSize(18);
 		this.muteButton.setPadding({x: 10, y: 5});
-		this.muteButton.setPosition(this.cameras.main.width / 1.5, this.cameras.main.height / 3.75 + 50);
+		this.muteButton.setPosition(width / 1.5, height / 3.75 + height / 18);
+		fontsizeTexts(3 * UNIT_HEIGHT, this.muteButton);
 
 		this.bg.setPosition(CENTER_WIDTH, CENTER_HEIGHT);
 		this.bg.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -306,7 +306,8 @@ export class Settings extends Scene {
 		this.closeButton.setPosition(CENTER_WIDTH, 11 * DOZEN_HEIGHT);
 		paddingTexts(4 * UNIT_HEIGHT, 2 * UNIT_HEIGHT, this.closeButton);
 		fontsizeTexts(DOZEN_HEIGHT, this.titleText);
-		fontsizeTexts(5 * UNIT_HEIGHT, this.settingsText);
+		fontsizeTexts(5 * UNIT_HEIGHT, this.pieceStyleSelectionTileText);
+		fontsizeTexts(5 * UNIT_HEIGHT, this.colorPaletteSectionText);
 		fontsizeTexts(9 * UNIT_HEIGHT, this.closeButton);
 	}
 }
