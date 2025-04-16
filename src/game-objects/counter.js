@@ -1,6 +1,15 @@
 // counter.js
 import {globalMoves, globalWaves} from "./global-stats";
-import {RIGHT_X_CENTER, RIGHT_UNIT, fontsizeTexts, paddingTexts, START_TEXT_ONE, START_TEXT_TWO} from "./constants";
+import {
+	RIGHT_X_CENTER,
+	RIGHT_UNIT,
+	fontsizeTexts,
+	paddingTexts,
+	START_TEXT_ONE,
+	START_TEXT_TWO,
+	DOZEN_HEIGHT,
+	UNIT_HEIGHT,
+} from "./constants";
 
 export class Counter {
 	scene;
@@ -38,10 +47,10 @@ export class Counter {
 
 	resize() {
 		if (this.turnCounterText?.active && this.waveCounterText?.active) {
-			const HEIGHT = this.scene.scale.height;
 			// ensure counter ui respects bounds imposed by pieces taken box above it and game buttons below
 			const capturedBottomY = 3.875 * RIGHT_UNIT;
-			const buttonTopY = this.scene.buttonTopY || HEIGHT - 3 * RIGHT_UNIT;
+			const buttonHeight = 12 * UNIT_HEIGHT;
+			const buttonTopY = this.scene.buttonTopY || 9 * DOZEN_HEIGHT - buttonHeight / 2;
 
 			const availableHeight = buttonTopY - capturedBottomY;
 			const yOffset = availableHeight / 4;
