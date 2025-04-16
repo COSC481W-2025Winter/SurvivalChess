@@ -112,6 +112,8 @@ export class Game extends Scene {
 						// Stop background music
 						this.stopMusic();
 
+						this.destroyButtons();
+
 						// Only add the scene if it's not already registered
 						if (!this.scene.get("GameOver")) {
 							this.scene.add("GameOver", module.GameOver); // Add the MainGame scene dynamically
@@ -152,11 +154,13 @@ export class Game extends Scene {
 	}
 
 	resize() {
-		this.settingsButton.setPosition(RIGHT_X_CENTER, 9 * DOZEN_HEIGHT);
-		this.rulesButton.setPosition(RIGHT_X_CENTER, 10 * DOZEN_HEIGHT);
-		this.endButton.setPosition(RIGHT_X_CENTER, 11 * DOZEN_HEIGHT);
-		fontsizeTexts(6 * UNIT_HEIGHT, this.endButton, this.settingsButton, this.rulesButton);
-		paddingTexts(4 * UNIT_HEIGHT, 2 * UNIT_HEIGHT, this.endButton, this.settingsButton, this.rulesButton);
+		if (this.settingsButton.active && this.rulesButton.active && this.endButton.active) {
+			this.settingsButton.setPosition(RIGHT_X_CENTER, 9 * DOZEN_HEIGHT);
+			this.rulesButton.setPosition(RIGHT_X_CENTER, 10 * DOZEN_HEIGHT);
+			this.endButton.setPosition(RIGHT_X_CENTER, 11 * DOZEN_HEIGHT);
+			fontsizeTexts(6 * UNIT_HEIGHT, this.endButton, this.settingsButton, this.rulesButton);
+			paddingTexts(4 * UNIT_HEIGHT, 2 * UNIT_HEIGHT, this.endButton, this.settingsButton, this.rulesButton);
+		}
 		this.chessTiles.resize();
 	}
 	changeBackground() {
@@ -191,5 +195,12 @@ export class Game extends Scene {
 				this.gameMusicPlaying = true;
 			}
 		}
+	}
+
+	destroyButtons() {
+		// Make buttons invisible
+		this.rulesButton.destroy();
+		this.settingsButton.destroy();
+		this.endButton.destroy();
 	}
 }
