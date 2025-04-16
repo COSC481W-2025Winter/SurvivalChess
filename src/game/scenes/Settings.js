@@ -167,6 +167,12 @@ export class Settings extends Scene {
 						gameScene.chessTiles.updateColorTheme(palette);
 					}
 
+					// Call the change background method of the Game scene
+					if (this.scene.get("MainGame")) {
+						const maingameScene = this.scene.get("MainGame");
+						maingameScene.changeBackground();
+					}
+
 					EventBus.emit("PaletteChanged", palette);
 					this.scene.stop("Settings"); // Optional: update Settings screen UI
 				});
