@@ -33,13 +33,14 @@ test("makes obviously correct move", () => {
 	const boardState = new BoardStateLite(coordinates);
 	boardState.addPiece(0, 0, ROOK, COMPUTER); // in position to take queen and check king
 	boardState.addPiece(1, 1, PAWN, COMPUTER); // worse move, threatens nothing
-	boardState.addPiece(0, 6, QUEEN, PLAYER); // threatened by computer rook
-	boardState.addPiece(0, 7, KING, PLAYER);
+	boardState.addPiece(6, 7, PAWN, PLAYER); //
+	boardState.addPiece(0, 7, QUEEN, PLAYER); // threatened by computer rook
+	boardState.addPiece(7, 7, KING, PLAYER);
 	const theGameState = new ChessGameState(boardState);
 	EventBus.once("ComputerMove", (detail) => {
 		expect(detail.length).toBe(3);
 		expect(detail[0]).toEqual([0, 0]);
-		expect(detail[1]).toEqual([0, 6]);
+		expect(detail[1]).toEqual([0, 7]);
 		expect(detail[2]).toEqual(true);
 	});
 	theGameState.getBestMove();

@@ -63,7 +63,7 @@ export class ChessTiles {
 
 		this.baseTurnsUntilNextWave = 13;
 		this.turnsUntilNextWave = this.baseTurnsUntilNextWave;
-		this.waveSpawnBudget = 4;
+		this.waveSpawnBudget = 10;
 
 		this.promotionCol; // temporary storage of column of piece to promote
 		this.promotionRow; // temporary storage of row of piece to promote
@@ -322,11 +322,12 @@ export class ChessTiles {
 				case this.currentPlayer === PLAYER ? COMPUTER : PLAYER: // If it's the opponent's piece
 					// If previously selected piece exists and move is valid, destroy and move the piece
 					if (this.xy && this.isValidMove([i, j])) {
+						let pieceValue = this.getValueOfPiece(this.boardState.getRank(i, j));
 						this.capturePiece(this.boardState.getRank(i, j), this.boardState.getAlignment(i, j));
 						this.boardState.destroyPiece(i, j);
 						this.boardState.movePiece(this.xy, [i, j]);
 						if (this.currentPlayer == PLAYER) {
-							incrementGlobalPieces();
+							incrementGlobalPieces(pieceValue);
 							incrementGlobalMoves();
 						}
 
@@ -413,7 +414,10 @@ export class ChessTiles {
 				if (computerHasValidMove) {
 					this.currentPlayer = COMPUTER;
 					if (!dev_deadAI) {
-						this.makeComputerMove(); // do the computer move
+						// Delay computer move slightly
+						setTimeout(() => {
+							this.makeComputerMove();
+						}, 300);
 					}
 					if (!--this.turnsUntilNextWave) this.spawnNextWave();
 				} else {
@@ -693,18 +697,15 @@ export class ChessTiles {
 
 	makeComputerMove() {
 		EventBus.once("ComputerMove", async (detail) => {
-			// Set a timeout to create a delay (allows for animation of white piece to finish)
-			setTimeout(async () => {
-				console.log("move: " + detail[0] + " to " + detail[1], detail[2]);
-				if (this.boardState.isOccupied(detail[1][0], detail[1][1])) {
-					this.capturePiece(this.boardState.getRank(detail[1][0], detail[1][1]), PLAYER);
-					this.boardState.destroyPiece(detail[1][0], detail[1][1]);
-				}
-				this.boardState.movePiece(detail[0], detail[1]); // make the move given
-				this.checkPromotion(detail[1]);
-				// this.currentPlayer = PLAYER;
-				this.toggleTurn();
-			}, 300); // 300 milliseconds delay
+			console.log("move: " + detail[0] + " to " + detail[1], detail[2]);
+			if (this.boardState.isOccupied(detail[1][0], detail[1][1])) {
+				this.capturePiece(this.boardState.getRank(detail[1][0], detail[1][1]), PLAYER);
+				this.boardState.destroyPiece(detail[1][0], detail[1][1]);
+			}
+			this.boardState.movePiece(detail[0], detail[1]); // make the move given
+			this.checkPromotion(detail[1]);
+			// this.currentPlayer = PLAYER;
+			this.toggleTurn();
 		});
 		this.futureMoves = new ChessGameState(this.boardState.cloneBoardState());
 		this.futureMoves.getBestMove();
