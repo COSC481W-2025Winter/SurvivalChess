@@ -417,9 +417,11 @@ export class ChessTiles {
 						// Delay computer move slightly
 						setTimeout(() => {
 							this.makeComputerMove();
+							if (!--this.turnsUntilNextWave) this.spawnNextWave();
 						}, 300);
+					} else {
+						if (!--this.turnsUntilNextWave) this.spawnNextWave();
 					}
-					if (!--this.turnsUntilNextWave) this.spawnNextWave();
 				} else {
 					// No moves means we clear all pieces and instantly start the next wave
 					this.boardState.zapPieces(COMPUTER);
@@ -440,7 +442,7 @@ export class ChessTiles {
 		if (this.boardState.isCheckmated(this.currentPlayer)) status = CHECKMATE;
 		if (this.boardState.isStalemated(this.currentPlayer)) status = STALEMATE;
 		setGlobalStatus(status);
-    console.log(status, this.currentPlayer);
+		// console.log(status, this.currentPlayer);
 		if (status) {
 			const gameScene = this.scene.scene.get("MainGame");
 			if (gameScene) {
@@ -697,7 +699,7 @@ export class ChessTiles {
 
 	makeComputerMove() {
 		EventBus.once("ComputerMove", async (detail) => {
-			console.log("move: " + detail[0] + " to " + detail[1], detail[2]);
+			// console.log("move: " + detail[0] + " to " + detail[1], detail[2]);
 			if (this.boardState.isOccupied(detail[1][0], detail[1][1])) {
 				this.capturePiece(this.boardState.getRank(detail[1][0], detail[1][1]), PLAYER);
 				this.boardState.destroyPiece(detail[1][0], detail[1][1]);
