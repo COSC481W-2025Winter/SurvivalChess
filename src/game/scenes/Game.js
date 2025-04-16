@@ -154,11 +154,13 @@ export class Game extends Scene {
 	}
 
 	resize() {
-		this.settingsButton.setPosition(RIGHT_X_CENTER, 9 * DOZEN_HEIGHT);
-		this.rulesButton.setPosition(RIGHT_X_CENTER, 10 * DOZEN_HEIGHT);
-		this.endButton.setPosition(RIGHT_X_CENTER, 11 * DOZEN_HEIGHT);
-		fontsizeTexts(6 * UNIT_HEIGHT, this.endButton, this.settingsButton, this.rulesButton);
-		paddingTexts(4 * UNIT_HEIGHT, 2 * UNIT_HEIGHT, this.endButton, this.settingsButton, this.rulesButton);
+		if (this.settingsButton.active && this.rulesButton.active && this.endButton.active) {
+			this.settingsButton.setPosition(RIGHT_X_CENTER, 9 * DOZEN_HEIGHT);
+			this.rulesButton.setPosition(RIGHT_X_CENTER, 10 * DOZEN_HEIGHT);
+			this.endButton.setPosition(RIGHT_X_CENTER, 11 * DOZEN_HEIGHT);
+			fontsizeTexts(6 * UNIT_HEIGHT, this.endButton, this.settingsButton, this.rulesButton);
+			paddingTexts(4 * UNIT_HEIGHT, 2 * UNIT_HEIGHT, this.endButton, this.settingsButton, this.rulesButton);
+		}
 		this.chessTiles.resize();
 	}
 	changeBackground() {
