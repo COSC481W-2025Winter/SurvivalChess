@@ -582,7 +582,6 @@ export class BoardState {
 		const coordinates = this.#pieceCoordinates.getAllCoordinates(alignment);
 		for (const xy of coordinates) if (this.searchMoves(...xy).length) return false;
 
-		console.log("checkmated");
 		return true;
 	}
 
@@ -593,7 +592,6 @@ export class BoardState {
 		const coordinates = this.#pieceCoordinates.getAllCoordinates(alignment);
 		for (const xy of coordinates) if (this.searchMoves(...xy).length) return false;
 
-		console.log("stalemated");
 		return true;
 	}
 
